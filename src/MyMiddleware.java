@@ -14,7 +14,7 @@ public class MyMiddleware {
 	private final int numThreadsPTP;
     private final boolean readSharded;
     private final Thread[] workerThreads;
-    private final BlockingQueue<Integer> blockingRequestQueue;
+    //private final BlockingQueue<Request> blockingRequestQueue;
 
     public MyMiddleware(String ip, int port, List<String> mcAddresses, int numThreadsPTP, boolean readSharded) {
         this.ip = ip;
