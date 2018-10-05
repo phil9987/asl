@@ -32,8 +32,8 @@
     <!-- Put everything in ${build} into the jar file -->
     <jar jarfile="${dist}/middleware-${nethzid}.jar" basedir="${build}" compress="true">
       <fileset dir="${src}" includes="**/*.java"/>
-      <zipgroupfileset dir="${lib.dir}" includes="log4j-api-2.11.1.jar"/>
-      <zipgroupfileset dir="${lib.dir}" includes="log4j-core-2.11.1.jar"/>
+      <fileset file="log4j2.xml"/>
+      <fileset dir="${lib.dir}" includes="**/*.jar"/>
       <manifest>
         <attribute name="Main-Class" value="ch.ethz.asltest.RunMW"/>
       </manifest>
