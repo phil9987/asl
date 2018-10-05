@@ -43,5 +43,9 @@
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
   </target>
+
+  <target name="run">
+        <java jar="${dist}/middleware-${nethzid}.jar" fork="true"/>
+    </target>
 </project>
 
