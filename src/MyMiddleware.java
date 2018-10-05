@@ -1,12 +1,12 @@
 package ch.ethz.asltest;
 
 import java.util.*;
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MyMiddleware {
 
-    //private static final Logger logger = LogManager.getLogger("MyMiddleware");
+    private static final Logger logger = LogManager.getLogger("MyMiddleware");
 
 	private final String ip;
 	private final int port;
@@ -29,11 +29,11 @@ public class MyMiddleware {
 
     void run() {
         try{
-            //logger.info("Start of MyMiddleware");
+            logger.info("Start of MyMiddleware");
 
 
         } catch (Exception e) {
-            //logger.error("Exception in MyMiddleware", e);
+            logger.error("Exception in MyMiddleware", e);
         }
     }
 
