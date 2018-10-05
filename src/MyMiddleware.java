@@ -30,6 +30,11 @@ public class MyMiddleware {
     void run() {
         try{
             logger.info("Start of MyMiddleware");
+            logger.info(ip);
+            logger.info(port);
+            logger.info(mcAddresses);
+            logger.info(numThreadsPTP);
+            logger.info(readSharded);
 
 
         } catch (Exception e) {
