@@ -46,8 +46,8 @@ public class Request {
         return true;
     }
 
-    public Request(String type, String body) {
-        this.type = type;
+    public Request(String body) {
         this.body = body;
+        // todo: process type;
     }
 }
