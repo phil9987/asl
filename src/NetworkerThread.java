@@ -37,6 +37,8 @@ public class NetworkerThread implements Runnable {
             serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port));
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+        } catch (IOException e) {
+            logger.error("Exception at NetworkerThread!", e);
         }
     }
 }
