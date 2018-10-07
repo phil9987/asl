@@ -31,7 +31,7 @@ public class NetworkerThread implements Runnable {
 
     @Override
     public void run() {
-        logger.info(String.format("Starting NetworkerThread %s:%d", ip, port));
+        logger.info(String.format("Starting NetworkerThread %s:%d", ipAddress, port));
         try (
             ServerSocketChannel serverSocket = ServerSocketChannel.open();
         ) {
