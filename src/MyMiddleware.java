@@ -38,6 +38,14 @@ public class MyMiddleware {
             logger.info(mcAddresses);
             logger.info(numThreadsPTP);
             logger.info(readSharded);
+
+            logger.info("Starting NetworkerThread...");
+            Thread networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.requestQueue));
+            networkerThread.start();
+
+            // TODO: start worker threads!
+            networkerThread.join();
+
         } catch (Exception e) {
             logger.error("Exception in MyMiddleware", e);
         }

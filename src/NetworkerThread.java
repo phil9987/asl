@@ -26,10 +26,12 @@ public class NetworkerThread implements Runnable {
         this.ipAddress = ip;
         this.port = port;
         this.blockingRequestQueue = queue;
+        logger.info(String.format("Instantiating NetworkerThread %s:%d", ip, port));
     }
 
     @Override
     public void run() {
+        logger.info(String.format("Starting NetworkerThread %s:%d", ip, port));
         try (
             ServerSocketChannel serverSocket = ServerSocketChannel.open();
         ) {
