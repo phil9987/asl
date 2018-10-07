@@ -1,4 +1,4 @@
-package asl;
+package ch.ethz.asltest;
 
 public class Request {
 
