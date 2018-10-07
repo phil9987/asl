@@ -44,17 +44,17 @@ public class NetworkerThread implements Runnable {
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
             while (true) {
-                int numReady = selector.select();
+                int numReady = selector.select();       // number of channels that are ready
                 if (numReady == 0) continue;
 
-                Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                Set<SelectionKey> selectedKeys = selector.selectedKeys();   // keys of ready channels
                 Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 
                 while (keyIterator.hasNext()) {
                     SelectionKey key = keyIterator.next();
                     if (key.isAcceptable()) {
                         logger.info("ACCEPT");
-                        SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();
+                        SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();   // it's a serversocketchannel because it's an incoming connection
                         socketChannel.configureBlocking(false);
                         socketChannel.register(selector, SelectionKey.OP_READ, new Request(socketChannel));
                     } else if (key.isReadable()) {
@@ -63,6 +63,9 @@ public class NetworkerThread implements Runnable {
                         Request request = (Request) key.attachment();
 
                         // TODO: add acceptedAt time to request
+                        
+                        int newBytesCount = socketChannel.read(request.buffer);
+
                         if(request.isComplete()) {
                             logger.debug("Request complete, adding it to queue");
                             // TODO: add addedToQueue time to request

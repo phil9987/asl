@@ -1,6 +1,8 @@
 package ch.ethz.asltest;
 
 import java.nio.channels.SocketChannel;
+import java.nio.ByteBuffer;
+
 
 
 public class Request {
@@ -8,6 +10,7 @@ public class Request {
     private Type type;
     private String body;
     private SocketChannel channel;
+    ByteBuffer buffer;
 
     public Request(SocketChannel channel) {
         this.channel = channel;
