@@ -12,8 +12,8 @@ public class Request {
     private SocketChannel channel;
     ByteBuffer buffer;
 
-    static final int HEADER_SIZE_MAX = ;
-    static final int VALUE_SIZE_MAX = ;
+    static final int HEADER_SIZE_MAX = 2600;    // TODO: does this make sense?
+    static final int VALUE_SIZE_MAX = 4096;     // According to instructions
 
     public Request(SocketChannel channel) {
         this.channel = channel;
