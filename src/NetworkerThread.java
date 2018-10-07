@@ -48,7 +48,7 @@ public class NetworkerThread implements Runnable {
                 int bytesRead = socketChannel.read(bb);
                 String s = new String(bb.array());
                 logger.info(String.format("read %d bytes: %s", bytesRead, s));
-
+                socketChannel.close();
                 
 
             }
