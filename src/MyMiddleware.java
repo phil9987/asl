@@ -40,7 +40,7 @@ public class MyMiddleware {
             logger.info(readSharded);
 
             logger.info("Starting NetworkerThread...");
-            Thread networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.requestQueue));
+            Thread networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.blockingRequestQueue));
             networkerThread.start();
 
             // TODO: start worker threads!
