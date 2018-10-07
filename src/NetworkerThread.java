@@ -38,8 +38,18 @@ public class NetworkerThread implements Runnable {
             Selector selector = Selector.open();
 
             serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port));
-            serverSocket.configureBlocking(false);
-            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+            while (true) {
+                SocketChannel socketChannel = serverSocket.accept();        // blocks until connection establishes
+                logger.info("connection accepted!");
+
+                ByteBuffer bb = ByteBuffer.allocate(84);  
+                int bytesRead = socketChannel.read(bb);
+                String s = new String(bb.array());
+                logger.info(String.format("read %d bytes: %s", bytesRead, s));
+
+                
+
+            }
         } catch (IOException e) {
             logger.error("Exception at NetworkerThread!", e);
         }
