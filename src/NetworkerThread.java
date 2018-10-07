@@ -25,7 +25,7 @@ public class NetworkerThread implements Runnable {
     }
 
     @Override
-    run() {
+    public void run() {
         try (
             ServerSocketChannel socket = ServerSocketChannel.open();
         ) {
