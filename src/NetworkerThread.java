@@ -34,5 +34,6 @@ public class NetworkerThread implements Runnable {
             serverSocketChannel.socket().bind(new InetSocketAddress(this.hostAddress, this.port));
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        }
     }
 }
