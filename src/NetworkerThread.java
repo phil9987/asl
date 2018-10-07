@@ -1,4 +1,4 @@
-package asl;
+package ch.ethz.asltest;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
