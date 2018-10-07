@@ -3,6 +3,10 @@ package ch.ethz.asltest;
 import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+
+
 
 public class MyMiddleware {
 
@@ -14,7 +18,7 @@ public class MyMiddleware {
 	private final int numThreadsPTP;
     private final boolean readSharded;
     private final Thread[] workerThreads;
-    //private final BlockingQueue<Request> blockingRequestQueue;
+    private final BlockingQueue<Request> blockingRequestQueue;
 
     public MyMiddleware(String ip, int port, List<String> mcAddresses, int numThreadsPTP, boolean readSharded) {
         this.ip = ip;
@@ -22,9 +26,8 @@ public class MyMiddleware {
         this.mcAddresses = mcAddresses;
         this.numThreadsPTP = numThreadsPTP;
         this.readSharded = readSharded;
-
+        this.blockingRequestQueue = new ArrayBlockingQueue<Request>(1024);
         this.workerThreads = new Thread[numThreadsPTP];
-
     }
 
     void run() {
@@ -35,8 +38,6 @@ public class MyMiddleware {
             logger.info(mcAddresses);
             logger.info(numThreadsPTP);
             logger.info(readSharded);
-
-
         } catch (Exception e) {
             logger.error("Exception in MyMiddleware", e);
         }
