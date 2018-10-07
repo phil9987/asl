@@ -17,7 +17,7 @@ public class Request {
 
     public Request(SocketChannel channel) {
         this.channel = channel;
-        ByteBuffer.allocateDirect(MAX_HEADER_SIZE + MAX_VALUE_SIZE);
+        ByteBuffer.allocateDirect(HEADER_SIZE_MAX + VALUE_SIZE_MAX);
     }
 
     public enum Type {
