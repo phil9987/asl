@@ -11,7 +11,7 @@ import java.nio.channels.ServerSocketChannel;
 
 public class NetworkerThread implements Runnable {
 
-    private static final Logger = LogManager.getLogger("NetworkerThread");
+    private static final Logger logger = LogManager.getLogger("NetworkerThread");
 
     private final String ipAddress;
     private final int port;
