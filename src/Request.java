@@ -12,8 +12,12 @@ public class Request {
     private SocketChannel channel;
     ByteBuffer buffer;
 
+    static final int HEADER_SIZE_MAX = ;
+    static final int VALUE_SIZE_MAX = ;
+
     public Request(SocketChannel channel) {
         this.channel = channel;
+        ByteBuffer.allocateDirect(MAX_HEADER_SIZE + MAX_VALUE_SIZE);
     }
 
     public enum Type {
