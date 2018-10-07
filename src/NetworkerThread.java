@@ -30,13 +30,13 @@ public class NetworkerThread implements Runnable {
     @Override
     public void run() {
         try (
-            ServerSocketChannel socket = ServerSocketChannel.open();
+            ServerSocketChannel serverSocket = ServerSocketChannel.open();
         ) {
             Selector selector = Selector.open();
 
-            serverSocketChannel.socket().bind(new InetSocketAddress(this.ipAddress, this.port));
-            serverSocketChannel.configureBlocking(false);
-            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+            serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port));
+            serverSocket.configureBlocking(false);
+            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
         }
     }
 }
