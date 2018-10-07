@@ -67,7 +67,7 @@ public class NetworkerThread implements Runnable {
                             logger.debug("Request complete, adding it to queue");
                             // TODO: add addedToQueue time to request
                             // TODO: add queueSize to request
-                            this.blockingRequestQueue.add(request);
+                            this.blockingRequestQueue.put(request); // blocking if queue is full
                         }
                     }
                 }
