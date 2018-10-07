@@ -34,23 +34,40 @@ public class NetworkerThread implements Runnable {
     @Override
     public void run() {
         logger.info(String.format("Starting NetworkerThread %s:%d", ipAddress, port));
-        try (
-            ServerSocketChannel serverSocket = ServerSocketChannel.open();
-        ) {
+        try (ServerSocketChannel serverSocket = ServerSocketChannel.open();) {
             Selector selector = Selector.open();
-
             serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port));
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
             while (true) {
-                SocketChannel socketChannel = serverSocket.accept();        // blocks until connection establishes
-                logger.info("connection accepted!");
+                int numReady = selector.select();
+                if (numReady == 0) continue;
 
-                ByteBuffer bb = ByteBuffer.allocate(84);  
-                int bytesRead = socketChannel.read(bb);
-                String s = new String(bb.array());
-                logger.info(String.format("read %d bytes: %s", bytesRead, s));
-                socketChannel.close();
-                
+                Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 
+                while (keyIterator.hasNext()) {
+                    SelectionKey key = keyIterator.next();
+                    if (key.isAcceptable()) {
+                        logger.info("ACCEPT");
+                        SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();
+                        socketChannel.configureBlocking(false);
+                        socketChannel.register(selector, SelectionKey.OP_READ, new Request(socketChannel));
+                    } else if (key.isReadable()) {
+                        logger.info("READ") ;
+                        SocketChannel socketChannel = (SocketChannel) key.channel();
+                        Request request = (Request) key.attachment();
+
+                        // TODO: add acceptedAt time to request
+                        if(request.isComplete()) {
+                            logger.debug("Request complete, adding it to queue");
+                            // TODO: add addedToQueue time to request
+                            // TODO: add queueSize to request
+                            this.blockingRequestQueue.add(request);
+                        }
+                    }
+                }
+            
             }
         } catch (IOException e) {
             logger.error("Exception at NetworkerThread!", e);
