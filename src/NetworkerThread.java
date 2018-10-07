@@ -37,8 +37,8 @@ public class NetworkerThread implements Runnable {
         try (ServerSocketChannel serverSocket = ServerSocketChannel.open();) {
             Selector selector = Selector.open();
             serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port));
-            serverSocketChannel.configureBlocking(false);
-            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+            serverSocket.configureBlocking(false);
+            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
             while (true) {
                 int numReady = selector.select();
                 if (numReady == 0) continue;
