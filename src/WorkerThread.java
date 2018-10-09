@@ -39,22 +39,26 @@ public class WorkerThread implements Runnable {
 
     @Override
     public void run() {
-        for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
-            String serverAddress = serverAdresses.get(serverIdx);
-            String[] serverAddressSplitted = serverAddress.split(":");
-            String ip = serverAddressSplitted[0];
-            int port = DEFAULT_MEMCACHED_PORT;
-            try {
-                port = Integer.parseUnsignedInt(serverAddressSplitted[1]);
-            } catch(NumberFormatException e) {
-                logger.error(String.format("Unable to parse port of memcached server (%s), using default port...", serverAddressSplitted[1]), e);
-                port = DEFAULT_MEMCACHED_PORT;
+        try{
+            for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
+                String serverAddress = serverAdresses.get(serverIdx);
+                String[] serverAddressSplitted = serverAddress.split(":");
+                String ip = serverAddressSplitted[0];
+                int port = DEFAULT_MEMCACHED_PORT;
+                try {
+                    port = Integer.parseUnsignedInt(serverAddressSplitted[1]);
+                } catch(NumberFormatException e) {
+                    logger.error(String.format("Unable to parse port of memcached server (%s), using default port...", serverAddressSplitted[1]), e);
+                    port = DEFAULT_MEMCACHED_PORT;
+                }
+                logger.info(String.format("Connecting to memcached server %s:%d", ip, port));
+                SocketChannel serverChannel = SocketChannel.open();
+                serverChannel.connect(new InetSocketAddress(ip, port));
+                serverChannel.configureBlocking(true);
+                serverConnections[serverIdx] = serverChannel;
             }
-            logger.info(String.format("Connecting to memcached server %s:%d", ip, port));
-            SocketChannel serverChannel = SocketChannel.open();
-            serverChannel.connect(new InetSocketAddress(ip, port));
-            serverChannel.configureBlocking(true);
-            serverConnections[serverIdx] = serverChannel;
+        } catch(IOException e) {
+            logger.error("IOException occurred during connection attempt to memcached servers", e);
         }
     }
     
