@@ -33,7 +33,7 @@ public class WorkerThread implements Runnable {
         this.id = id;
         this.blockingRequestQueue = queue;
         this.serverAdresses = serverAdresses;
-        this.serverConnections = new SocketChannel[storageAddresses.size()];
+        this.serverConnections = new SocketChannel[serverAdresses.size()];
         this.readSharded = readSharded;
     }
 
