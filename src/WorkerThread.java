@@ -60,10 +60,13 @@ public class WorkerThread implements Runnable {
                     }
                 }
                 logger.info(String.format("Connecting to memcached server %s:%d", ip, port));
-                SocketChannel serverChannel = SocketChannel.open();
+                /*SocketChannel serverChannel = SocketChannel.open();
                 serverChannel.connect(new InetSocketAddress(ip, port));
                 serverChannel.configureBlocking(true);
-                serverConnections[serverIdx] = serverChannel;
+                serverConnections[serverIdx] = serverChannel;*/
+                serverConnections[serverIdx] = SocketChannel.open();
+                serverConnections[serverIdx].connect(new InetSocketAddress(ip, port));
+                serverConnections[serverIdx].configureBlocking(true);
             }
             while(true) {
                 Request request = this.blockingRequestQueue.take();
