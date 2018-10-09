@@ -45,7 +45,7 @@ public class WorkerThread implements Runnable {
                 String[] serverAddressSplitted = serverAddress.split(":");
                 String ip = serverAddressSplitted[0];
                 int port = DEFAULT_MEMCACHED_PORT;
-                if(serverAddressSplitted.size() > 1) {
+                if(serverAddressSplitted.length > 1) {
                     try {
                         port = Integer.parseUnsignedInt(serverAddressSplitted[1]);
                     } catch(NumberFormatException e) {
