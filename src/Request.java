@@ -39,12 +39,6 @@ public class Request {
         return this.channel;
     }
 
-    public void clear() {
-        this.type = Type.NOT_SET;
-        this.buffer.clear();
-        this.buffer.compact();
-    }
-
     public Type getType() {
         if(this.type == Type.NOT_SET) {
             byte firstChar = this.buffer[0];

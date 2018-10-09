@@ -78,7 +78,7 @@ public class NetworkerThread implements Runnable {
                         if(Request.isComplete(buffer)) {
                             logger.debug("Request complete, adding it to queue");
                             buffer.flip();
-                            byte[] buf = new byte[buf.remaining()];
+                            byte[] buf = new byte[buffer.remaining()];
                             buffer.get(buf);
                             Request newRequest = new Request(buf);
                             logger.debug(String.format("received request of type %s", Reque.getType()));
