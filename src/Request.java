@@ -36,8 +36,8 @@ public class Request {
     }
 
 
-    public SocketChannel getChannel() {
-        return this.channel;
+    public SocketChannel getRequestorChannel() {
+        return this.requestorChannel;
     }
 
     public Type getType() {
