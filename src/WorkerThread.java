@@ -89,6 +89,8 @@ public class WorkerThread implements Runnable {
             logger.error(String.format("Worker %d got interrupted", this.id), e);
         } catch(IOException e) {
             logger.error(String.format("Worker %d had an IOException", this.id), e);
+        } catch(Exception e) {
+            logger.error(String.format("Worker %d had an Exception", this.id), e);
         }
     }
 
@@ -116,8 +118,6 @@ public class WorkerThread implements Runnable {
         while (serverSetResponseBuffer.hasRemaining()) {
             request.getRequestorChannel().write(serverSetResponseBuffer);
         }
-
-
     }
 
     private void handleGet(Request request) {
