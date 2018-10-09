@@ -113,6 +113,7 @@ public class WorkerThread implements Runnable {
             serverSetResponseBuffer.clear();
             serverChannel.read(serverSetResponseBuffer);
             // TODO: for debug purposes only, make more efficient
+            serverSetResponseBuffer.rewind();
             response = Request.ByteBufferToString(serverSetResponseBuffer);
             logger.info(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
         }
