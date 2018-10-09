@@ -24,8 +24,6 @@ public class WorkerThread implements Runnable {
     private final static String SET_POSITIVE_RESPONSE = "STORED";
     ByteBuffer serverSetResponseBuffer = ByteBuffer.allocateDirect(SET_MAX_RESPONSE_SIZE);
 
-
-
     private static final Logger logger = LogManager.getLogger("WorkerThread");
     static final int DEFAULT_MEMCACHED_PORT = 11211;
     private final int id;
@@ -69,7 +67,7 @@ public class WorkerThread implements Runnable {
                 serverConnections[serverIdx].configureBlocking(true);
             }
             while(true) {
-                Request request = this.blockingRequestQueue.take();
+                Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
                 Request.Type type = request.getType();
                 logger.info(String.format("Worker %d starts handling request of type %s", this.id, type));
                 switch(type) {
@@ -121,7 +119,9 @@ public class WorkerThread implements Runnable {
         logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response));
         SocketChannel requestorChannel = request.getRequestorChannel();
         // TODO: log request
+        logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
         serverSetResponseBuffer.rewind();
+        logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
         while (serverSetResponseBuffer.hasRemaining()) {
             logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
             requestorChannel.write(serverSetResponseBuffer);
