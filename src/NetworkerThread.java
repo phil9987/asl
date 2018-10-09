@@ -22,6 +22,8 @@ import java.util.Iterator;
 public class NetworkerThread implements Runnable {
 
     private static final Logger logger = LogManager.getLogger("NetworkerThread");
+    static final int KEY_SIZE_MAX = 250;    // max key size according to memcached protocol
+    static final int VALUE_SIZE_MAX = 4096;     // According to instructions
 
     private final String ipAddress;
     private final int port;
@@ -43,6 +45,9 @@ public class NetworkerThread implements Runnable {
             serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port));
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+            ByteBuffer buffer = ByteBuffer.allocateDirect(KEY_SIZE_MAX + VALUE_SIZE_MAX);
+
+
             while (true) {
                 int numReady = selector.select();       // number of channels that are ready
                 if (numReady == 0) continue;
@@ -62,20 +67,21 @@ public class NetworkerThread implements Runnable {
                         logger.info("ACCEPT");
                         SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();   // it's a serversocketchannel because it's an incoming connection
                         socketChannel.configureBlocking(false);
-                        socketChannel.register(selector, SelectionKey.OP_READ, new Request(socketChannel));
+                        socketChannel.register(selector, SelectionKey.OP_READ);
                     } else if (key.isReadable()) {
                         logger.info("READ") ;
                         SocketChannel socketChannel = (SocketChannel) key.channel();
-                        Request request = (Request) key.attachment();
 
                         // TODO: add acceptedAt time to request
-                        logger.debug(String.format("channel valid operations: %d", socketChannel.validOps()));
-                        int newBytesCount = socketChannel.read(request.buffer);
+                        int newBytesCount = socketChannel.read(buffer);
                         logger.debug(String.format("read %d new bytes from request", newBytesCount));
-                        logger.debug(String.format("channel valid operations: %d", socketChannel.validOps()));
-                        logger.debug(String.format("received request of type %s", request.getType()));
-                        if(request.isComplete()) {
+                        if(Request.isComplete(buffer)) {
                             logger.debug("Request complete, adding it to queue");
+                            buffer.flip();
+                            byte[] buf = new byte[buf.remaining()];
+                            buffer.get(buf);
+                            Request newRequest = new Request(buf);
+                            logger.debug(String.format("received request of type %s", Reque.getType()));
                             // TODO: add addedToQueue time to request
                             // TODO: add queueSize to request
                             try {

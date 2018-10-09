@@ -20,14 +20,10 @@ public class Request {
     private int size;
     private String body;
     private SocketChannel channel;
-    ByteBuffer buffer;
+    byte[] buffer;
 
-    static final int KEY_SIZE_MAX = 250;    // max key size according to memcached protocol
-    static final int VALUE_SIZE_MAX = 4096;     // According to instructions
-
-    public Request(SocketChannel channel) {
-        this.channel = channel;
-        this.buffer = ByteBuffer.allocateDirect(KEY_SIZE_MAX + VALUE_SIZE_MAX);
+    public Request(byte[] buffer) {
+        this.buffer = buffer;
     }
 
     public enum Type {
@@ -51,10 +47,10 @@ public class Request {
 
     public Type getType() {
         if(this.type == Type.NOT_SET) {
-            byte firstChar = this.buffer.get(0);
+            byte firstChar = this.buffer[0];
             logger.debug(String.format("first character = %c", firstChar));
             switch(firstChar) {
-                case 'g':   if(this.buffer.get(3) == 's') {
+                case 'g':   if(this.buffer[3] == 's') {
                                 this.type = Type.MULTIGET;
                             } else {
                                 this.type = Type.GET;
@@ -66,12 +62,8 @@ public class Request {
         return this.type;
     }
 
-    public boolean isComplete() {
-        if (this.getType() == Type.SET) {
-            return this.containsNewline() && this.dataComplete();
-        } else {
-            return this.containsNewline();
-        }
+    public static boolean isComplete(ByteBuffer buf) {
+        return true;
     }
 
     boolean dataComplete() {
