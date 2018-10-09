@@ -13,6 +13,8 @@ public class Request {
     private static final Logger logger = LogManager.getLogger("Request");
 
 
+    private static final byte G_BYTE  = 103;
+    private static final byte S_BYTE  = 115;
 
     private Type type = Type.NOT_SET;
     private int size;
@@ -43,10 +45,10 @@ public class Request {
 
     public Type getType() {
         if(this.type == Type.NOT_SET) {
-            char firstChar = this.buffer.getChar(0);
+            byte firstChar = this.buffer.get(0);
             logger.debug(String.format("first character = %c", firstChar));
             switch(firstChar) {
-                case 'g':   if(this.buffer.getChar(3) == 's') {
+                case 'g':   if(this.buffer.get(3) == 's') {
                                 this.type = Type.MULTIGET;
                             } else {
                                 this.type = Type.GET;
