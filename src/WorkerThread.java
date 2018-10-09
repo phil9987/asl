@@ -111,13 +111,11 @@ public class WorkerThread implements Runnable {
             SocketChannel serverChannel = serverConnections[serverIdx];
             serverSetResponseBuffer.clear();
             serverChannel.read(serverSetResponseBuffer);
-            serverSetResponseBuffer.flip();
             // TODO: for debug purposes only, make more efficient
             response = Request.ByteBufferToString(serverSetResponseBuffer);
             logger.info(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
         }
         logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response));
-        serverSetResponseBuffer.flip();
         SocketChannel requestorChannel = request.getRequestorChannel();
         // TODO: log request
         while (serverSetResponseBuffer.hasRemaining()) {
