@@ -69,7 +69,9 @@ public class NetworkerThread implements Runnable {
                         if(request.isComplete()) {
                             // request has been finished already, start a new one
                             // TODO: reuse old request?
-                            request.reset();
+                            //request.reset();
+                            request = new Request(socketChannel);
+                            key.attach(request);
                         } else {
                             // TODO: handle incomplete request
                         }
