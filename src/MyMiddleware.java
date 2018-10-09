@@ -43,7 +43,12 @@ public class MyMiddleware {
             Thread networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.blockingRequestQueue));
             networkerThread.start();
 
-            // TODO: start worker threads!
+            for (int i = 0; i < workerThreads.length; i++) {
+                logger.info(String.format("Starting worker thread %s", i));
+                Thread worker = new Thread(new Worker(i, this.blockingRequestQueue, this.mcAddresses, this.readSharded));
+                worker.start();
+                workerThreads[i] = worker;
+            }
             networkerThread.join();
 
         } catch (Exception e) {

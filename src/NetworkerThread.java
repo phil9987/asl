@@ -16,9 +16,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.Set;
 import java.util.Iterator;
 
-
-
-
 public class NetworkerThread implements Runnable {
 
     private static final Logger logger = LogManager.getLogger("NetworkerThread");
@@ -74,7 +71,9 @@ public class NetworkerThread implements Runnable {
 
                         // TODO: add acceptedAt time to request
                         int newBytesCount = socketChannel.read(buffer);
+                        // TODO: check if newBytesCount == -1 -> channel closed by client
                         logger.debug(String.format("read %d new bytes from request", newBytesCount));
+                        
                         if(Request.isComplete(buffer)) {
                             logger.debug("Request complete, adding it to queue");
                             buffer.flip();
@@ -84,7 +83,7 @@ public class NetworkerThread implements Runnable {
                             buffer.clear();
                             logger.debug(String.format("received request of type %s", newRequest.getType()));
                             // TODO: add addedToQueue time to request
-                            // TODO: add queueSize to request
+                            // TODO: add currentQueueSize to request
                             try {
                                 this.blockingRequestQueue.put(newRequest); // blocking if queue is full
                              } catch (InterruptedException e) {
