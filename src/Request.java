@@ -43,7 +43,7 @@ public class Request {
 
     public Type getType() {
         if(this.type == Type.NOT_SET) {
-            char firstChar = this.buffer.asCharBuffer().getChar(0);
+            char firstChar = this.buffer.getChar(0);
             logger.debug(String.format("first character = %c", firstChar));
             switch(firstChar) {
                 case 'g':   if(this.buffer.getChar(3) == 's') {
