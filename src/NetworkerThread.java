@@ -52,6 +52,12 @@ public class NetworkerThread implements Runnable {
 
                 while (keyIterator.hasNext()) {
                     SelectionKey key = keyIterator.next();
+                    keyIterator.remove();       // Remove key from set so we don't process it twice
+
+                    if (!key.isValid()) {
+                        continue;
+                    }
+                    
                     if (key.isAcceptable()) {
                         logger.info("ACCEPT");
                         SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();   // it's a serversocketchannel because it's an incoming connection
@@ -65,14 +71,14 @@ public class NetworkerThread implements Runnable {
                         // TODO: add acceptedAt time to request
                         
                         int newBytesCount = socketChannel.read(request.buffer);
+                        logger.debug(String.format("received request of type %s", request.getType()));
 
                         if(request.isComplete()) {
                             logger.debug("Request complete, adding it to queue");
                             // TODO: add addedToQueue time to request
                             // TODO: add queueSize to request
                             try {
-                                this.blockingRequestQueue.put(request); // blocking if queue is full
-                            } catch (InterruptedException e) {
+                             } catch (InterruptedException e) {
                                 logger.error("Got interrupted while waiting for new space in queue", e);
                             }
                         }

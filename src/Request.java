@@ -7,31 +7,47 @@ import java.nio.ByteBuffer;
 
 public class Request {
 
-    private Type type;
+
+    private Type type = Type.NOT_SET;
+    private int size;
     private String body;
     private SocketChannel channel;
     ByteBuffer buffer;
 
-    static final int HEADER_SIZE_MAX = 2600;    // TODO: does this make sense?
+    static final int KEY_SIZE_MAX = 250;    // max key size according to memcached protocol
     static final int VALUE_SIZE_MAX = 4096;     // According to instructions
 
     public Request(SocketChannel channel) {
         this.channel = channel;
-        this.buffer = ByteBuffer.allocateDirect(HEADER_SIZE_MAX + VALUE_SIZE_MAX);
+        this.buffer = ByteBuffer.allocateDirect(KEY_SIZE_MAX + VALUE_SIZE_MAX);
     }
 
     public enum Type {
         GET,
         MULTIGET,
         SET,
-        OTHER;
+        NOT_SET,
+        INVALID;
     }
+
 
     public SocketChannel getChannel() {
         return this.channel;
     }
 
     public Type getType() {
+        if(this.type == Type.NOT_SET) {
+            char firstChar = this.buffer.getChar(0);
+            switch(char) {
+                case 'g':   if(this.buffer.getChar(3) == 's') {
+                                this.type = Type.MULTIGET;
+                            } else {
+                                this.type = Type.GET;
+                            }
+                case 's':   this.type = Type.SET;
+                            break;
+            }
+        }
         return this.type;
     }
 
