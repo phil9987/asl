@@ -104,7 +104,7 @@ public class WorkerThread implements Runnable {
         }
         String response = "";
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
-            logger.info(String.format("Worker %d reads response from memcached server %d: %s", this.id, serverIdx));
+            logger.info(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
             SocketChannel serverChannel = serverConnections[serverIdx];
             serverSetResponseBuffer.clear();
             serverChannel.read(serverSetResponseBuffer);
