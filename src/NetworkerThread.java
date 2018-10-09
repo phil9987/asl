@@ -79,11 +79,6 @@ public class NetworkerThread implements Runnable {
                         logger.debug(String.format("channel is still readable: %b", key.isReadable()));
                         logger.debug(String.format("channel is writable: %b", key.isWritable()));
                         logger.debug(String.format("received request of type %s", request.getType()));
-
-                        char c;
-                        while ((c = request.buffer.getChar()) != 0) {
-                            logger.debug(c);
-                          }
                         if(request.isComplete()) {
                             logger.debug("Request complete, adding it to queue");
                             // TODO: add addedToQueue time to request
