@@ -85,7 +85,7 @@ public class NetworkerThread implements Runnable {
                             // TODO: add addedToQueue time to request
                             // TODO: add queueSize to request
                             try {
-                                this.blockingRequestQueue.put(request); // blocking if queue is full
+                                this.blockingRequestQueue.put(newRequest); // blocking if queue is full
                              } catch (InterruptedException e) {
                                 logger.error("Got interrupted while waiting for new space in queue", e);
                             }
