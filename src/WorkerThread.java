@@ -16,7 +16,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.Set;
 import java.util.Iterator;
 
-public class NetworkerThread implements Runnable {
+public class WorkerThread implements Runnable {
 
     private static final Logger logger = LogManager.getLogger("WorkerThread");
     static final int DEFAULT_MEMCACHED_PORT = 11211;
