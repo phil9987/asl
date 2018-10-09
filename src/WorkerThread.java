@@ -99,8 +99,9 @@ public class WorkerThread implements Runnable {
      */
     private void handleSet(Request request) throws IOException {
         logger.info(String.format("Worker %d sends set request to all memcached servers...", this.id));
-        for (SocketChannel serverChannel : serverConnections) {
-            logger.info(String.format("Worker %d sends set request to all memcached servers...", this.id));
+        for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
+            SocketChannel serverChannel = serverConnections[serverIdx];
+            logger.info(String.format("Worker %d sends set request to memcached server %d...", this.id, serverIdx));
             request.buffer.rewind();
             while (request.buffer.hasRemaining()) {
                 serverChannel.write(request.buffer);
