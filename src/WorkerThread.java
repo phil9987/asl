@@ -97,8 +97,11 @@ public class WorkerThread implements Runnable {
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
             SocketChannel serverChannel = serverConnections[serverIdx];
             logger.info(String.format("Worker %d sends set request to memcached server %d...", this.id, serverIdx));
+            if(!serverChannel.isConnected())
+                logger.info("ERROR: no connection to memcached");
             request.buffer.rewind();
             while (request.buffer.hasRemaining()) {
+                logger.info(String.format("sending request to server, %d remaining", request.buffer.remaining()));
                 serverChannel.write(request.buffer);
             }
         }
