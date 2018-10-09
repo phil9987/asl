@@ -76,7 +76,7 @@ public class NetworkerThread implements Runnable {
 
                         char c;
                         while ((c = request.buffer.getChar()) != 0) {
-                            logger.info.print(c);
+                            logger.info(c);
                           }
                         if(request.isComplete()) {
                             logger.debug("Request complete, adding it to queue");
