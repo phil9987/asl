@@ -121,6 +121,7 @@ public class WorkerThread implements Runnable {
         SocketChannel requestorChannel = request.getRequestorChannel();
         // TODO: log request
         while (serverSetResponseBuffer.hasRemaining()) {
+            logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
             requestorChannel.write(serverSetResponseBuffer);
         }
         // channel remains open intentionally
