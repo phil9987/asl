@@ -67,9 +67,6 @@ public class NetworkerThread implements Runnable {
                         logger.info("READ") ;
                         SocketChannel socketChannel = (SocketChannel) key.channel();
                         Request request = (Request) key.attachment();
-                        if(request.isComplete()) {
-                            request.clear();
-                        }
 
                         // TODO: add acceptedAt time to request
                         logger.debug(String.format("channel is readable: %b", key.isReadable()));
