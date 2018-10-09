@@ -45,11 +45,13 @@ public class WorkerThread implements Runnable {
                 String[] serverAddressSplitted = serverAddress.split(":");
                 String ip = serverAddressSplitted[0];
                 int port = DEFAULT_MEMCACHED_PORT;
-                try {
-                    port = Integer.parseUnsignedInt(serverAddressSplitted[1]);
-                } catch(NumberFormatException e) {
-                    logger.error(String.format("Unable to parse port of memcached server (%s), using default port...", serverAddressSplitted[1]), e);
-                    port = DEFAULT_MEMCACHED_PORT;
+                if(serverAddressSplitted.size() > 1) {
+                    try {
+                        port = Integer.parseUnsignedInt(serverAddressSplitted[1]);
+                    } catch(NumberFormatException e) {
+                        logger.error(String.format("Unable to parse port of memcached server (%s), using default port...", serverAddressSplitted[1]), e);
+                        port = DEFAULT_MEMCACHED_PORT;
+                    }
                 }
                 logger.info(String.format("Connecting to memcached server %s:%d", ip, port));
                 SocketChannel serverChannel = SocketChannel.open();
