@@ -69,12 +69,10 @@ public class NetworkerThread implements Runnable {
                         Request request = (Request) key.attachment();
 
                         // TODO: add acceptedAt time to request
-                        logger.debug(String.format("channel is readable: %b", key.isReadable()));
-                        logger.debug(String.format("channel is writable: %b", key.isWritable()));
+                        logger.debug(String.format("channel valid operations: %d", socketChannel.validOps()));
                         int newBytesCount = socketChannel.read(request.buffer);
                         logger.debug(String.format("read %d new bytes from request", newBytesCount));
-                        logger.debug(String.format("channel is still readable: %b", key.isReadable()));
-                        logger.debug(String.format("channel is writable: %b", key.isWritable()));
+                        logger.debug(String.format("channel valid operations: %d", socketChannel.validOps()));
                         logger.debug(String.format("received request of type %s", request.getType()));
                         if(request.isComplete()) {
                             logger.debug("Request complete, adding it to queue");
