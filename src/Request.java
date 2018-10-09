@@ -45,10 +45,10 @@ public class Request {
 
     public Type getType() {
         if(this.type == Type.NOT_SET) {
-            byte firstChar = this.buffer[0];
+            byte firstChar = this.buffer.get(0);
             logger.debug(String.format("first character = %c", firstChar));
             switch(firstChar) {
-                case 'g':   if(this.buffer[3] == 's') {
+                case 'g':   if(this.buffer.get(3) == 's') {
                                 this.type = Type.MULTIGET;
                             } else {
                                 this.type = Type.GET;

@@ -81,18 +81,20 @@ public class WorkerThread implements Runnable {
             }
         } catch(InterruptedException e) {
             logger.error(String.format("Worker %d got interrupted", this.id), e);
+        } catch(IOException e) {
+            logger.error(String.format("Worker %d had an IOException", this.id), e);
         }
     }
 
     /**
      * Sends the set request to all storage servers and sends a response back to the client
      */
-    private void handleSet(Request request) {
+    private void handleSet(Request request) throws IOException {
 
-        for (SocketChannel storageChannel : storageConns) {
-            request.buf.rewind();
-            while (request.buf.hasRemaining()) {
-                storageChannel.write(request.buf);
+        for (SocketChannel serverChannel : serverConnections) {
+            request.buffer.rewind();
+            while (request.buffer.hasRemaining()) {
+                serverChannel.write(request.buffer);
             }
         }
     }
