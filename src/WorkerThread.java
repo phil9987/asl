@@ -41,7 +41,7 @@ public class WorkerThread implements Runnable {
     public void run() {
         for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
             String serverAddress = serverAdresses.get(serverIdx);
-            String[] serverAddressSplitted = serverAddress.split(':');
+            String[] serverAddressSplitted = serverAddress.split(":");
             String ip = serverAddressSplitted[0];
             int port = DEFAULT_MEMCACHED_PORT;
             try {
@@ -54,7 +54,7 @@ public class WorkerThread implements Runnable {
             SocketChannel serverChannel = SocketChannel.open();
             serverChannel.connect(new InetSocketAddress(ip, port));
             serverChannel.configureBlocking(true);
-            serverConnections[serverIdx] = storageChannel;
+            serverConnections[serverIdx] = serverChannel;
         }
     }
     
