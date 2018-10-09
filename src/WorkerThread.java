@@ -27,7 +27,7 @@ public class WorkerThread implements Runnable {
     private final boolean readSharded;
 
 
-    public NetworkerThread(int id, BlockingQueue<Request> queue, List<String> serverAdresses, boolean readSharded) {
+    public WorkerThread(int id, BlockingQueue<Request> queue, List<String> serverAdresses, boolean readSharded) {
         this.id = id;
         this.blockingRequestQueue = queue;
         this.serverAdresses = serverAdresses;
