@@ -52,7 +52,6 @@ public class NetworkerThread implements Runnable {
 
                 while (keyIterator.hasNext()) {
                     SelectionKey key = keyIterator.next();
-                    keyIterator.remove();       // Remove key from set so we don't process it twice
 
                     if (!key.isValid()) {
                         continue;
@@ -81,7 +80,7 @@ public class NetworkerThread implements Runnable {
                             logger.info("DISCONNECT");
                             key.cancel();
                             socketChannel.close();
-                            break;
+                            //break;
                         } else {
                             logger.debug(String.format("read %d new bytes from request", newBytesCount));
                             
@@ -98,6 +97,7 @@ public class NetworkerThread implements Runnable {
                             }
                         }
                     }
+                    keyIterator.remove();       // Remove key from set so we don't process it twice
                 }
             
             }
