@@ -42,6 +42,10 @@ public class Request {
     public SocketChannel getRequestorChannel() {
         return this.requestorChannel;
     }
+    public void reset() {
+        this.buffer.clear();
+        this.type = Type.NOT_SET;
+    }
 
     public Type getType() {
         if(this.type == Type.NOT_SET) {
