@@ -44,6 +44,7 @@ public class Request {
     }
     public void reset() {
         this.buffer.clear();
+        this.buffer.compact();
         this.type = Type.NOT_SET;
     }
 
