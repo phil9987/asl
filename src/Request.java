@@ -78,4 +78,12 @@ public class Request {
         // TODO: parse request and store offset
         return true;
     }
+
+    public static String ByteBufferToString(ByteBuffer buf) {
+        final byte[] bytes = new byte[buf.remaining()];
+     
+        buf.duplicate().get(bytes);
+     
+        return new String(bytes);
+    }
 }

@@ -98,8 +98,9 @@ public class WorkerThread implements Runnable {
      * Sends the set request to all storage servers and sends a response back to the client
      */
     private void handleSet(Request request) throws IOException {
-
+        logger.info(String.format("Worker %d sends set request to all memcached servers...", this.id));
         for (SocketChannel serverChannel : serverConnections) {
+            logger.info(String.format("Worker %d sends set request to all memcached servers...", this.id));
             request.buffer.rewind();
             while (request.buffer.hasRemaining()) {
                 serverChannel.write(request.buffer);
@@ -110,7 +111,8 @@ public class WorkerThread implements Runnable {
             SocketChannel serverChannel = serverConnections[serverIdx];
             serverSetResponseBuffer.clear();
             serverChannel.read(serverSetResponseBuffer);
-            response = new String(serverSetResponseBuffer.array());
+            serverSetResponseBuffer.flip();
+            response = Request.ByteBufferToString(serverSetResponseBuffer);
             logger.info(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
         }
         logger.info(String.format("Worker %d sends response to requesting client: %s", response));
