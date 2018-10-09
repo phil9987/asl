@@ -77,18 +77,23 @@ public class NetworkerThread implements Runnable {
 
                         // TODO: add acceptedAt time to request
                         int newBytesCount = socketChannel.read(request.buffer);
-                        // TODO: check if newBytesCount == -1 -> channel closed by client
-                        logger.debug(String.format("read %d new bytes from request", newBytesCount));
-                        
-                        if(request.isComplete()) {
-                            logger.debug("Request complete, adding it to queue");
-                            logger.debug(String.format("received request of type %s", request.getType()));
-                            // TODO: add addedToQueue time to request
-                            // TODO: add currentQueueSize to request
-                            try {
-                                this.blockingRequestQueue.put(request); // blocking if queue is full
-                             } catch (InterruptedException e) {
-                                logger.error("Got interrupted while waiting for new space in queue", e);
+                        if (newBytesCount == -1) {
+                            logger.info("DISCONNECT");
+                            key.cancel();
+                            socketChannel.close();
+                        } else {
+                            logger.debug(String.format("read %d new bytes from request", newBytesCount));
+                            
+                            if(request.isComplete()) {
+                                logger.debug("Request complete, adding it to queue");
+                                logger.debug(String.format("received request of type %s", request.getType()));
+                                // TODO: add addedToQueue time to request
+                                // TODO: add currentQueueSize to request
+                                try {
+                                    this.blockingRequestQueue.put(request); // blocking if queue is full
+                                } catch (InterruptedException e) {
+                                    logger.error("Got interrupted while waiting for new space in queue", e);
+                                }
                             }
                         }
                     }
