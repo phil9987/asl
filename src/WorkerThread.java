@@ -65,11 +65,6 @@ public class WorkerThread implements Runnable {
                 serverChannel.configureBlocking(true);
                 serverConnections[serverIdx] = serverChannel;
             }
-        } catch(IOException e) {
-            logger.error("IOException occurred during connection attempt to memcached servers", e);
-        }
-
-        try {
             while(true) {
                 Request request = this.blockingRequestQueue.take();
                 Request.Type type = request.getType();
