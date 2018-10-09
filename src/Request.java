@@ -19,10 +19,11 @@ public class Request {
     private Type type = Type.NOT_SET;
     private int size;
     private String body;
-    private SocketChannel channel;
+    private SocketChannel requestorChannel;
     byte[] buffer;
 
-    public Request(byte[] buffer) {
+    public Request(SocketChannel channel, byte[] buffer) {
+        this.requestorChannel = channel;
         this.buffer = buffer;
     }
 

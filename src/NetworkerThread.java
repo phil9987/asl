@@ -79,7 +79,7 @@ public class NetworkerThread implements Runnable {
                             buffer.flip();
                             byte[] buf = new byte[buffer.remaining()];
                             buffer.get(buf);
-                            Request newRequest = new Request(buf);
+                            Request newRequest = new Request(socketChannel, buf);
                             buffer.clear();
                             logger.debug(String.format("received request of type %s", newRequest.getType()));
                             // TODO: add addedToQueue time to request

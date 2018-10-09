@@ -83,6 +83,10 @@ public class WorkerThread implements Runnable {
             logger.error(String.format("Worker %d got interrupted", this.id), e);
         }
     }
+
+    private void handleSet(Request request) {
+
+    }
     
 }
 
