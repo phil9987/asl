@@ -81,6 +81,7 @@ public class NetworkerThread implements Runnable {
                             logger.info("DISCONNECT");
                             key.cancel();
                             socketChannel.close();
+                            break;
                         } else {
                             logger.debug(String.format("read %d new bytes from request", newBytesCount));
                             
