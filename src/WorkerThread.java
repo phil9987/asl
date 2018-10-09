@@ -20,6 +20,12 @@ import java.util.List;
 
 public class WorkerThread implements Runnable {
 
+    private final static int SET_MAX_RESPONSE_SIZE = 24;
+    private final static String SET_POSITIVE_RESPONSE = "STORED";
+    ByteBuffer serverSetResponseBuffer = ByteBuffer.allocateDirect(SET_MAX_RESPONSE_SIZE);
+
+
+
     private static final Logger logger = LogManager.getLogger("WorkerThread");
     static final int DEFAULT_MEMCACHED_PORT = 11211;
     private final int id;
@@ -97,6 +103,21 @@ public class WorkerThread implements Runnable {
                 serverChannel.write(request.buffer);
             }
         }
+        String response = "";
+        for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
+            SocketChannel serverChannel = serverConnections[serverIdx];
+            serverSetResponseBuffer.clear();
+            serverChannel.read(serverSetResponseBuffer);
+            response = new String(serverSetResponseBuffer.array());
+            logger.info(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
+        }
+        logger.info(String.format("Worker %d sends response to requesting client: %s", response));
+        serverSetResponseBuffer.rewind();
+        while (serverSetResponseBuffer.hasRemaining()) {
+            request.getRequestorChannel().write(serverSetResponseBuffer);
+        }
+
+
     }
 
     private void handleGet(Request request) {

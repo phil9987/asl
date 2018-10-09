@@ -60,7 +60,7 @@ public class Request {
         return this.type;
     }
 
-    public static boolean isComplete() {
+    public boolean isComplete() {
         return true;
     }
 
@@ -74,8 +74,8 @@ public class Request {
         return true;
     }
 
-    public Request(String body) {
-        this.body = body;
-        // todo: process type;
+    public static boolean containsNewline(ByteBuffer buf) {
+        // TODO: parse request and store offset
+        return true;
     }
 }
