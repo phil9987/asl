@@ -33,14 +33,14 @@ public class WorkerThread implements Runnable {
         this.id = id;
         this.blockingRequestQueue = queue;
         this.serverAdresses = serverAdresses;
-        this.storageConns = new SocketChannel[storageAddresses.size()];
+        this.serverConnections = new SocketChannel[storageAddresses.size()];
         this.readSharded = readSharded;
     }
 
     @Override
     public void run() {
         for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
-            String serverAddress = serverAdresses[serverIdx];
+            String serverAddress = serverAdresses.get(serverIdx);
             String[] serverAddressSplitted = serverAddress.split(':');
             String ip = serverAddressSplitted[0];
             int port = DEFAULT_MEMCACHED_PORT;
