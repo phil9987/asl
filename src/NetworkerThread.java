@@ -71,6 +71,7 @@ public class NetworkerThread implements Runnable {
                         // TODO: add acceptedAt time to request
                         
                         int newBytesCount = socketChannel.read(request.buffer);
+                        logger.debug(String.format("read %d new bytes from request", newBytesCount));
                         logger.debug(String.format("received request of type %s", request.getType()));
 
                         if(request.isComplete()) {
