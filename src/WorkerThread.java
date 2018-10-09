@@ -63,20 +63,24 @@ public class WorkerThread implements Runnable {
             logger.error("IOException occurred during connection attempt to memcached servers", e);
         }
 
-        while(true) {
-            Request request = this.blockingRequestQueue.take();
-            Request.Type type = request.getType();
-            logger.info(String.format("Worker %d starts handling request of type %s", this.id, type));
-            switch(type) {
-                case GET:
-                            break;
-                case MULTIGET:
-                            break;
-                case SET:
-                            break;
-                default:
-                    logger.error(String.format("Received request with wrong type: %s", type));
+        try {
+            while(true) {
+                Request request = this.blockingRequestQueue.take();
+                Request.Type type = request.getType();
+                logger.info(String.format("Worker %d starts handling request of type %s", this.id, type));
+                switch(type) {
+                    case GET:
+                                break;
+                    case MULTIGET:
+                                break;
+                    case SET:
+                                break;
+                    default:
+                        logger.error(String.format("Received request with wrong type: %s", type));
+                }
             }
+        } catch(InterruptedException e) {
+            logger.error(String.format("Worker %d got interrupted", this.id), e);
         }
     }
     
