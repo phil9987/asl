@@ -122,8 +122,8 @@ public class WorkerThread implements Runnable {
         // TODO: log request
         logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
         serverSetResponseBuffer.rewind();
-        serverSetResponseBuffer.limit(response.length());
-        logger.info(String.format("Response length: %d", response.length()));
+
+        serverSetResponseBuffer.limit(response.indexOf('\n')+1);
         logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
         while (serverSetResponseBuffer.hasRemaining()) {
             logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
