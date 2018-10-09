@@ -38,7 +38,7 @@ public class Request {
     public Type getType() {
         if(this.type == Type.NOT_SET) {
             char firstChar = this.buffer.getChar(0);
-            switch(char) {
+            switch(firstChar) {
                 case 'g':   if(this.buffer.getChar(3) == 's') {
                                 this.type = Type.MULTIGET;
                             } else {
