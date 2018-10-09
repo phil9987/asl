@@ -81,7 +81,7 @@ public class NetworkerThread implements Runnable {
                             byte[] buf = new byte[buffer.remaining()];
                             buffer.get(buf);
                             Request newRequest = new Request(buf);
-                            logger.debug(String.format("received request of type %s", Reque.getType()));
+                            logger.debug(String.format("received request of type %s", newRequest.getType()));
                             // TODO: add addedToQueue time to request
                             // TODO: add queueSize to request
                             try {
