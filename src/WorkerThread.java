@@ -69,11 +69,11 @@ public class WorkerThread implements Runnable {
                 Request.Type type = request.getType();
                 logger.info(String.format("Worker %d starts handling request of type %s", this.id, type));
                 switch(type) {
-                    case GET:
+                    case GET:   handleGet(request);
                                 break;
-                    case MULTIGET:
+                    case MULTIGET:  handleMultiget(request);
                                 break;
-                    case SET:
+                    case SET:   handleSet(request);
                                 break;
                     default:
                         logger.error(String.format("Received request with wrong type: %s", type));
@@ -84,8 +84,27 @@ public class WorkerThread implements Runnable {
         }
     }
 
+    /**
+     * Sends the set request to all storage servers and sends a response back to the client
+     */
     private void handleSet(Request request) {
 
+        for (SocketChannel storageChannel : storageConns) {
+            request.buf.rewind();
+            while (request.buf.hasRemaining()) {
+                storageChannel.write(request.buf);
+            }
+        }
+    }
+
+    private void handleGet(Request request) {
+        int serverIdx = 0;  // TODO: add roundrobin scheme to select always a different one!
+        // TODO
+
+    }
+
+    private void handleMultiget(Request request) {
+        // TODO
     }
     
 }

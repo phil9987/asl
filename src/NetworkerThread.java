@@ -19,8 +19,7 @@ import java.util.Iterator;
 public class NetworkerThread implements Runnable {
 
     private static final Logger logger = LogManager.getLogger("NetworkerThread");
-    static final int KEY_SIZE_MAX = 250;    // max key size according to memcached protocol
-    static final int VALUE_SIZE_MAX = 4096;     // According to instructions
+
 
     private final String ipAddress;
     private final int port;
@@ -42,7 +41,6 @@ public class NetworkerThread implements Runnable {
             serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port));
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-            ByteBuffer buffer = ByteBuffer.allocateDirect(KEY_SIZE_MAX + VALUE_SIZE_MAX);
 
 
             while (true) {
@@ -64,28 +62,31 @@ public class NetworkerThread implements Runnable {
                         logger.info("ACCEPT");
                         SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();   // it's a serversocketchannel because it's an incoming connection
                         socketChannel.configureBlocking(false);
-                        socketChannel.register(selector, SelectionKey.OP_READ);
+                        socketChannel.register(selector, SelectionKey.OP_READ, new Request(socketChannel));
                     } else if (key.isReadable()) {
                         logger.info("READ") ;
                         SocketChannel socketChannel = (SocketChannel) key.channel();
+                        Request request = (Request) key.attachment();
+                        if(request.isComplete()) {
+                            // request has been finished already, start a new one
+                            // TODO: reuse old request?
+                            request = new Request(socketChannel);
+                        } else {
+                            // TODO: handle incomplete request
+                        }
 
                         // TODO: add acceptedAt time to request
-                        int newBytesCount = socketChannel.read(buffer);
+                        int newBytesCount = socketChannel.read(request.buffer);
                         // TODO: check if newBytesCount == -1 -> channel closed by client
                         logger.debug(String.format("read %d new bytes from request", newBytesCount));
                         
-                        if(Request.isComplete(buffer)) {
+                        if(request.isComplete()) {
                             logger.debug("Request complete, adding it to queue");
-                            buffer.flip();
-                            byte[] buf = new byte[buffer.remaining()];
-                            buffer.get(buf);
-                            Request newRequest = new Request(socketChannel, buf);
-                            buffer.clear();
-                            logger.debug(String.format("received request of type %s", newRequest.getType()));
+                            logger.debug(String.format("received request of type %s", request.getType()));
                             // TODO: add addedToQueue time to request
                             // TODO: add currentQueueSize to request
                             try {
-                                this.blockingRequestQueue.put(newRequest); // blocking if queue is full
+                                this.blockingRequestQueue.put(request); // blocking if queue is full
                              } catch (InterruptedException e) {
                                 logger.error("Got interrupted while waiting for new space in queue", e);
                             }
