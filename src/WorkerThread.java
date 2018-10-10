@@ -95,26 +95,37 @@ public class WorkerThread implements Runnable {
      */
     private void handleSet(Request request) throws IOException {
         logger.info(String.format("Worker %d sends set request to all memcached servers...", this.id));
+        logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
+        request.buffer.flip();
+        logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
             SocketChannel serverChannel = serverConnections[serverIdx];
             logger.info(String.format("Worker %d sends set request to memcached server %d...", this.id, serverIdx));
             if(!serverChannel.isConnected() || !serverChannel.isOpen())
                 logger.info("ERROR: no connection to memcached");
             request.buffer.rewind();
+            logger.info(String.format("after rewind bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
             while (request.buffer.hasRemaining()) {
                 logger.info(String.format("sending request to server, %d remaining", request.buffer.remaining()));
                 serverChannel.write(request.buffer);
             }
+            logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
         }
         String response = "";
+        logger.info(String.format("response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
+
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
             logger.info(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
             SocketChannel serverChannel = serverConnections[serverIdx];
             serverSetResponseBuffer.clear();
+            logger.info(String.format("after clear response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             serverChannel.read(serverSetResponseBuffer);
+            logger.info(String.format("after read response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             // TODO: for debug purposes only, make more efficient
-            serverSetResponseBuffer.rewind();
+            serverSetResponseBuffer.flip();
+            logger.info(String.format("after flip response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             response = Request.ByteBufferToString(serverSetResponseBuffer);
+            logger.info(String.format("after toString response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             logger.info(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
         }
         logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response));
