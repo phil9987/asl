@@ -65,7 +65,12 @@ public class Request {
     public boolean isComplete() {
         if(this.buffer.position() > 0) {
             byte lastChar = this.buffer.get(this.buffer.position()-1);
-            logger.debug(String.format("last character of buffer = %c", lastChar));
+            if(lastChar == '\n') {
+                logger.debug("last character of buffer is newline");
+            }
+            else {
+                logger.debug(String.format("last character of buffer is not newline, request not finished yet: %c", lastChar));
+            }
             return lastChar == '\n';
         }
         else {
