@@ -63,7 +63,14 @@ public class Request {
     }
 
     public boolean isComplete() {
-        return true;
+        if(this.buffer.position() > 0) {
+            byte lastChar = this.buffer.get(this.buffer.position()-1);
+            logger.debug(String.format("last character of buffer = %c", lastChar));
+            return lastChar == '\n';
+        }
+        else {
+            return false;
+        }
     }
 
     boolean dataComplete() {
