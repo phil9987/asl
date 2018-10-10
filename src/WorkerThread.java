@@ -129,7 +129,7 @@ public class WorkerThread implements Runnable {
             if(true) {
             //if (!serverSetResponseBuffer.equals(this.SET_POSITIVE_RESPONSE_BUF)) {
                 logger.error(String.format("Memcached server %d returned error to worker %d", serverIdx, this.id));
-                errResponse = "ERROR\r\n";
+                errResponse = "SERVER_ERROR <error>\r\n";
                 //errResponse = response;
             }
             logger.info(String.format("after toString response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
