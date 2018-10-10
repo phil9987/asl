@@ -124,7 +124,7 @@ public class WorkerThread implements Runnable {
             // TODO: for debug purposes only, make more efficient
             serverSetResponseBuffer.flip();
             logger.info(String.format("after flip response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
-            response = Request.decodeToString(serverSetResponseBuffer);
+            response = Request.byteBufferToString(serverSetResponseBuffer);
             logger.info(String.format("after toString response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
         }

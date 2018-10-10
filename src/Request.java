@@ -86,7 +86,7 @@ public class Request {
         return true;
     }
 
-    public static String ByteBufferToString(ByteBuffer buf) {
+    public static String byteBufferToString(ByteBuffer buf) {
         final byte[] bytes = new byte[buf.remaining()];
      
         buf.duplicate().get(bytes);
@@ -94,11 +94,8 @@ public class Request {
         return new String(bytes);
     }
 
-    public static ByteBuffer encodeString(String str) {
+    public static ByteBuffer stringToByteBuffer(String str) {
         return StandardCharsets.US_ASCII.encode(str);
     }
 
-    public static String decodeToString(ByteBuffer buf) {
-        return StandardCharsets.US_ASCII.decode(buf).toString();
-    }
 }
