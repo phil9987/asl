@@ -21,7 +21,7 @@ import java.util.List;
 public class WorkerThread implements Runnable {
 
     private final static int SET_MAX_RESPONSE_SIZE = 24;
-    private final static String SET_POSITIVE_RESPONSE = "STORED";
+    private static final ByteBuffer SET_POSITIVE_RESPONSE_BUF = Request.stringToByteBuffer("STORED\r\n");
     ByteBuffer serverSetResponseBuffer = ByteBuffer.allocateDirect(SET_MAX_RESPONSE_SIZE);
 
     private static final Logger logger = LogManager.getLogger("WorkerThread");
@@ -71,11 +71,11 @@ public class WorkerThread implements Runnable {
                 Request.Type type = request.getType();
                 logger.info(String.format("Worker %d starts handling request of type %s", this.id, type));
                 switch(type) {
-                    case GET:   handleGet(request);
+                    case GET:   processGet(request);
                                 break;
-                    case MULTIGET:  handleMultiget(request);
+                    case MULTIGET:  processMultiget(request);
                                 break;
-                    case SET:   handleSet(request);
+                    case SET:   processSet(request);
                                 break;
                     default:
                         logger.error(String.format("Received request with wrong type: %s", type));
@@ -93,7 +93,7 @@ public class WorkerThread implements Runnable {
     /**
      * Sends the set request to all storage servers and sends a response back to the client
      */
-    private void handleSet(Request request) throws IOException {
+    private void processSet(Request request) throws IOException {
         logger.info(String.format("Worker %d sends set request to all memcached servers...", this.id));
         logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
         request.buffer.flip();
@@ -112,6 +112,7 @@ public class WorkerThread implements Runnable {
             logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
         }
         String response = "";
+        String errResponse = "";
         logger.info(String.format("response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
 
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
@@ -125,8 +126,18 @@ public class WorkerThread implements Runnable {
             serverSetResponseBuffer.flip();
             logger.info(String.format("after flip response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             response = Request.byteBufferToString(serverSetResponseBuffer);
+            if(true) {
+            //if (!serverSetResponseBuffer.equals(this.SET_POSITIVE_RESPONSE_BUF)) {
+                logger.error(String.format("Memcached server %d returned error to worker %d", serverIdx, this.id));
+                errResponse = response;
+            }
             logger.info(String.format("after toString response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
+        }
+        if(errResponse != "") {
+            // at least one server responded an error
+            response = errResponse;
+            serverResponseBuffer = Request.stringToByteBuffer(response);
         }
         logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response));
         SocketChannel requestorChannel = request.getRequestorChannel();
@@ -143,13 +154,13 @@ public class WorkerThread implements Runnable {
 
     }
 
-    private void handleGet(Request request) {
+    private void processGet(Request request) {
         int serverIdx = 0;  // TODO: add roundrobin scheme to select always a different one!
         // TODO
 
     }
 
-    private void handleMultiget(Request request) {
+    private void processMultiget(Request request) {
         // TODO
     }
     
