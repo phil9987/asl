@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 
 public class Request {
 
-    static final int KEY_SIZE_MAX = 256;        // max key size according to memcached protocol = 250
+    static final int HEADER_SIZE_MAX = 256;        // max key size according to memcached protocol = 250
     static final int VALUE_SIZE_MAX = 4096;     // According to instructions
 
     private static final Logger logger = LogManager.getLogger("Request");
@@ -29,7 +29,7 @@ public class Request {
 
     public Request(SocketChannel channel) {
         this.requestorChannel = channel;
-        this.buffer = ByteBuffer.allocateDirect(KEY_SIZE_MAX + VALUE_SIZE_MAX);;
+        this.buffer = ByteBuffer.allocate(HEADER_SIZE_MAX + VALUE_SIZE_MAX);   // using non-direct bytebuffer here
     }
 
     public enum Type {
@@ -43,11 +43,6 @@ public class Request {
 
     public SocketChannel getRequestorChannel() {
         return this.requestorChannel;
-    }
-    public void reset() {
-        this.buffer.clear();
-        this.buffer.compact();
-        this.type = Type.NOT_SET;
     }
 
     public Type getType() {
