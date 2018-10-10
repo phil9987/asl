@@ -123,10 +123,8 @@ public class WorkerThread implements Runnable {
             logger.info(String.format("after read response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             // TODO: for debug purposes only, make more efficient
             serverSetResponseBuffer.flip();
-            logger.info(String.format("after flip response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             response = Request.ByteBufferToString(serverSetResponseBuffer);
-            logger.info(String.format("after toString response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
-            logger.info(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
+            logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
         }
         logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response));
         SocketChannel requestorChannel = request.getRequestorChannel();

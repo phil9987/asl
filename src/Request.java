@@ -2,6 +2,8 @@ package ch.ethz.asltest;
 
 import java.nio.channels.SocketChannel;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -90,5 +92,13 @@ public class Request {
         buf.duplicate().get(bytes);
      
         return new String(bytes);
+    }
+
+    public static ByteBuffer encodeString(String str) {
+        return StandardCharsets.US_ASCII.encode(str);
+    }
+
+    public static String decodeToString(ByteBuffer buf) {
+        return StandardCharsets.US_ASCII.decode(buf).toString();
     }
 }
