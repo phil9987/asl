@@ -95,11 +95,14 @@ public class NetworkerThread implements Runnable {
                             String receivedStr = Request.byteBufferToString(buffer);
                             request.buffer.put(buffer);
                             logger.debug(String.format("Request buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity()));
-                            request.buffer.flip();
+                            ByteBuffer requestBufView = request.buffer.duplicate();
+                            logger.debug(String.format("requestBufView position: %d limit: %d capacity: %d", requestBufView.position(), requestBufView.limit(), requestBufView.capacity()));
+                            requestBufView.flip();
                             logger.debug(String.format("Request buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity()));
-                            String transferredStr = Request.byteBufferToString(request.buffer);
-                            request.buffer.flip();
+                            logger.debug(String.format("requestBufView position: %d limit: %d capacity: %d", requestBufView.position(), requestBufView.limit(), requestBufView.capacity()));
+                            String transferredStr = Request.byteBufferToString(requestBufView);
                             logger.debug(String.format("Request buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity()));
+                            logger.debug(String.format("requestBufView position: %d limit: %d capacity: %d", requestBufView.position(), requestBufView.limit(), requestBufView.capacity()));
                             logger.debug(String.format("transferred %s from netthreadbuf to request.buffer: %s", receivedStr, transferredStr));
                             if(request.isComplete()) {
                                 logger.debug("Request complete, adding it to queue");
