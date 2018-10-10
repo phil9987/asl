@@ -120,9 +120,6 @@ public class WorkerThread implements Runnable {
             if (!serverSetResponseBuffer.equals(this.SET_POSITIVE_RESPONSE_BUF)) {
                 logger.error(String.format("Memcached server %d returned error to worker %d", serverIdx, this.id));
                 errResponse = response;
-                String s1 = Request.byteBufferToString(serverSetResponseBuffer);
-                String s2 = Request.byteBufferToString(this.SET_POSITIVE_RESPONSE_BUF);
-                logger.debug(String.format("server resonse: %s expected response: %s", s1, s2));
             }
         }
         if(!errResponse.isEmpty()) {
@@ -131,7 +128,7 @@ public class WorkerThread implements Runnable {
         }
         logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response));
         SocketChannel requestorChannel = request.getRequestorChannel();
-        // TODO: log request
+        // TODO: log request object
         if(errResponse.isEmpty()) {
             serverSetResponseBuffer.rewind();
             while (serverSetResponseBuffer.hasRemaining()) {
