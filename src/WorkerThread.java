@@ -116,7 +116,7 @@ public class WorkerThread implements Runnable {
             // TODO: for debug purposes only, make more efficient
             serverSetResponseBuffer.flip();
             response = Request.byteBufferToString(serverSetResponseBuffer);
-            logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
+            logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response.trim()));
             if (!serverSetResponseBuffer.equals(this.SET_POSITIVE_RESPONSE_BUF)) {
                 logger.error(String.format("Memcached server %d returned error to worker %d", serverIdx, this.id));
                 errResponse = response;
@@ -126,7 +126,7 @@ public class WorkerThread implements Runnable {
             // at least one server responded an error
             response = errResponse;
         }
-        logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response));
+        logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
         SocketChannel requestorChannel = request.getRequestorChannel();
         // TODO: log request object
         if(errResponse.isEmpty()) {
