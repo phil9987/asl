@@ -94,45 +94,32 @@ public class WorkerThread implements Runnable {
      * Sends the set request to all storage servers and sends a response back to the client
      */
     private void processSet(Request request) throws IOException {
-        logger.info(String.format("Worker %d sends set request to all memcached servers...", this.id));
-        logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
+        logger.debug(String.format("Worker %d sends set request to all memcached servers...", this.id));
         request.buffer.flip();
-        logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
             SocketChannel serverChannel = serverConnections[serverIdx];
-            logger.info(String.format("Worker %d sends set request to memcached server %d...", this.id, serverIdx));
-            if(!serverChannel.isConnected() || !serverChannel.isOpen())
-                logger.info("ERROR: no connection to memcached");
+            logger.debug(String.format("Worker %d sends set request to memcached server %d...", this.id, serverIdx));
             request.buffer.rewind();
-            logger.info(String.format("after rewind bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
             while (request.buffer.hasRemaining()) {
-                logger.info(String.format("sending request to server, %d remaining", request.buffer.remaining()));
+                logger.debug(String.format("sending request to server, %d remaining", request.buffer.remaining()));
                 serverChannel.write(request.buffer);
             }
-            logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
         }
         String response = "";
         String errResponse = "";
-        logger.info(String.format("response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
 
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
-            logger.info(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
+            logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
             SocketChannel serverChannel = serverConnections[serverIdx];
             serverSetResponseBuffer.clear();
-            logger.info(String.format("after clear response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             serverChannel.read(serverSetResponseBuffer);
-            logger.info(String.format("after read response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             // TODO: for debug purposes only, make more efficient
             serverSetResponseBuffer.flip();
-            logger.info(String.format("after flip response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             response = Request.byteBufferToString(serverSetResponseBuffer);
-            if(true) {
-            //if (!serverSetResponseBuffer.equals(this.SET_POSITIVE_RESPONSE_BUF)) {
+            if (!serverSetResponseBuffer.equals(this.SET_POSITIVE_RESPONSE_BUF)) {
                 logger.error(String.format("Memcached server %d returned error to worker %d", serverIdx, this.id));
-                errResponse = "SERVER_ERROR <error>\r\n";
-                //errResponse = response;
+                errResponse = response;
             }
-            logger.info(String.format("after toString response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
             logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response));
         }
         if(errResponse != "") {
@@ -142,11 +129,8 @@ public class WorkerThread implements Runnable {
         logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response));
         SocketChannel requestorChannel = request.getRequestorChannel();
         // TODO: log request
-        logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
-        serverSetResponseBuffer.rewind();
-
-        logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
         if(errResponse.isEmpty()) {
+            serverSetResponseBuffer.rewind();
             while (serverSetResponseBuffer.hasRemaining()) {
                 logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
                 requestorChannel.write(serverSetResponseBuffer);
