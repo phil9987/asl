@@ -76,9 +76,7 @@ public class NetworkerThread implements Runnable {
                             request = new Request(socketChannel);
                             key.attach(request);
                         } 
-                        else {
-                            // TODO: handle incomplete request
-                        }
+                        // else: attached request is continued until it is complete
 
                         // TODO: add acceptedAt time to request
                         int newBytesCount = socketChannel.read(buffer); // read new data into netthread-buffer
