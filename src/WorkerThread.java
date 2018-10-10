@@ -129,7 +129,7 @@ public class WorkerThread implements Runnable {
             if(true) {
             //if (!serverSetResponseBuffer.equals(this.SET_POSITIVE_RESPONSE_BUF)) {
                 logger.error(String.format("Memcached server %d returned error to worker %d", serverIdx, this.id));
-                errResponse = "ERROR\r\n"
+                errResponse = "ERROR\r\n";
                 //errResponse = response;
             }
             logger.info(String.format("after toString response bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
@@ -138,7 +138,6 @@ public class WorkerThread implements Runnable {
         if(errResponse != "") {
             // at least one server responded an error
             response = errResponse;
-            serverResponseBuffer = Request.stringToByteBuffer(response);
         }
         logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response));
         SocketChannel requestorChannel = request.getRequestorChannel();
@@ -147,11 +146,22 @@ public class WorkerThread implements Runnable {
         serverSetResponseBuffer.rewind();
 
         logger.info(String.format("bytebuffer position: %d limit: %d capacity: %d", serverSetResponseBuffer.position(), serverSetResponseBuffer.limit(), serverSetResponseBuffer.capacity() ));
-        while (serverSetResponseBuffer.hasRemaining()) {
-            logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
-            requestorChannel.write(serverSetResponseBuffer);
+        if(errResponse.isEmpty()) {
+            while (serverSetResponseBuffer.hasRemaining()) {
+                logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
+                requestorChannel.write(serverSetResponseBuffer);
+            } 
+        } else {
+            // error occurred on at least one server, forwarding one of the error messages
+            ByteBuffer errBuf = Request.stringToByteBuffer(errResponse);
+            logger.info(String.format("errror bytebuffer position: %d limit: %d capacity: %d", errBuf.position(), errBuf.limit(), errBuf.capacity() ));
+            while (errBuf.hasRemaining()) {
+                logger.info(String.format("sending error response to requestor, %d remaining", errBuf.remaining()));
+                requestorChannel.write(errBuf);
+            }
         }
-        // channel remains open intentionally
+        
+        // channels to memcached servers remain open intentionally, they get only closed on Middleware shutdown
 
     }
 
