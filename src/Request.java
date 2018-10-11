@@ -55,6 +55,7 @@ public class Request {
                             } else {
                                 this.type = Type.GET;
                             }
+                            break;
                 case 's':   this.type = Type.SET;
                             break;
             }
