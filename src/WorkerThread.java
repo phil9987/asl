@@ -23,6 +23,7 @@ public class WorkerThread implements Runnable {
     private final static int SET_MAX_RESPONSE_SIZE = 24;
     private static final ByteBuffer SET_POSITIVE_RESPONSE_BUF = Request.stringToByteBuffer("STORED\r\n");
     ByteBuffer serverSetResponseBuffer = ByteBuffer.allocateDirect(SET_MAX_RESPONSE_SIZE);
+    ByteBuffer serverGetResponseBuffer = ByteBuffer.allocateDirect(Request.HEADER_SIZE_MAX + Request.VALUE_SIZE_MAX);       // TODO: does this make sense? Shall we unify response buffers into one big buffer?
 
     private static final Logger logger = LogManager.getLogger("WorkerThread");
     static final int DEFAULT_MEMCACHED_PORT = 11211;
@@ -39,55 +40,6 @@ public class WorkerThread implements Runnable {
         this.serverAdresses = serverAdresses;
         this.serverConnections = new SocketChannel[serverAdresses.size()];
         this.readSharded = readSharded;
-    }
-
-    @Override
-    public void run() {
-        try{
-            for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
-                String serverAddress = serverAdresses.get(serverIdx);
-                String[] serverAddressSplitted = serverAddress.split(":");
-                String ip = serverAddressSplitted[0];
-                int port = DEFAULT_MEMCACHED_PORT;
-                if(serverAddressSplitted.length > 1) {
-                    try {
-                        port = Integer.parseUnsignedInt(serverAddressSplitted[1]);
-                    } catch(NumberFormatException e) {
-                        logger.error(String.format("Unable to parse port of memcached server (%s), using default port...", serverAddressSplitted[1]), e);
-                        port = DEFAULT_MEMCACHED_PORT;
-                    }
-                }
-                logger.info(String.format("Connecting to memcached server %s:%d", ip, port));
-                /*SocketChannel serverChannel = SocketChannel.open();
-                serverChannel.connect(new InetSocketAddress(ip, port));
-                serverChannel.configureBlocking(true);
-                serverConnections[serverIdx] = serverChannel;*/
-                serverConnections[serverIdx] = SocketChannel.open();
-                serverConnections[serverIdx].connect(new InetSocketAddress(ip, port));
-                serverConnections[serverIdx].configureBlocking(true);
-            }
-            while(true) {
-                Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
-                Request.Type type = request.getType();
-                logger.info(String.format("Worker %d starts handling request of type %s", this.id, type));
-                switch(type) {
-                    case GET:   processGet(request);
-                                break;
-                    case MULTIGET:  processMultiget(request);
-                                break;
-                    case SET:   processSet(request);
-                                break;
-                    default:
-                        logger.error(String.format("Received request with wrong type: %s", type));
-                }
-            }
-        } catch(InterruptedException e) {
-            logger.error(String.format("Worker %d got interrupted", this.id), e);
-        } catch(IOException e) {
-            logger.error(String.format("Worker %d had an IOException", this.id), e);
-        } catch(Exception e) {
-            logger.error(String.format("Worker %d had an Exception", this.id), e);
-        }
     }
 
     /**
@@ -149,14 +101,88 @@ public class WorkerThread implements Runnable {
 
     }
 
-    private void processGet(Request request) {
+    /**
+     * Sends a get request to one memcached server and forwards the response to the requesting client.
+     * If multiple memcached servers exist one is selected using a round-robin scheme to ensure equal
+     * payload.
+     */
+    private void processGet(Request request) throws IOException {
         int serverIdx = 0;  // TODO: add roundrobin scheme to select always a different one!
-        // TODO
+        logger.debug(String.format("Worker %d sends get request to memcached server %d.", this.id, serverIdx));
+        request.buffer.flip();
+        SocketChannel serverChannel = serverConnections[serverIdx];
+        while (request.buffer.hasRemaining()) {
+            logger.debug(String.format("sending get request to server, %d remaining", request.buffer.remaining()));
+            serverChannel.write(request.buffer);
+        }
 
+        String response = "";
+        logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
+        serverGetResponseBuffer.clear();
+        serverChannel.read(serverGetResponseBuffer);
+        serverGetResponseBuffer.flip();
+        response = Request.byteBufferToString(serverGetResponseBuffer);
+        logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response.trim()));
+        logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
+        SocketChannel requestorChannel = request.getRequestorChannel();
+        serverGetResponseBuffer.rewind();
+        while (serverGetResponseBuffer.hasRemaining()) {
+            logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
+            requestorChannel.write(serverGetResponseBuffer);
+        } 
     }
 
     private void processMultiget(Request request) {
         // TODO
+    }
+
+    @Override
+    public void run() {
+        try{
+            for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
+                String serverAddress = serverAdresses.get(serverIdx);
+                String[] serverAddressSplitted = serverAddress.split(":");
+                String ip = serverAddressSplitted[0];
+                int port = DEFAULT_MEMCACHED_PORT;
+                if(serverAddressSplitted.length > 1) {
+                    try {
+                        port = Integer.parseUnsignedInt(serverAddressSplitted[1]);
+                    } catch(NumberFormatException e) {
+                        logger.error(String.format("Unable to parse port of memcached server (%s), using default port...", serverAddressSplitted[1]), e);
+                        port = DEFAULT_MEMCACHED_PORT;
+                    }
+                }
+                logger.info(String.format("Connecting to memcached server %s:%d", ip, port));
+                /*SocketChannel serverChannel = SocketChannel.open();
+                serverChannel.connect(new InetSocketAddress(ip, port));
+                serverChannel.configureBlocking(true);
+                serverConnections[serverIdx] = serverChannel;*/
+                serverConnections[serverIdx] = SocketChannel.open();
+                serverConnections[serverIdx].connect(new InetSocketAddress(ip, port));
+                serverConnections[serverIdx].configureBlocking(true);
+            }
+            while(true) {
+                Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
+                Request.Type type = request.getType();
+                logger.info(String.format("Worker %d starts handling request of type %s", this.id, type));
+                switch(type) {
+                    case GET:   processGet(request);
+                                break;
+                    case MULTIGET:  processMultiget(request);
+                                break;
+                    case SET:   processSet(request);
+                                break;
+                    default:
+                        logger.error(String.format("Received request with wrong type: %s", type));
+                }
+            }
+        } catch(InterruptedException e) {
+            logger.error(String.format("Worker %d got interrupted", this.id), e);
+        } catch(IOException e) {
+            logger.error(String.format("Worker %d had an IOException", this.id), e);
+        } catch(Exception e) {
+            logger.error(String.format("Worker %d had an Exception", this.id), e);
+        }
     }
     
 }
