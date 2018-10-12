@@ -55,7 +55,6 @@ public class MyMiddleware {
             }
             int serverOffset = -1;
             for (int i = 0; i < workerThreads.length; i++) {
-                logger.info(String.format("Starting worker thread %s", i));
                 if(numWorkersPerServer >= 0) {
                     // we want to assign several workers to one server initially
                     if(i % numWorkersPerServer == 0) {
@@ -71,6 +70,7 @@ public class MyMiddleware {
                         serverOffset += numServersPerWorker;
                     }
                 }
+                logger.info(String.format("Starting worker thread %d with serverOffset=%d (numWorkersPerServer=%d, numServersPerWorker=%d)", i, serverOffset, numWorkersPerServer, numServersPerWorker));
                 Thread worker = new Thread(new WorkerThread(i, this.blockingRequestQueue, this.mcAddresses, this.readSharded, serverOffset));
                 worker.start();
                 workerThreads[i] = worker;
