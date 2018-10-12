@@ -54,6 +54,7 @@ public class MyMiddleware {
                 numWorkersPerServer = -1;
             }
             int serverOffset = -1;
+            logger.info(15%4);
             for (int i = 0; i < workerThreads.length; i++) {
                 if(numWorkersPerServer >= 0) {
                     // we want to assign several workers to one server initially
