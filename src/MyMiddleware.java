@@ -43,12 +43,12 @@ public class MyMiddleware {
             Thread networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.blockingRequestQueue));
             networkerThread.start();
 
-            int numServers = mcAdresses.size();
+            int numServers = this.mcAddresses.size();
             final int numWorkersPerServer;
             final int numServersPerWorker;
             if(numThreadsPTP > numServers) {
                 numWorkersPerServer = numThreadsPTP / numServers;
-                numServersPerWorker = -1
+                numServersPerWorker = -1;
             } else {
                 numServersPerWorker = numServers / numThreadsPTP;
                 numWorkersPerServer = -1;

@@ -36,15 +36,6 @@ public class WorkerThread implements Runnable {
     private final SocketChannel[] serverConnections;
     private final boolean readSharded;
 
-    int getServeridx() {
-        roundrobinvariable = (roundrobinvariable + 1) % numServers;
-        int next_idx = (serverOffset + roundrobinvariable) % numServers;
-        logger.debug(String.format("Next idx: %d roundrobinvariable: %d", next_idx, roundrobinvariable));
-        return next_idx;
-        
-    }
-
-
     public WorkerThread(int id, BlockingQueue<Request> queue, List<String> serverAdresses, boolean readSharded, int serverOffset) {
         this.id = id;
         this.blockingRequestQueue = queue;
@@ -56,8 +47,16 @@ public class WorkerThread implements Runnable {
         this.roundrobinvariable = -1;
         logger.debug(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
         for(int i = 0; i < 20; i++) {
-            getServerIsdx()
+            getServerIdx();
         }
+    }
+
+    private int getServerIdx() {
+        roundrobinvariable = (roundrobinvariable + 1) % numServers;
+        int next_idx = (serverOffset + roundrobinvariable) % numServers;
+        logger.debug(String.format("Next idx: %d roundrobinvariable: %d", next_idx, roundrobinvariable));
+        return next_idx;
+        
     }
 
     /**
