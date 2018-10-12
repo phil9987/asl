@@ -43,9 +43,35 @@ public class MyMiddleware {
             Thread networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.blockingRequestQueue));
             networkerThread.start();
 
+            int numServers = mcAdresses.size();
+            final int numWorkersPerServer;
+            final int numServersPerWorker;
+            if(numThreadsPTP > numServers) {
+                numWorkersPerServer = numThreadsPTP / numServers;
+                numServersPerWorker = -1
+            } else {
+                numServersPerWorker = numServers / numThreadsPTP;
+                numWorkersPerServer = -1;
+            }
+            int serverOffset = -1;
             for (int i = 0; i < workerThreads.length; i++) {
                 logger.info(String.format("Starting worker thread %s", i));
-                Thread worker = new Thread(new WorkerThread(i, this.blockingRequestQueue, this.mcAddresses, this.readSharded));
+                if(numWorkersPerServer >= 0) {
+                    // we want to assign several workers to one server initially
+                    if(i % numWorkersPerServer == 0) {
+                        serverOffset++;
+                    }
+                } 
+                else if(numServersPerWorker >= 0) {
+                    // we want to assign a server only every several server indizes
+                    if(serverOffset == -1) {
+                        serverOffset = 0;
+                    }
+                    else {
+                        serverOffset += numServersPerWorker;
+                    }
+                }
+                Thread worker = new Thread(new WorkerThread(i, this.blockingRequestQueue, this.mcAddresses, this.readSharded, serverOffset));
                 worker.start();
                 workerThreads[i] = worker;
             }

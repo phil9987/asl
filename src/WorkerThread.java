@@ -28,18 +28,36 @@ public class WorkerThread implements Runnable {
     private static final Logger logger = LogManager.getLogger("WorkerThread");
     static final int DEFAULT_MEMCACHED_PORT = 11211;
     private final int id;
+    private final int numServers;
+    private final int serverOffset;
+    private int roundrobinvariable;
     private final BlockingQueue<Request> blockingRequestQueue;
     private final List<String> serverAdresses;
     private final SocketChannel[] serverConnections;
     private final boolean readSharded;
 
+    int getServeridx() {
+        roundrobinvariable = (roundrobinvariable + 1) % numServers;
+        int next_idx = (serverOffset + roundrobinvariable) % numServers;
+        logger.debug(String.format("Next idx: %d roundrobinvariable: %d", next_idx, roundrobinvariable));
+        return next_idx;
+        
+    }
 
-    public WorkerThread(int id, BlockingQueue<Request> queue, List<String> serverAdresses, boolean readSharded) {
+
+    public WorkerThread(int id, BlockingQueue<Request> queue, List<String> serverAdresses, boolean readSharded, int serverOffset) {
         this.id = id;
         this.blockingRequestQueue = queue;
         this.serverAdresses = serverAdresses;
         this.serverConnections = new SocketChannel[serverAdresses.size()];
         this.readSharded = readSharded;
+        this.numServers = serverAdresses.size();
+        this.serverOffset = id;
+        this.roundrobinvariable = -1;
+        logger.debug(String.format("Instantiating NetworkerThread %d with serverOffset %d", this.id, this.serverOffset));
+        for(int i = 0; i < 20; i++) {
+            getServerIsdx()
+        }
     }
 
     /**
@@ -107,7 +125,7 @@ public class WorkerThread implements Runnable {
      * payload.
      */
     private void processGet(Request request) throws IOException {
-        int serverIdx = 0;  // TODO: add roundrobin scheme to select always a different one!
+        int serverIdx = getServerIdx();  // TODO: add roundrobin scheme to select always a different one!
         logger.debug(String.format("Worker %d sends get request to memcached server %d.", this.id, serverIdx));
         request.buffer.flip();
         SocketChannel serverChannel = serverConnections[serverIdx];
@@ -138,6 +156,7 @@ public class WorkerThread implements Runnable {
 
     @Override
     public void run() {
+        logger.debug(String.format("Starting NetworkerThread %d with serverOffset %d", this.id, this.serverOffset));
         try{
             for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
                 String serverAddress = serverAdresses.get(serverIdx);
