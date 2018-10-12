@@ -46,15 +46,12 @@ public class WorkerThread implements Runnable {
         this.serverOffset = serverOffset;
         this.roundrobinvariable = -1;
         logger.debug(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
-        for(int i = 0; i < 20; i++) {
-            getServerIdx();
-        }
     }
 
     private int getServerIdx() {
         roundrobinvariable = (roundrobinvariable + 1) % numServers;
         int next_idx = (serverOffset + roundrobinvariable) % numServers;
-        logger.debug(String.format("Next idx: %d roundrobinvariable: %d", next_idx, roundrobinvariable));
+        logger.debug(String.format("WorkerThread%d next server idx: %d roundrobinvariable: %d", this.id, next_idx, roundrobinvariable));
         return next_idx;
         
     }
