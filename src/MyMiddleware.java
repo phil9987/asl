@@ -58,7 +58,7 @@ public class MyMiddleware {
                 if(numWorkersPerServer >= 0) {
                     // we want to assign several workers to one server initially
                     if(i % numWorkersPerServer == 0) {
-                        serverOffset++;
+                        serverOffset = (serverOffset + 1) % numServers;
                     }
                 } 
                 else if(numServersPerWorker >= 0) {
@@ -67,7 +67,7 @@ public class MyMiddleware {
                         serverOffset = 0;
                     }
                     else {
-                        serverOffset += numServersPerWorker;
+                        serverOffset = (serverOffset + numServersPerWorker) % numServers;
                     }
                 }
                 logger.info(String.format("Starting worker thread %d with serverOffset=%d (numWorkersPerServer=%d, numServersPerWorker=%d)", i, serverOffset, numWorkersPerServer, numServersPerWorker));
