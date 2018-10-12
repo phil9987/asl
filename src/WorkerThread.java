@@ -43,7 +43,7 @@ public class WorkerThread implements Runnable {
         this.serverConnections = new SocketChannel[serverAdresses.size()];
         this.readSharded = readSharded;
         this.numServers = serverAdresses.size();
-        this.serverOffset = id;
+        this.serverOffset = serverOffset;
         this.roundrobinvariable = -1;
         logger.debug(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
         for(int i = 0; i < 20; i++) {
