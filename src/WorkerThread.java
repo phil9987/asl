@@ -54,7 +54,7 @@ public class WorkerThread implements Runnable {
         this.numServers = serverAdresses.size();
         this.serverOffset = id;
         this.roundrobinvariable = -1;
-        logger.debug(String.format("Instantiating NetworkerThread %d with serverOffset %d", this.id, this.serverOffset));
+        logger.debug(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
         for(int i = 0; i < 20; i++) {
             getServerIsdx()
         }
@@ -156,7 +156,7 @@ public class WorkerThread implements Runnable {
 
     @Override
     public void run() {
-        logger.debug(String.format("Starting NetworkerThread %d with serverOffset %d", this.id, this.serverOffset));
+        logger.debug(String.format("Starting WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
         try{
             for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
                 String serverAddress = serverAdresses.get(serverIdx);
