@@ -118,14 +118,15 @@ public class Request {
         if(numKeys > 0) {
             int offsetPointer = 0;
             ByteBuffer bufferPart;
+            int offsetRange;
             for(int reqId = 0; reqId < numRequests; reqId++) {
-                int offsetRange = keysPerRequest;
+                offsetRange = keysPerRequest;
                 if(reqId == 0) {
                     offsetRange += overflow;
                 }
                 bufferPart = buffer.duplicate();
                 int from = offsets.get(offsetPointer) + 1;
-                int to = offsets.get(offsetPointer + offsetRange - 1);
+                int to = offsets.get(offsetPointer + offsetRange) -1;
                 bufferPart.position(from);
                 bufferPart.limit(to);
                 offsetPointer = offsetPointer + offsetRange;
