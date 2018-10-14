@@ -100,7 +100,7 @@ public class Request {
     public ByteBuffer[] splitGetsKeys(int numServers) {
         // requires parseGet() to be executed beforehand. This function is executed by getType() in NetworkerThread
         logger.debug(String.format("Splitting multiget keys for %d servers", numServers));
-        int numKeys = offsets.size();
+        int numKeys = offsets.size() - 1;
         logger.debug(String.format("Number of keys: %d", numKeys));
         int keysPerRequest = numKeys / numServers;
         int overflow = numServers % numKeys;
@@ -156,6 +156,7 @@ public class Request {
             spacePos = this.requestStr.indexOf(' ', spacePos+1);
             offsets.add(spacePos);
         } while(spacePos != -1);
+        offsets.add(this.requestStr.indexOf('\r'), spacePos+1);     // last offset is endline
         return offsets.size();
     }
 
