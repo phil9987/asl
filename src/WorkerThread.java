@@ -191,7 +191,6 @@ public class WorkerThread implements Runnable {
                 do{
                     bytesRead = serverChannel.read(serverGetResponseBuffer);
                 } while(!(Request.getResponseIsComplete(serverGetResponseBuffer) || bytesRead == 0 || bytesRead == -1)); // TODO: add better error handling
-                serverChannel.read(serverGetResponseBuffer);
                 ByteBuffer debugbuf = serverGetResponseBuffer.duplicate();
                 response = Request.byteBufferToString(debugbuf);
                 logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
