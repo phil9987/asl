@@ -78,6 +78,28 @@ public class Request {
             return false;
         }
     }
+    private int countGets() {
+        ByteBuffer buf = this.buffer.duplicate();
+        buf.rewind();
+        // TODO: parse request
+
+        return 1;
+    }
+
+    public int numGets() {
+        int res = 0;
+        switch (this.type) {
+            case MULTIGET:
+                res = countGets();
+                break;
+            case GET:
+                res = 1;
+                break;
+            default:
+                break;
+        }
+        return res;
+    }
 
     public static String byteBufferToString(ByteBuffer buf) {
         final byte[] bytes = new byte[buf.remaining()];
