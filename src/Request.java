@@ -151,7 +151,7 @@ public class Request {
         buf.flip();
         this.requestStr = byteBufferToString(buf);
         logger.debug(String.format("Parsing get request: %s", requestStr));
-        int spacePos;
+        int spacePos = -1;
         int numSpaces = 0;
         do {
             spacePos = this.requestStr.indexOf(' ', spacePos+1);
