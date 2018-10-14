@@ -49,7 +49,8 @@ public class MyMiddleware {
             if(numThreadsPTP > numServers) {
                 numWorkersPerServer = numThreadsPTP / numServers;
                 numServersPerWorker = -1;
-            } else {
+            } 
+            else {
                 numServersPerWorker = numServers / numThreadsPTP;
                 numWorkersPerServer = -1;
             }

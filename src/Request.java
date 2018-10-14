@@ -1,5 +1,7 @@
 package ch.ethz.asltest;
 
+import java.util.*;
+
 import java.nio.channels.SocketChannel;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +17,7 @@ public class Request {
     static final int HEADER_SIZE_MAX = 256;        // max key size according to memcached protocol = 250
     static final int VALUE_SIZE_MAX = 4096;     // According to instructions
 
+
     private static final Logger logger = LogManager.getLogger("Request");
 
 
@@ -26,6 +29,8 @@ public class Request {
     private String body;
     private SocketChannel requestorChannel;
     ByteBuffer buffer;
+    String requestStr;
+    List<Integer> offsets;
 
     public Request(SocketChannel channel) {
         this.requestorChannel = channel;
@@ -52,7 +57,8 @@ public class Request {
             switch(firstChar) {
                 case 'g':   if(this.buffer.get(3) == 's') {
                                 this.type = Type.MULTIGET;
-                            } else {
+                            }
+                            else {
                                 this.type = Type.GET;
                             }
                             break;
@@ -78,25 +84,77 @@ public class Request {
             return false;
         }
     }
-    private int countGets() {
-        ByteBuffer buf = this.buffer.duplicate();
-        buf.rewind();
-        // TODO: parse request
 
-        return 1;
+    public ByteBuffer[] splitGetsKeys(int numServers) {
+        int numKeys = numGets();
+        int keysPerRequest = numKeys / numServers;
+        int overflow = numServers % numKeys;
+        int numRequests = numServers;
+        if(keysPerRequest == 0) {
+            // if there are less keys than servers just put 1 key per request
+            keysPerRequest = 1;     
+            overflow = 0;
+            numRequests = numKeys;
+        }
+        ByteBuffer[] res = new ByteBuffer[numRequests];
+        if(numKeys > 0) {
+            int offsetPointer = 0;
+            ByteBuffer bufferPart;
+            for(int reqId = 0; reqId < numRequests; reqId++) {
+                int offsetRange = keysPerRequest;
+                if(reqId == 0) {
+                    offsetRange += overflow;
+                }
+                bufferPart = buffer.duplicate();
+                int from = offsets.get(offsetPointer) + 1;
+                int to = offsets.get(offsetPointer + offsetRange - 1);
+                bufferPart.position(from);
+                bufferPart.limit(to);
+                offsetPointer = offsetPointer + offsetRange;
+                res[reqId] = bufferPart;
+            }
+        }
+        else {
+            logger.error("Called splitGets() when request.isComplete() == false");
+            res[0] = this.buffer;
+        }
+        return res;
+    } 
+
+    /**
+     * Converts buffer to String and parses it for space characers and endline. 
+     * String is stored in this.requestStr and space positions are stored in this.offsets
+     * Returns the number of white spaces that are contained in the request
+     */
+    private int parseGet() {
+        // requires this.isComplete() == true else might run infinitely
+        offsets = new ArrayList<Integer>();
+        this.requestStr = byteBufferToString(this.buffer);
+        int spacePos = 0;
+        int numSpaces = 0;
+        while(spacePos != -1) {
+            spacePos = this.requestStr.indexOf(' ');
+            offsets.add(spacePos);
+            numSpaces++;
+        }
+        offsets.add(this.requestStr.indexOf('\r')); // add index of end
+        return numSpaces;
     }
 
     public int numGets() {
         int res = 0;
-        switch (this.type) {
-            case MULTIGET:
-                res = countGets();
-                break;
-            case GET:
-                res = 1;
-                break;
-            default:
-                break;
+        if (isComplete()) {
+            switch (this.type) {
+                case MULTIGET:
+                case GET:           // get can also be multiget according to protocol rules
+                    res = parseGet();
+                    break;
+                default:
+                    break;
+            }
+        }
+        else {
+            res = -1;
         }
         return res;
     }
@@ -111,6 +169,20 @@ public class Request {
 
     public static ByteBuffer stringToByteBuffer(String str) {
         return StandardCharsets.US_ASCII.encode(str);
+    }
+
+    public static boolean getResponseIsComplete(ByteBuffer responseBuf) {
+        ByteBuffer buf = responseBuf.duplicate();
+        int current_pos = buf.position();
+        if(current_pos >= 5) {
+            return buf.get(current_pos-5) == 'E' && 
+                    buf.get(current_pos-4) == 'N' && 
+                    buf.get(current_pos-3) == 'D' && 
+                    buf.get(current_pos-2) == '\r' && 
+                    buf.get(current_pos-1) == '\n'; 
+        } else {
+            return false;
+        }
     }
 
 }

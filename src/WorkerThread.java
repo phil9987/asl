@@ -22,8 +22,13 @@ public class WorkerThread implements Runnable {
 
     private final static int SET_MAX_RESPONSE_SIZE = 24;
     private static final ByteBuffer SET_POSITIVE_RESPONSE_BUF = Request.stringToByteBuffer("STORED\r\n");
-    ByteBuffer serverSetResponseBuffer = ByteBuffer.allocateDirect(SET_MAX_RESPONSE_SIZE);
-    ByteBuffer serverGetResponseBuffer = ByteBuffer.allocateDirect(Request.HEADER_SIZE_MAX + Request.VALUE_SIZE_MAX);       // TODO: does this make sense? Shall we unify response buffers into one big buffer?
+    private ByteBuffer serverSetResponseBuffer = ByteBuffer.allocateDirect(SET_MAX_RESPONSE_SIZE);
+    private ByteBuffer serverGetResponseBuffer = ByteBuffer.allocateDirect(Request.HEADER_SIZE_MAX + Request.VALUE_SIZE_MAX);       // TODO: does this make sense? Shall we unify response buffers into one big buffer?
+
+    private final ByteBuffer GET_REQ_BEGINING = Request.stringToByteBuffer("get ");
+    private final ByteBuffer REQ_LINE_END = Request.stringToByteBuffer("\r\n");
+    private ByteBuffer[] bufferPartsGetReq = new ByteBuffer[3];  // bytebuffer array to construct get requests from multiget
+
 
     private static final Logger logger = LogManager.getLogger("WorkerThread");
     static final int DEFAULT_MEMCACHED_PORT = 11211;
@@ -45,6 +50,8 @@ public class WorkerThread implements Runnable {
         this.numServers = serverAdresses.size();
         this.serverOffset = serverOffset;
         this.roundrobinvariable = -1;
+        this.REQ_LINE_END.rewind();
+        this.GET_REQ_BEGINING.rewind();
         logger.debug(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
     }
 
@@ -53,7 +60,10 @@ public class WorkerThread implements Runnable {
         int next_idx = (serverOffset + roundrobinvariable) % numServers;
         logger.debug(String.format("WorkerThread%d next server idx: %d roundrobinvariable: %d", this.id, next_idx, roundrobinvariable));
         return next_idx;
-        
+    }
+
+    private void fastForwardServerIndex(int numRequests) {
+        roundrobinvariable += numRequests;
     }
 
     /**
@@ -101,7 +111,8 @@ public class WorkerThread implements Runnable {
                 logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
                 requestorChannel.write(serverSetResponseBuffer);
             } 
-        } else {
+        }
+        else {
             // error occurred on at least one server, forwarding one of the error messages
             ByteBuffer errBuf = Request.stringToByteBuffer(errResponse);
             logger.info(String.format("errror bytebuffer position: %d limit: %d capacity: %d", errBuf.position(), errBuf.limit(), errBuf.capacity() ));
@@ -121,7 +132,7 @@ public class WorkerThread implements Runnable {
      * payload.
      */
     private void processGet(Request request) throws IOException {
-        int serverIdx = getServerIdx();  // TODO: add roundrobin scheme to select always a different one!
+        int serverIdx = getServerIdx(); 
         logger.debug(String.format("Worker %d sends get request to memcached server %d.", this.id, serverIdx));
         request.buffer.flip();
         SocketChannel serverChannel = serverConnections[serverIdx];
@@ -133,23 +144,79 @@ public class WorkerThread implements Runnable {
         String response = "";
         logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
         serverGetResponseBuffer.clear();
-        serverChannel.read(serverGetResponseBuffer);
-        serverGetResponseBuffer.flip();
-        response = Request.byteBufferToString(serverGetResponseBuffer);
-        logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response.trim()));
-        logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
-        SocketChannel requestorChannel = request.getRequestorChannel();
-        serverGetResponseBuffer.rewind();
-        while (serverGetResponseBuffer.hasRemaining()) {
-            logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
-            requestorChannel.write(serverGetResponseBuffer);
-        } 
+        boolean responseComplete = false;
+        int parts = 0;
+        do {
+            parts++;
+            serverChannel.read(serverGetResponseBuffer);
+            responseComplete = Request.getResponseIsComplete(serverGetResponseBuffer);
+            serverGetResponseBuffer.flip();
+            response = Request.byteBufferToString(serverGetResponseBuffer);
+            logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), responseComplete));
+            logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
+            SocketChannel requestorChannel = request.getRequestorChannel();
+            serverGetResponseBuffer.rewind();
+            while (serverGetResponseBuffer.hasRemaining()) {
+                logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
+                requestorChannel.write(serverGetResponseBuffer);
+            } 
+        } while (!responseComplete);
+        logger.debug(String.format("Worker %d forwarded %d parts to requestor", this.id, parts));
     }
 
     private void processMultiget(Request request) throws IOException{
         if(this.readSharded) {
+            int initialServerIdx = getServerIdx();
+            int serverIdx = initialServerIdx;
+            request.buffer.flip();
+            ByteBuffer[] keyParts = request.splitGetsKeys(this.numServers);
+            int numRequests = keyParts.length;
+            bufferPartsGetReq[0] = this.GET_REQ_BEGINING.duplicate();
+            bufferPartsGetReq[2] = this.REQ_LINE_END.duplicate();
+            for(int reqId = 0; reqId < numRequests; reqId++) {
+                SocketChannel serverChannel = serverConnections[serverIdx];
+                bufferPartsGetReq[1] = keyParts[reqId];
+                serverChannel.write(bufferPartsGetReq); // blocking
+                serverIdx = (serverIdx + 1) % numServers;
+            }
 
-        } else {
+            serverIdx = initialServerIdx;
+            for(int reqId = 0; reqId < numRequests; reqId++) {
+                SocketChannel serverChannel = serverConnections[serverIdx];
+                
+                String response = "";
+                logger.debug(String.format("Worker %d reads multiget response from memcached server %d", this.id, serverIdx));
+                serverGetResponseBuffer.clear();
+                boolean responseComplete = false;
+                int parts = 0;
+                do {
+                    parts++;
+                    serverChannel.read(serverGetResponseBuffer);
+                    responseComplete = Request.getResponseIsComplete(serverGetResponseBuffer);
+                    if(responseComplete && reqId < numRequests -1) {
+                        // remove end line from all requests but last one
+                        // TODO: what if end line does not arrive in one piece?
+                        logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+                        serverGetResponseBuffer.position(serverGetResponseBuffer.position()-5);
+                        logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+                    }
+                    serverGetResponseBuffer.flip();
+                    response = Request.byteBufferToString(serverGetResponseBuffer);
+                    logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), responseComplete));
+                    logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
+                    SocketChannel requestorChannel = request.getRequestorChannel();
+                    serverGetResponseBuffer.rewind();
+                    while (serverGetResponseBuffer.hasRemaining()) {
+                        logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
+                        requestorChannel.write(serverGetResponseBuffer);
+                    } 
+                } while (!responseComplete);
+                logger.debug(String.format("Worker %d forwarded %d parts to requestor", this.id, parts));
+        
+            }
+
+        }
+        else {
             // Treat multi-get like normal get: forward complete request to one server
             processGet(request);
         }
