@@ -143,10 +143,11 @@ public class Request {
         // requires this.isComplete() == true else might run infinitely
         offsets = new ArrayList<Integer>();
         this.requestStr = byteBufferToString(this.buffer);
-        int spacePos = 0;
+        logger.debug(String.format("Parsing get request: %s", requestStr));
+        int spacePos = -1;
         int numSpaces = 0;
         while(spacePos != -1) {
-            spacePos = this.requestStr.indexOf(' ');
+            spacePos = this.requestStr.indexOf(' ', spacePos+1);
             offsets.add(spacePos);
             numSpaces++;
         }
