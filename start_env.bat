@@ -1,6 +1,7 @@
 start /B /wait "" "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" startvm "ASL Ubuntu Server" --type headless
 start /B /wait ssh -p 2222 osboxes@localhost -t "cd asl ; git pull ; ant jar"
 start cmd /k ssh -p 2222 osboxes@localhost -t "memcached -p 11212 -vv ; /bin/bash"
+start cmd /k ssh -p 2222 osboxes@localhost -t "memcached -p 11213 -vv ; /bin/bash"
 TIMEOUT 5
 start cmd /k ssh -p 2222 osboxes@localhost -t "cd asl ; java -jar dist/middleware-junkerp.jar  -l localhost -p 1234 -t 1 -s false -m localhost:11212 ; /bin/bash"
 TIMEOUT 5

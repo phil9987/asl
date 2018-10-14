@@ -42,7 +42,7 @@ public class Request {
         MULTIGET,
         SET,
         NOT_SET,
-        INVALID;
+        UNKNOWN;
     }
 
 
@@ -55,11 +55,18 @@ public class Request {
             byte firstChar = this.buffer.get(0);
             logger.debug(String.format("first character = %c", firstChar));
             switch(firstChar) {
-                case 'g':   if(this.buffer.get(3) == 's') {
-                                this.type = Type.MULTIGET;
+                case 'g':   if(this.isComplete()) {
+                                int numSpaces = parseGet();
+                                if(numSpaces == 1) {
+                                    this.type = Type.GET;
+                                }
+                                else {
+                                    this.type = Type.MULTIGET;
+                                }
                             }
                             else {
-                                this.type = Type.GET;
+                                // request is not complete yet, we cannot determine type
+                                this.type = Type.UNKNOWN;
                             }
                             break;
                 case 's':   this.type = Type.SET;
@@ -90,7 +97,8 @@ public class Request {
     }
 
     public ByteBuffer[] splitGetsKeys(int numServers) {
-        int numKeys = numGets();
+        // requires parseGet() to be executed beforehand. This function is executed by getType() in NetworkerThread
+        int numKeys = offsets.size() - 1;
         int keysPerRequest = numKeys / numServers;
         int overflow = numServers % numKeys;
         int numRequests = numServers;
