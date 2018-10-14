@@ -175,6 +175,7 @@ public class WorkerThread implements Runnable {
                 String start = Request.byteBufferToString(bufferPartsGetReq[0]);
                 String keyPart = Request.byteBufferToString(bufferPartsGetReq[1]);
                 String endl = Request.byteBufferToString(bufferPartsGetReq[2]);
+                logger.debug(String.format("start len = %d keyPart len = %d endl len = %d", start.length(), keyPart.length(), endl.length()));
                 logger.debug(String.format("Worker %d sends multiget request to memcached server %d: %s%s%s", this.id, serverIdx, start, keyPart, endl));
                 serverChannel.write(bufferPartsGetReq); // blocking
                 serverIdx = (serverIdx + 1) % numServers;
