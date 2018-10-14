@@ -79,7 +79,14 @@ public class NetworkerThread implements Runnable {
                         // else: attached request is continued until it is complete
 
                         // TODO: add acceptedAt time to request
-                        int newBytesCount = socketChannel.read(buffer); // read new data into netthread-buffer
+                        int newBytesCount = -1;
+                        try{
+                            newBytesCount = socketChannel.read(buffer); // read new data into netthread-buffer
+                        } catch (Exception e) {
+                            logger.debug(Request.byteBufferToString(buffer));
+                            logger.debug(String.format("bytesRead: %d", newBytesCount));
+                            logger.error("Exception occurred",e);
+                        }
                         if (newBytesCount == -1) {
                             logger.info("DISCONNECT");
                             key.cancel();
