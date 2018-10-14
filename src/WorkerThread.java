@@ -163,14 +163,17 @@ public class WorkerThread implements Runnable {
         if(this.readSharded) {
             int initialServerIdx = getServerIdx();
             int serverIdx = initialServerIdx;
+            logger.debug(String.format("Worker %d sends multiget request to possibly several servers starting with %d.", this.id, initialServerIdx));
             request.buffer.flip();
             ByteBuffer[] keyParts = request.splitGetsKeys(this.numServers);
             int numRequests = keyParts.length;
             bufferPartsGetReq[0] = this.GET_REQ_BEGINING.duplicate();
             bufferPartsGetReq[2] = this.REQ_LINE_END.duplicate();
             for(int reqId = 0; reqId < numRequests; reqId++) {
+                logger.debug(String.format("Worker %d sends multiget request to memcached server %d.", this.id, serverIdx));
                 SocketChannel serverChannel = serverConnections[serverIdx];
                 bufferPartsGetReq[1] = keyParts[reqId];
+                String keyPart = Request.byteBufferToString(bufferPartsGetReq[1]);
                 serverChannel.write(bufferPartsGetReq); // blocking
                 serverIdx = (serverIdx + 1) % numServers;
             }
