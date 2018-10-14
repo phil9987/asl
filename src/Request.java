@@ -70,19 +70,23 @@ public class Request {
     }
 
     public boolean isComplete() {
-        if(this.buffer.position() > 0) {
-            byte lastChar = this.buffer.get(this.buffer.position()-1);
-            if(lastChar == '\n') {
+        return isComplete(this.buffer);
+    }
+
+    public static boolean isComplete(ByteBuffer buf) {
+        boolean res = false;
+        if(buf.position() > 0) {
+            byte lastChar = buf.get(buf.position()-1);
+            res = lastChar == '\n';
+            if(res) {
                 logger.debug("last character of buffer is newline, request is complete");
             }
             else {
                 logger.debug(String.format("last character of buffer is not newline, request not finished yet: %c", lastChar));
             }
-            return lastChar == '\n';
+            return res;
         }
-        else {
-            return false;
-        }
+        return res;
     }
 
     public ByteBuffer[] splitGetsKeys(int numServers) {
