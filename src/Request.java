@@ -147,7 +147,9 @@ public class Request {
     private int parseGet() {
         // requires this.isComplete() == true else might run infinitely
         offsets = new ArrayList<Integer>();
-        this.requestStr = byteBufferToString(this.buffer);
+        ByteBuffer buf = this.buffer.duplicate();
+        buf.flip();
+        this.requestStr = byteBufferToString(buf);
         logger.debug(String.format("Parsing get request: %s", requestStr));
         int spacePos = -1;
         int numSpaces = 0;
