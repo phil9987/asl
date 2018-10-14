@@ -126,7 +126,7 @@ public class Request {
                 }
                 bufferPart = buffer.duplicate();
                 int from = offsets.get(offsetPointer) + 1;
-                int to = offsets.get(offsetPointer + offsetRange) -1;
+                int to = offsets.get(offsetPointer + offsetRange);
                 bufferPart.position(from);
                 bufferPart.limit(to);
                 offsetPointer = offsetPointer + offsetRange;
