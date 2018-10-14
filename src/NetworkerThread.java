@@ -70,6 +70,7 @@ public class NetworkerThread implements Runnable {
                         SocketChannel socketChannel = (SocketChannel) key.channel();
                         Request request = (Request) key.attachment();
                         this.buffer.clear();    // prepare network thread buffer for new data
+                        this.buffer.compact();
                         if(request.isComplete()) {
                             // request has been finished already, start a new one
                             // TODO: reuse old request?
