@@ -79,21 +79,6 @@ public class Request {
         }
     }
 
-    boolean dataComplete() {
-        // TODO: implement this
-        return true;
-    }
-
-    boolean containsNewline() {
-        // TODO: implement this
-        return true;
-    }
-
-    public static boolean containsNewline(ByteBuffer buf) {
-        // TODO: parse request and store offset
-        return true;
-    }
-
     public static String byteBufferToString(ByteBuffer buf) {
         final byte[] bytes = new byte[buf.remaining()];
      
