@@ -23,7 +23,8 @@ public class WorkerThread implements Runnable {
     private final static int SET_MAX_RESPONSE_SIZE = 24;
     private static final ByteBuffer SET_POSITIVE_RESPONSE_BUF = Request.stringToByteBuffer("STORED\r\n");
     private ByteBuffer serverSetResponseBuffer = ByteBuffer.allocateDirect(SET_MAX_RESPONSE_SIZE);
-    private ByteBuffer serverGetResponseBuffer = ByteBuffer.allocateDirect(Request.HEADER_SIZE_MAX + Request.VALUE_SIZE_MAX);       // TODO: does this make sense? Shall we unify response buffers into one big buffer?
+    private static final int MAX_NUM_GET_REQUESTS = 10;
+    private ByteBuffer serverGetResponseBuffer = ByteBuffer.allocateDirect(10*(Request.HEADER_SIZE_MAX + Request.VALUE_SIZE_MAX));       // TODO: does this make sense? Shall we unify response buffers into one big buffer?
 
     private final ByteBuffer GET_REQ_BEGINING = Request.stringToByteBuffer("get ");
     private final ByteBuffer REQ_LINE_END = Request.stringToByteBuffer("\r\n");
@@ -121,9 +122,7 @@ public class WorkerThread implements Runnable {
                 requestorChannel.write(errBuf);
             }
         }
-        
         // channels to memcached servers remain open intentionally, they get only closed on Middleware shutdown
-
     }
 
     /**
@@ -144,24 +143,17 @@ public class WorkerThread implements Runnable {
         String response = "";
         logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
         serverGetResponseBuffer.clear();
-        boolean responseComplete = false;
-        int parts = 0;
-        do {
-            parts++;
-            serverChannel.read(serverGetResponseBuffer);
-            responseComplete = Request.getResponseIsComplete(serverGetResponseBuffer);
-            serverGetResponseBuffer.flip();
-            response = Request.byteBufferToString(serverGetResponseBuffer);
-            logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), responseComplete));
-            logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
-            SocketChannel requestorChannel = request.getRequestorChannel();
-            serverGetResponseBuffer.rewind();
-            while (serverGetResponseBuffer.hasRemaining()) {
-                logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
-                requestorChannel.write(serverGetResponseBuffer);
-            } 
-        } while (!responseComplete);
-        logger.debug(String.format("Worker %d forwarded %d parts to requestor", this.id, parts));
+        serverChannel.read(serverGetResponseBuffer);
+        serverGetResponseBuffer.flip();
+        response = Request.byteBufferToString(serverGetResponseBuffer);
+        logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
+        logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
+        SocketChannel requestorChannel = request.getRequestorChannel();
+        serverGetResponseBuffer.rewind();
+        while (serverGetResponseBuffer.hasRemaining()) {
+            logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
+            requestorChannel.write(serverGetResponseBuffer);
+        } 
     }
 
     private void processMultiget(Request request) throws IOException{
