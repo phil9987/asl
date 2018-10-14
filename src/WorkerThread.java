@@ -146,8 +146,13 @@ public class WorkerThread implements Runnable {
         } 
     }
 
-    private void processMultiget(Request request) {
-        // TODO
+    private void processMultiget(Request request) throws IOException{
+        if(this.readSharded) {
+
+        } else {
+            // Treat multi-get like normal get: forward complete request to one server
+            processGet(request);
+        }
     }
 
     @Override
@@ -168,10 +173,6 @@ public class WorkerThread implements Runnable {
                     }
                 }
                 logger.info(String.format("Connecting to memcached server %s:%d", ip, port));
-                /*SocketChannel serverChannel = SocketChannel.open();
-                serverChannel.connect(new InetSocketAddress(ip, port));
-                serverChannel.configureBlocking(true);
-                serverConnections[serverIdx] = serverChannel;*/
                 serverConnections[serverIdx] = SocketChannel.open();
                 serverConnections[serverIdx].connect(new InetSocketAddress(ip, port));
                 serverConnections[serverIdx].configureBlocking(true);
