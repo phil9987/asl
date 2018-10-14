@@ -151,13 +151,13 @@ public class Request {
         buf.flip();
         this.requestStr = byteBufferToString(buf);
         logger.debug(String.format("Parsing get request: %s", requestStr));
-        int spacePos = -1;
+        int spacePos;
         int numSpaces = 0;
-        while(spacePos != -1) {
+        do {
             spacePos = this.requestStr.indexOf(' ', spacePos+1);
             offsets.add(spacePos);
             numSpaces++;
-        }
+        } while(spacePos != -1);
         offsets.add(this.requestStr.indexOf('\r')); // add index of end
         return numSpaces;
     }
