@@ -201,6 +201,7 @@ public class WorkerThread implements Runnable {
                     serverGetResponseBuffer.position(serverGetResponseBuffer.position()-5);
                     logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", this.id, serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
                 }
+                serverIdx = (serverIdx + 1) % numServers;
             }
 
             serverGetResponseBuffer.flip();
