@@ -103,7 +103,7 @@ public class Request {
         int numKeys = offsets.size() - 1;
         logger.debug(String.format("Number of keys: %d", numKeys));
         int keysPerRequest = numKeys / numServers;
-        int overflow = numServers % numKeys;
+        int overflow = numKeys % numServers;
         int numRequests = numServers;
         logger.debug(String.format("Number of keys per request: %d (overflow: %d, numRequests: %d)", keysPerRequest, overflow, numRequests));
         if(keysPerRequest == 0) {
