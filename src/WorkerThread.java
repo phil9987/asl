@@ -172,6 +172,9 @@ public class WorkerThread implements Runnable {
             for(int reqId = 0; reqId < numRequests; reqId++) {
                 SocketChannel serverChannel = serverConnections[serverIdx];
                 bufferPartsGetReq[1] = keyParts[reqId];
+                bufferPartsGetReq[1].rewind();
+                bufferPartsGetReq[0].rewind();
+                bufferPartsGetReq[2].rewind();
                 String start = Request.byteBufferToString(bufferPartsGetReq[0]);
                 String keyPart = Request.byteBufferToString(bufferPartsGetReq[1]);
                 String endl = Request.byteBufferToString(bufferPartsGetReq[2]);
