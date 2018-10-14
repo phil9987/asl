@@ -200,12 +200,14 @@ public class Request {
             byte third = buf.get(current_pos-3);
             byte snd = buf.get(current_pos-2);
             byte fst = buf.get(current_pos-1);
-            logger.debug(String.format("Response ends with following characters:%c%c%c%c%c", fifth, fourth, third, snd, fst));
-            return (fifth == 'E' && 
+            boolean res =  (fifth == 'E' && 
                     fourth == 'N' && 
                     third == 'D' && 
                     snd == '\r' && 
                     fst == '\n'); 
+            logger.debug(String.format("Response ends with following characters:%c%c%c%c%c complete: %b", fifth, fourth, third, snd, fst, res));
+
+            return res;
         } else {
             return false;
         }
