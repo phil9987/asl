@@ -173,40 +173,34 @@ public class WorkerThread implements Runnable {
             }
 
             serverIdx = initialServerIdx;
+            String response = "";
             for(int reqId = 0; reqId < numRequests; reqId++) {
                 SocketChannel serverChannel = serverConnections[serverIdx];
                 
-                String response = "";
                 logger.debug(String.format("Worker %d reads multiget response from memcached server %d", this.id, serverIdx));
                 serverGetResponseBuffer.clear();
-                boolean responseComplete = false;
-                int parts = 0;
-                do {
-                    parts++;
-                    serverChannel.read(serverGetResponseBuffer);
-                    responseComplete = Request.getResponseIsComplete(serverGetResponseBuffer);
-                    if(responseComplete && reqId < numRequests -1) {
-                        // remove end line from all requests but last one
-                        // TODO: what if end line does not arrive in one piece?
-                        logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
-                        serverGetResponseBuffer.position(serverGetResponseBuffer.position()-5);
-                        logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
-                    }
-                    serverGetResponseBuffer.flip();
-                    response = Request.byteBufferToString(serverGetResponseBuffer);
-                    logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), responseComplete));
-                    logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
-                    SocketChannel requestorChannel = request.getRequestorChannel();
-                    serverGetResponseBuffer.rewind();
-                    while (serverGetResponseBuffer.hasRemaining()) {
-                        logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
-                        requestorChannel.write(serverGetResponseBuffer);
-                    } 
-                } while (!responseComplete);
-                logger.debug(String.format("Worker %d forwarded %d parts to requestor", this.id, parts));
-        
+                serverChannel.read(serverGetResponseBuffer);
+                ByteBuffer debugbuf = serverGetResponseBuffer.duplicate();
+                response = Request.byteBufferToString(debugbuf);
+                logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
+                if(reqId < numRequests -1) {
+                    // remove end line from all requests but last one
+                    // TODO: what if end line does not arrive in one piece?
+                    logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+                    serverGetResponseBuffer.position(serverGetResponseBuffer.position()-5);
+                    logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+                }
             }
 
+            serverGetResponseBuffer.flip();
+            response = Request.byteBufferToString(serverGetResponseBuffer);
+            logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor: %s (Complete: %b)", this.id, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
+            SocketChannel requestorChannel = request.getRequestorChannel();
+            serverGetResponseBuffer.rewind();
+            while (serverGetResponseBuffer.hasRemaining()) {
+                logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
+                requestorChannel.write(serverGetResponseBuffer);
+            } 
         }
         else {
             // Treat multi-get like normal get: forward complete request to one server
