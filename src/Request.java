@@ -156,7 +156,7 @@ public class Request {
             spacePos = this.requestStr.indexOf(' ', spacePos+1);
             offsets.add(spacePos);
         } while(spacePos != -1);
-        offsets.add(this.requestStr.indexOf('\r');     // last offset is endline
+        offsets.add(this.requestStr.indexOf('\r'));     // last offset is endline
         return offsets.size();
     }
 
