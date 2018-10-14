@@ -57,6 +57,7 @@ public class Request {
             switch(firstChar) {
                 case 'g':   if(this.isComplete()) {
                                 int numSpaces = parseGet();
+                                logger.debug(String.format("NumSpaces from parseGet(): %d", numSpaces));
                                 if(numSpaces == 1) {
                                     this.type = Type.GET;
                                 }
