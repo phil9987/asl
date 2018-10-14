@@ -201,11 +201,11 @@ public class Request {
             byte snd = buf.get(current_pos-2);
             byte fst = buf.get(current_pos-1);
             logger.debug(String.format("Response ends with following characters:%c%c%c%c%c", fifth, fourth, third, snd, fst));
-            return buf.get(current_pos-5) == 'E' && 
-                    buf.get(current_pos-4) == 'N' && 
-                    buf.get(current_pos-3) == 'D' && 
-                    buf.get(current_pos-2) == '\r' && 
-                    buf.get(current_pos-1) == '\n'; 
+            return (fifth == 'E' && 
+                    fourth == 'N' && 
+                    third == 'D' && 
+                    snd == '\r' && 
+                    fst == '\n'); 
         } else {
             return false;
         }
