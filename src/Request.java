@@ -195,6 +195,12 @@ public class Request {
         ByteBuffer buf = responseBuf.duplicate();
         int current_pos = buf.position();
         if(current_pos >= 5) {
+            byte fifth = buf.get(current_pos-5);
+            byte fourth = buf.get(current_pos-4);
+            byte third = buf.get(current_pos-3);
+            byte snd = buf.get(current_pos-2);
+            byte fst = buf.get(current_pos-1);
+            logger.debug(String.format("Response ends with following characters:%c%c%c%c%c", fifth, fourth, third, snd, fst));
             return buf.get(current_pos-5) == 'E' && 
                     buf.get(current_pos-4) == 'N' && 
                     buf.get(current_pos-3) == 'D' && 
