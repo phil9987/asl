@@ -170,10 +170,12 @@ public class WorkerThread implements Runnable {
             bufferPartsGetReq[0] = this.GET_REQ_BEGINING.duplicate();
             bufferPartsGetReq[2] = this.REQ_LINE_END.duplicate();
             for(int reqId = 0; reqId < numRequests; reqId++) {
-                logger.debug(String.format("Worker %d sends multiget request to memcached server %d.", this.id, serverIdx));
                 SocketChannel serverChannel = serverConnections[serverIdx];
                 bufferPartsGetReq[1] = keyParts[reqId];
+                String start = Request.byteBufferToString(bufferPartsGetReq[0]);
                 String keyPart = Request.byteBufferToString(bufferPartsGetReq[1]);
+                String endl = Request.byteBufferToString(bufferPartsGetReq[2]);
+                logger.debug(String.format("Worker %d sends multiget request to memcached server %d: %s %s %s", this.id, serverIdx, start, keyPart, endl));
                 serverChannel.write(bufferPartsGetReq); // blocking
                 serverIdx = (serverIdx + 1) % numServers;
             }
