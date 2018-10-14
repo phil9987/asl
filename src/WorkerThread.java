@@ -197,9 +197,9 @@ public class WorkerThread implements Runnable {
                 if(reqId < numRequests -1) {
                     // remove end line from all requests but last one
                     // TODO: what if end line does not arrive in one piece?
-                    logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+                    logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", this.id, serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
                     serverGetResponseBuffer.position(serverGetResponseBuffer.position()-5);
-                    logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+                    logger.info(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", this.id, serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
                 }
             }
 
