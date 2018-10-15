@@ -94,7 +94,7 @@ public class NetworkerThread implements Runnable {
                             socketChannel.close();
                             //break;
                         } 
-                        else {
+                        else if (newBytesCount > 0) {
                             logger.debug(String.format("read %d new bytes from request", newBytesCount));
                             // transfer data from netthread-buffer into request buffer
                             buffer.flip();
@@ -117,6 +117,8 @@ public class NetworkerThread implements Runnable {
                                     logger.error("Got interrupted while waiting for new space in queue", e);
                                 }
                             }
+                        } else {
+                            logger.debug("NetworkerThread received 0 new bytes on read");
                         }
                     }
                     keyIterator.remove();       // Remove key from set so we don't process it twice
