@@ -99,6 +99,7 @@ public class NetworkerThread implements Runnable {
                             // transfer data from netthread-buffer into request buffer
                             buffer.flip();
                             String receivedStr = Request.byteBufferToString(buffer);
+                            logger.debug(String.format("Networker received string from client: %s", receivedStr));
                             request.buffer.put(buffer);
                             ByteBuffer requestBufView = request.buffer.duplicate();
                             requestBufView.flip();
