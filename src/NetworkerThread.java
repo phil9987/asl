@@ -80,7 +80,9 @@ public class NetworkerThread implements Runnable {
                             request = new Request(socketChannel);
                             key.attach(request);
                         } else {
-                            logger.debug("Request is not finished yet...")
+                            logger.debug("Request is not finished yet...");
+                            logger.info(String.format("Request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
+
                         }
                         // else: attached request is continued until it is complete
 
