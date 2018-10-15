@@ -15,27 +15,19 @@ import org.apache.logging.log4j.LogManager;
 public class Request {
 
     static final int HEADER_SIZE_MAX = 256;        // max key size according to memcached protocol = 250
-    static final int VALUE_SIZE_MAX = 4096;     // According to instructions
-
-
+    static final int VALUE_SIZE_MAX = 4096;        // According to instructions
     private static final Logger logger = LogManager.getLogger("Request");
 
-
-    private static final byte G_BYTE  = 103;
-    private static final byte S_BYTE  = 115;
-
     private Type type = Type.NOT_SET;
-    private int size;
-    private String body;
     private SocketChannel requestorChannel;
     ByteBuffer buffer;
     String requestStr;
     List<Integer> offsets;
-    boolean finished = false;
 
     public Request(SocketChannel channel) {
         this.requestorChannel = channel;
         this.buffer = ByteBuffer.allocate(HEADER_SIZE_MAX + VALUE_SIZE_MAX);   // using non-direct bytebuffer here
+        offsets = new ArrayList<Integer>();
     }
 
     public enum Type {
@@ -46,9 +38,16 @@ public class Request {
         UNKNOWN;
     }
 
-
     public SocketChannel getRequestorChannel() {
         return this.requestorChannel;
+    }
+
+    public void reset(SocketChannel channel) {
+        this.requestorChannel = channel;
+        this.type = Type.NOT_SET;
+        this.buffer.clear();
+        this.offsets = new ArrayList<Integer>();
+        this.requestStr = "";
     }
 
     public Type getType() {
@@ -157,7 +156,6 @@ public class Request {
      */
     private int parseGet() {
         // requires this.isComplete() == true else might run infinitely
-        offsets = new ArrayList<Integer>();
         ByteBuffer buf = this.buffer.duplicate();
         buf.flip();
         this.requestStr = byteBufferToString(buf);

@@ -74,15 +74,13 @@ public class NetworkerThread implements Runnable {
                         logger.info(String.format("Networker cleared buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
                         if(request.isComplete()) {
                             // request has been finished already, start a new one
-                            // TODO: reuse old request?
-                            logger.debug("Creating a new request object");
-
-                            request = new Request(socketChannel);
-                            key.attach(request);
+                            logger.debug("Resetting request object");
+                            request.reset(socketChannel);
+                            logger.info(String.format("Request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
+                            //key.attach(request);
                         } else {
                             logger.debug("Request is not finished yet...");
                             logger.info(String.format("Request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
-
                         }
                         // else: attached request is continued until it is complete
 

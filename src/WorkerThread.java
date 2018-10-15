@@ -257,7 +257,6 @@ public class WorkerThread implements Runnable {
                     default:
                         logger.error(String.format("Received request with wrong type: %s", type));
                 }
-                request.finished = true;
             }
         } catch(InterruptedException e) {
             logger.error(String.format("Worker %d got interrupted", this.id), e);
