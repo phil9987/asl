@@ -69,8 +69,10 @@ public class NetworkerThread implements Runnable {
                         logger.info("READ") ;
                         SocketChannel socketChannel = (SocketChannel) key.channel();
                         Request request = (Request) key.attachment();
+                        logger.info(String.format("Networker clears buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
                         this.buffer.clear();    // prepare network thread buffer for new data
                         this.buffer.compact();
+                        logger.info(String.format("Networker cleared buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
                         if(request.isComplete()) {
                             // request has been finished already, start a new one
                             // TODO: reuse old request?
@@ -82,7 +84,9 @@ public class NetworkerThread implements Runnable {
                         // TODO: add acceptedAt time to request
                         int newBytesCount = -1;
                         try{
+                            logger.info(String.format("Networker reads into buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
                             newBytesCount = socketChannel.read(buffer); // read new data into netthread-buffer
+                            logger.info(String.format("Networker has read into buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
                         } catch (Exception e) {
                             logger.debug(Request.byteBufferToString(buffer));
                             logger.debug(String.format("bytesRead: %d", newBytesCount));
