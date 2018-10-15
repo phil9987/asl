@@ -138,6 +138,7 @@ public class Request {
                 int to = offsets.get(offsetPointer + offsetRange);
                 bufferPart.position(from);
                 bufferPart.limit(to);
+                logger.debug(String.format("Keys for request %d: %s", reqId, byteBufferToString(bufferPart)));
                 offsetPointer = offsetPointer + offsetRange;
                 res[reqId] = bufferPart;
             }
