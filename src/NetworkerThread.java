@@ -125,7 +125,7 @@ public class NetworkerThread implements Runnable {
                             logger.debug("NetworkerThread received 0 new bytes on read");
                         }
                     }
-                    logger.debug("Networker removes processed key from iterator")
+                    logger.debug("Networker removes processed key from iterator");
                     keyIterator.remove();       // Remove key from set so we don't process it twice
                 }
             
