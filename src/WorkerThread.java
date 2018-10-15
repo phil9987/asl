@@ -207,10 +207,8 @@ public class WorkerThread implements Runnable {
                 }
                 serverIdx = (serverIdx + 1) % numServers;
             }
-
+            logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor. (Complete: %b)", this.id, Request.getResponseIsComplete(serverGetResponseBuffer)));
             serverGetResponseBuffer.flip();
-            response = Request.byteBufferToString(serverGetResponseBuffer);
-            logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor: %s (Complete: %b)", this.id, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
             SocketChannel requestorChannel = request.getRequestorChannel();
             serverGetResponseBuffer.rewind();
             while (serverGetResponseBuffer.hasRemaining()) {
