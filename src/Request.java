@@ -95,6 +95,13 @@ public class Request {
             }
             return res;
         }
+        else {
+            if (buf.limit() < buf.capacity()) {
+                ByteBuffer b = buf.duplicate();
+                b.flip();
+                if(b.position() > 0) res = isComplete(b);
+            }
+        }
         return res;
     }
 
