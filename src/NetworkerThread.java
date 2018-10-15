@@ -101,8 +101,10 @@ public class NetworkerThread implements Runnable {
                             logger.debug(String.format("read %d new bytes from request", newBytesCount));
                             // transfer data from netthread-buffer into request buffer
                             buffer.flip();
+                            logger.info(String.format("Networker flips buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
                             String receivedStr = Request.byteBufferToString(buffer);
                             logger.debug(String.format("Networker received string from client: %s", receivedStr));
+                            logger.info(String.format("Networker puts buffer into request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
                             request.buffer.put(buffer);
                             ByteBuffer requestBufView = request.buffer.duplicate();
                             requestBufView.flip();
