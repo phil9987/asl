@@ -31,6 +31,7 @@ public class Request {
     ByteBuffer buffer;
     String requestStr;
     List<Integer> offsets;
+    boolean finished = false;
 
     public Request(SocketChannel channel) {
         this.requestorChannel = channel;

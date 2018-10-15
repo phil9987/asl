@@ -72,9 +72,11 @@ public class NetworkerThread implements Runnable {
                         logger.info(String.format("Networker clears buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
                         this.buffer.clear();    // prepare network thread buffer for new data
                         logger.info(String.format("Networker cleared buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
-                        if(request.isComplete()) {
+                        if(request.finished) {
                             // request has been finished already, start a new one
                             // TODO: reuse old request?
+                            logger.debug("Creating a new request object");
+                            
                             request = new Request(socketChannel);
                             key.attach(request);
                         } 
