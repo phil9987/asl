@@ -76,10 +76,12 @@ public class NetworkerThread implements Runnable {
                             // request has been finished already, start a new one
                             // TODO: reuse old request?
                             logger.debug("Creating a new request object");
-                            
+
                             request = new Request(socketChannel);
                             key.attach(request);
-                        } 
+                        } else {
+                            logger.debug("Request is not finished yet...")
+                        }
                         // else: attached request is continued until it is complete
 
                         // TODO: add acceptedAt time to request
