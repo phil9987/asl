@@ -99,6 +99,7 @@ public class Request {
             if (buf.limit() < buf.capacity()) {
                 ByteBuffer b = buf.duplicate();
                 b.flip();
+                logger.debug(String.format("buffer flipped for complete check: position: %d limit: %d capacity: %d", b.position(), b.limit(), b.capacity()));
                 if(b.position() > 0) res = isComplete(b);
             }
         }
