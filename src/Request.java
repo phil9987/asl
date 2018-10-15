@@ -84,6 +84,7 @@ public class Request {
 
     public static boolean isComplete(ByteBuffer buf) {
         boolean res = false;
+        logger.debug(String.format("Checking if buffer is completed: position: %d limit: %d capacity: %d", buf.position(), buf.limit(), buf.capacity()));
         if(buf.position() > 0) {
             byte lastChar = buf.get(buf.position()-1);
             res = lastChar == '\n';
