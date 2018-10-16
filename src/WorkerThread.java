@@ -30,7 +30,6 @@ public class WorkerThread implements Runnable {
     private final ByteBuffer REQ_LINE_END = Request.stringToByteBuffer("\r\n");
     private ByteBuffer[] bufferPartsGetReq = new ByteBuffer[3];  // bytebuffer array to construct get requests from multiget
 
-
     private static final Logger logger = LogManager.getLogger("WorkerThread");
     static final int DEFAULT_MEMCACHED_PORT = 11211;
     private final int id;
@@ -63,8 +62,10 @@ public class WorkerThread implements Runnable {
         return next_idx;
     }
 
-    private void fastForwardServerIndex(int numRequests) {
-        roundrobinvariable += numRequests;
+    private int getServerIdxForSeveralRequests(int numRequests) {
+        int res = getServerIdx();
+        roundrobinvariable += numRequests-1;
+        return res;
     }
 
     /**
@@ -169,12 +170,12 @@ public class WorkerThread implements Runnable {
 
     private void processMultiget(Request request) throws IOException{
         if(this.readSharded) {
-            int initialServerIdx = getServerIdx();
-            int serverIdx = initialServerIdx;
-            logger.debug(String.format("Worker %d sends multiget request to possibly several servers starting with %d.", this.id, initialServerIdx));
             request.buffer.flip();
             ByteBuffer[] keyParts = request.splitGetsKeys(this.numServers);
             int numRequests = keyParts.length;
+            int initialServerIdx = getServerIdxForSeveralRequests(numRequests);
+            int serverIdx = initialServerIdx;
+            logger.debug(String.format("Worker %d sends multiget request to possibly several servers starting with %d.", this.id, initialServerIdx));
             bufferPartsGetReq[0] = this.GET_REQ_BEGINING.duplicate();
             bufferPartsGetReq[2] = this.REQ_LINE_END.duplicate();
             long serverProcessingBegin = System.currentTimeMillis();
