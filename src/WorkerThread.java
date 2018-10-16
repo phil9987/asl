@@ -218,10 +218,11 @@ public class WorkerThread implements Runnable {
             }
             request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
             request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
-            logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor. (Complete: %b)", this.id, Request.getResponseIsComplete(serverGetResponseBuffer)));
             serverGetResponseBuffer.flip();
+
+            logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor (Complete: %b): %s", this.id, Request.getResponseIsComplete(serverGetResponseBuffer), Request.byteBufferToString(serverGetResponseBuffer)));
+
             SocketChannel requestorChannel = request.getRequestorChannel();
-            serverGetResponseBuffer.rewind();
             while (serverGetResponseBuffer.hasRemaining()) {
                 logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
                 requestorChannel.write(serverGetResponseBuffer);
