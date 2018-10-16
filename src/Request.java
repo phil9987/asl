@@ -30,7 +30,6 @@ public class Request {
     long queueWaitingTime = -1;                     // Time in ms waiting in queue
     long timeServerProcessing = -1;                 // Time in ms for memcached servers to process request
     long timeInMiddleware = -1;                     // Time in 1/10 ms the request spent in middleware
-    int queueLengthAfterRemoval = -1;               // Size of queue after this request has been removed by workerThread
     int numMissesOnServer = -1;                     // Number of cache misses on memcached server (in response)
 
     /**
@@ -75,7 +74,6 @@ public class Request {
         this.timeServerProcessing = -1;
         this.timeInMiddleware = -1;
         this.queueLengthBeforeEntering = -1;
-        this.queueLengthAfterRemoval = -1;
         this.numMissesOnServer = -1;
     }
 

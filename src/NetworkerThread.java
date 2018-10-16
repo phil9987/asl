@@ -106,8 +106,6 @@ public class NetworkerThread implements Runnable {
                             if(request.isComplete()) {
                                 logger.debug("Request complete, adding it to queue");
                                 logger.debug(String.format("received request of type %s", request.getType()));
-                                // TODO: add addedToQueue time to request
-                                // TODO: add currentQueueSize to request
                                 request.timestampQueueEntered = System.nanoTime();
                                 request.queueLengthBeforeEntering = blockingRequestQueue.size();
                                 try {

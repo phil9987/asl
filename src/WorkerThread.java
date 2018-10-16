@@ -73,7 +73,7 @@ public class WorkerThread implements Runnable {
     private void processSet(Request request) throws IOException {
         logger.debug(String.format("Worker %d sends set request to all memcached servers...", this.id));
         request.buffer.flip();
-        long serverProcessingBegin = System.nanoTime();
+        long serverProcessingBegin = System.currentTimeMillis();
 
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
             SocketChannel serverChannel = serverConnections[serverIdx];
@@ -92,16 +92,17 @@ public class WorkerThread implements Runnable {
             SocketChannel serverChannel = serverConnections[serverIdx];
             serverSetResponseBuffer.clear();
             serverChannel.read(serverSetResponseBuffer);
-            // TODO: for debug purposes only, make more efficient
             serverSetResponseBuffer.flip();
-            response = Request.byteBufferToString(serverSetResponseBuffer);
-            logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response.trim()));
+            //response = Request.byteBufferToString(serverSetResponseBuffer);
+            //logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response.trim()));
             if (!serverSetResponseBuffer.equals(this.SET_POSITIVE_RESPONSE_BUF)) {
                 logger.error(String.format("Memcached server %d returned error to worker %d", serverIdx, this.id));
                 errResponse = response;
             }
         }
         request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
+        request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
+
         if(!errResponse.isEmpty()) {
             // at least one server responded an error
             response = errResponse;
@@ -138,6 +139,7 @@ public class WorkerThread implements Runnable {
         logger.debug(String.format("Worker %d sends get request to memcached server %d.", this.id, serverIdx));
         request.buffer.flip();
         SocketChannel serverChannel = serverConnections[serverIdx];
+        long serverProcessingBegin = System.currentTimeMillis();
         while (request.buffer.hasRemaining()) {
             logger.debug(String.format("sending get request to server, %d remaining", request.buffer.remaining()));
             serverChannel.write(request.buffer);
@@ -147,9 +149,12 @@ public class WorkerThread implements Runnable {
         logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
         serverGetResponseBuffer.clear();
         int bytesRead = 0;
-        do{
+        do {
             bytesRead = serverChannel.read(serverGetResponseBuffer);
         } while(!(Request.getResponseIsComplete(serverGetResponseBuffer) || bytesRead == 0 || bytesRead == -1)); // TODO: add better error handling
+        request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
+        request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
+        
         serverGetResponseBuffer.flip();
         response = Request.byteBufferToString(serverGetResponseBuffer);
         logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
@@ -172,6 +177,7 @@ public class WorkerThread implements Runnable {
             int numRequests = keyParts.length;
             bufferPartsGetReq[0] = this.GET_REQ_BEGINING.duplicate();
             bufferPartsGetReq[2] = this.REQ_LINE_END.duplicate();
+            long serverProcessingBegin = System.currentTimeMillis();
             for(int reqId = 0; reqId < numRequests; reqId++) {
                 SocketChannel serverChannel = serverConnections[serverIdx];
                 bufferPartsGetReq[1] = keyParts[reqId];
@@ -198,6 +204,7 @@ public class WorkerThread implements Runnable {
                     bytesRead = serverChannel.read(serverGetResponseBuffer);
                 } while(!(Request.getResponseIsComplete(serverGetResponseBuffer) || bytesRead == 0 || bytesRead == -1)); // TODO: add better error handling
                 ByteBuffer debugbuf = serverGetResponseBuffer.duplicate();
+                debugbuf.flip();
                 response = Request.byteBufferToString(debugbuf);
                 logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
                 if(reqId < numRequests -1) {
@@ -209,6 +216,8 @@ public class WorkerThread implements Runnable {
                 }
                 serverIdx = (serverIdx + 1) % numServers;
             }
+            request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
+            request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
             logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor. (Complete: %b)", this.id, Request.getResponseIsComplete(serverGetResponseBuffer)));
             serverGetResponseBuffer.flip();
             SocketChannel requestorChannel = request.getRequestorChannel();
