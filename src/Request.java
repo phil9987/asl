@@ -24,12 +24,21 @@ public class Request {
     String requestStr;                              // For get requests the buffer is converted into a string for convenience
     List<Integer> offsets;                          // A list of space-character-indizes. The last index is of '\r' character
 
+    long timestampReceived = -1;                    // Timestamp when request became readable in middleware
+    long timestampQueueEntered = -1;                // Timestamp when entering the queue
+    int queueLengthBeforeEntering = -1;             // Size of queue before this request was added to it by networkerThread
+    long queueWaitingTime = -1;                     // Time in ms waiting in queue
+    long timeServerProcessing = -1;                 // Time in ms for memcached servers to process request
+    long timeInMiddleware = -1;                     // Time in 1/10 ms the request spent in middleware
+    int queueLengthAfterRemoval = -1;               // Size of queue after this request has been removed by workerThread
+    int numMissesOnServer = -1;                     // Number of cache misses on memcached server (in response)
+
     /**
      * Constructor
      */
     public Request(SocketChannel channel) {
         this.requestorChannel = channel;
-        this.buffer = ByteBuffer.allocate(HEADER_SIZE_MAX + VALUE_SIZE_MAX);   // using non-direct bytebuffer here
+        this.buffer = ByteBuffer.allocateDirect(HEADER_SIZE_MAX + VALUE_SIZE_MAX);
         offsets = new ArrayList<Integer>();
     }
 
@@ -60,6 +69,14 @@ public class Request {
         this.buffer.clear();
         this.offsets = new ArrayList<Integer>();
         this.requestStr = "";
+        this.timestampReceived = -1;
+        this.timestampQueueEntered = -1;
+        this.queueWaitingTime = -1;
+        this.timeServerProcessing = -1;
+        this.timeInMiddleware = -1;
+        this.queueLengthBeforeEntering = -1;
+        this.queueLengthAfterRemoval = -1;
+        this.numMissesOnServer = -1;
     }
 
     /**
@@ -83,6 +100,7 @@ public class Request {
                             }
                             else {
                                 // request is not complete yet, we cannot determine type
+                                logger.error(String.format("Error: getType call even though request is incomplete: %s", byteBufferToString(this.buffer)));
                                 this.type = Type.UNKNOWN;
                             }
                             break;

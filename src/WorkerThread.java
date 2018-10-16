@@ -73,6 +73,8 @@ public class WorkerThread implements Runnable {
     private void processSet(Request request) throws IOException {
         logger.debug(String.format("Worker %d sends set request to all memcached servers...", this.id));
         request.buffer.flip();
+        long serverProcessingBegin = System.nanoTime();
+
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
             SocketChannel serverChannel = serverConnections[serverIdx];
             logger.debug(String.format("Worker %d sends set request to memcached server %d...", this.id, serverIdx));
@@ -99,6 +101,7 @@ public class WorkerThread implements Runnable {
                 errResponse = response;
             }
         }
+        request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
         if(!errResponse.isEmpty()) {
             // at least one server responded an error
             response = errResponse;
@@ -245,6 +248,7 @@ public class WorkerThread implements Runnable {
             }
             while(true) {
                 Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
+                request.queueWaitingTime = System.currentTimeMillis() - request.timestampQueueEntered;
                 Request.Type type = request.getType();
                 logger.info(String.format("Worker %d starts handling request of type %s", this.id, type));
                 switch(type) {

@@ -20,7 +20,6 @@ public class NetworkerThread implements Runnable {
 
     private static final Logger logger = LogManager.getLogger("NetworkerThread");
 
-    private ByteBuffer buffer;
     private final String ipAddress;
     private final int port;
     private final BlockingQueue<Request> blockingRequestQueue;
@@ -30,7 +29,6 @@ public class NetworkerThread implements Runnable {
         this.ipAddress = ip;
         this.port = port;
         this.blockingRequestQueue = queue;
-        this.buffer = ByteBuffer.allocateDirect(Request.HEADER_SIZE_MAX + Request.VALUE_SIZE_MAX);
         logger.info(String.format("Instantiating NetworkerThread %s:%d", ip, port));
     }
 
@@ -69,9 +67,6 @@ public class NetworkerThread implements Runnable {
                         logger.info("READ") ;
                         SocketChannel socketChannel = (SocketChannel) key.channel();
                         Request request = (Request) key.attachment();
-                        logger.info(String.format("Networker clears buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
-                        this.buffer.clear();    // prepare network thread buffer for new data
-                        logger.info(String.format("Networker cleared buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
                         if(request.isComplete()) {
                             // request has been finished already, start a new one
                             logger.debug("Resetting request object");
@@ -85,13 +80,14 @@ public class NetworkerThread implements Runnable {
                         // else: attached request is continued until it is complete
 
                         // TODO: add acceptedAt time to request
+                        request.timestampReceived = System.nanoTime();
                         int newBytesCount = -1;
                         try{
-                            logger.info(String.format("Networker reads into buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
-                            newBytesCount = socketChannel.read(buffer); // read new data into netthread-buffer
-                            logger.info(String.format("Networker has read into buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
+                            logger.info(String.format("Networker reads into buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
+                            newBytesCount = socketChannel.read(request.buffer); // read new data into netthread-buffer
+                            logger.info(String.format("Networker has read into buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
                         } catch (Exception e) {
-                            logger.debug(Request.byteBufferToString(buffer));
+                            logger.debug(Request.byteBufferToString(request.buffer));
                             logger.debug(String.format("bytesRead: %d", newBytesCount));
                             logger.error("Exception occurred",e);
                         }
@@ -103,22 +99,17 @@ public class NetworkerThread implements Runnable {
                         } 
                         else if (newBytesCount > 0) {
                             logger.debug(String.format("read %d new bytes from request", newBytesCount));
-                            // transfer data from netthread-buffer into request buffer
-                            buffer.flip();
-                            logger.info(String.format("Networker flips buffer position: %d limit: %d capacity: %d", buffer.position(), buffer.limit(), buffer.capacity() ));
-                            String receivedStr = Request.byteBufferToString(buffer);
-                            logger.debug(String.format("Networker received string from client: %s", receivedStr));
-                            logger.info(String.format("Networker puts buffer into request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
-                            request.buffer.put(buffer);
                             ByteBuffer requestBufView = request.buffer.duplicate();
                             requestBufView.flip();
-                            String transferredStr = Request.byteBufferToString(requestBufView);
-                            logger.debug(String.format("transferred %s from netthreadbuf to request.buffer: %s", receivedStr, transferredStr));
+                            String receivedStr = Request.byteBufferToString(requestBufView);
+                            logger.debug(String.format("Received msg from client: %s", receivedStr));
                             if(request.isComplete()) {
                                 logger.debug("Request complete, adding it to queue");
                                 logger.debug(String.format("received request of type %s", request.getType()));
                                 // TODO: add addedToQueue time to request
                                 // TODO: add currentQueueSize to request
+                                request.timestampQueueEntered = System.nanoTime();
+                                request.queueLengthBeforeEntering = blockingRequestQueue.size();
                                 try {
                                     this.blockingRequestQueue.put(request); // blocking if queue is full
                                 } 
