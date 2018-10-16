@@ -194,11 +194,11 @@ public class WorkerThread implements Runnable {
 
             serverIdx = initialServerIdx;
             String response = "";
+            serverGetResponseBuffer.clear();
             for(int reqId = 0; reqId < numRequests; reqId++) {
                 SocketChannel serverChannel = serverConnections[serverIdx];
                 
                 logger.debug(String.format("Worker %d reads multiget response from memcached server %d", this.id, serverIdx));
-                serverGetResponseBuffer.clear();
                 int bytesRead = 0;
                 do{
                     bytesRead = serverChannel.read(serverGetResponseBuffer);
