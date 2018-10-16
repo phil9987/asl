@@ -218,10 +218,16 @@ public class WorkerThread implements Runnable {
             }
             request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
             request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
+            logger.info(String.format("serverGetResponesBuffer position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+
             serverGetResponseBuffer.flip();
+            logger.info(String.format("serverGetResponesBuffer after flip position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+
+            serverGetResponseBuffer.rewind();
+            logger.info(String.format("serverGetResponesBuffer after rewind position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+
 
             logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor (Complete: %b): %s", this.id, Request.getResponseIsComplete(serverGetResponseBuffer), Request.byteBufferToString(serverGetResponseBuffer)));
-
             SocketChannel requestorChannel = request.getRequestorChannel();
             while (serverGetResponseBuffer.hasRemaining()) {
                 logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
