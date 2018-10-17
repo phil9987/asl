@@ -32,6 +32,9 @@ public class NetworkerThread implements Runnable {
         logger.info(String.format("Instantiating NetworkerThread %s:%d", ip, port));
     }
 
+    /**
+     * The function that is initially called for the NetworkerThread
+     */
     @Override
     public void run() {
         logger.info(String.format("Starting NetworkerThread %s:%d", ipAddress, port));
@@ -116,7 +119,7 @@ public class NetworkerThread implements Runnable {
                                 }
                             }
                         } else {
-                            logger.debug("NetworkerThread received 0 new bytes on read");
+                            logger.error("NetworkerThread received 0 new bytes on read");
                         }
                     }
                     logger.debug("Networker removes processed key from iterator");

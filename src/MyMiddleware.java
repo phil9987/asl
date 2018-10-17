@@ -30,15 +30,12 @@ public class MyMiddleware {
         this.workerThreads = new Thread[numThreadsPTP];
     }
 
+    /**
+     * The function that is called to start MyMiddleware
+     */
     void run() {
         try{
-            logger.info("Start of MyMiddleware");
-            logger.info(ip);
-            logger.info(port);
-            logger.info(mcAddresses);
-            logger.info(numThreadsPTP);
-            logger.info(readSharded);
-
+            logger.debug("Start of MyMiddleware. ip=%d port=%d memcached_addresses=%s number_workerThreads=%d sharded=%b", ip, port, mcAddresses, numThreadsPTP, readSharded);
             logger.info("Starting NetworkerThread...");
             Thread networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.blockingRequestQueue));
             networkerThread.start();

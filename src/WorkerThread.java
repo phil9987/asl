@@ -55,6 +55,10 @@ public class WorkerThread implements Runnable {
         logger.debug(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
     }
 
+    /**
+     * Returns next server to query for get requests.
+     * Increases roundrobinvariable by 1.
+     */
     private int getServerIdx() {
         roundrobinvariable = (roundrobinvariable + 1) % numServers;
         int next_idx = (serverOffset + roundrobinvariable) % numServers;
@@ -62,6 +66,10 @@ public class WorkerThread implements Runnable {
         return next_idx;
     }
 
+    /**
+     * Returns next server to query for multiget requests.
+     * Increases roundrobinvariable by numRequests
+     */
     private int getServerIdxForSeveralRequests(int numRequests) {
         int res = getServerIdx();
         roundrobinvariable += numRequests-1;
@@ -69,7 +77,9 @@ public class WorkerThread implements Runnable {
     }
 
     /**
-     * Sends the set request to all storage servers and sends a response back to the client
+     * Sends a set request to all storage servers and forwards one of the memcached server responses 
+     * to the requesting client.
+     * In case one server responded with an error, the error message is sent to the requesting client.
      */
     private void processSet(Request request) throws IOException {
         logger.debug(String.format("Worker %d sends set request to all memcached servers...", this.id));
@@ -168,6 +178,12 @@ public class WorkerThread implements Runnable {
         } 
     }
 
+    /**
+     * Non-sharded mode: processGet(request)
+     * Sharded mode: splits the keys into equal parts and sends each part to one server.
+     * Then it collects the responses, merges them into one response and forwards it to the 
+     * requesting client.
+     */
     private void processMultiget(Request request) throws IOException{
         if(this.readSharded) {
             request.buffer.flip();
@@ -236,6 +252,9 @@ public class WorkerThread implements Runnable {
         }
     }
 
+    /**
+     * The function that is initially called on every WorkerThread
+     */
     @Override
     public void run() {
         logger.debug(String.format("Starting WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
