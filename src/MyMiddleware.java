@@ -58,7 +58,7 @@ public class MyMiddleware {
                     if(i % numWorkersPerServer == 0) {
                         serverOffset = (serverOffset + 1) % numServers;
                     }
-                } 
+                }
                 else if(numServersPerWorker >= 0) {
                     // we want to assign a server only every several server indizes
                     if(serverOffset == -1) {
@@ -68,7 +68,7 @@ public class MyMiddleware {
                         serverOffset = (serverOffset + numServersPerWorker) % numServers;
                     }
                 }
-                logger.info(String.format("Starting worker thread %d with serverOffset=%d (numWorkersPerServer=%d, numServersPerWorker=%d)", i, serverOffset, numWorkersPerServer, numServersPerWorker));
+                logger.info(String.format("Creating worker thread %d with serverOffset=%d (numWorkersPerServer=%d, numServersPerWorker=%d)", i, serverOffset, numWorkersPerServer, numServersPerWorker));
                 Thread worker = new Thread(new WorkerThread(i, this.blockingRequestQueue, this.mcAddresses, this.readSharded, serverOffset));
                 worker.start();
                 workerThreads[i] = worker;
