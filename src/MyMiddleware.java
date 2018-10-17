@@ -28,6 +28,13 @@ public class MyMiddleware {
         this.readSharded = readSharded;
         this.blockingRequestQueue = new LinkedBlockingQueue<Request>();
         this.workerThreads = new Thread[numThreadsPTP];
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                logger.info("Shutdownhook executing...");
+            }
+        });
     }
 
     /**
