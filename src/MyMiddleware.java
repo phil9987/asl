@@ -4,7 +4,7 @@ import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 
@@ -26,7 +26,7 @@ public class MyMiddleware {
         this.mcAddresses = mcAddresses;
         this.numThreadsPTP = numThreadsPTP;
         this.readSharded = readSharded;
-        this.blockingRequestQueue = new ArrayBlockingQueue<Request>(1024);
+        this.blockingRequestQueue = new LinkedBlockingQueue<Request>();
         this.workerThreads = new Thread[numThreadsPTP];
     }
 

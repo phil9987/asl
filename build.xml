@@ -28,7 +28,9 @@
 
   <target name="compiled" depends="init" description="compile the source">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}" classpathref="classpath" includeantruntime="false" debug="true"/>
+    <javac srcdir="${src}" destdir="${build}" classpathref="classpath" includeantruntime="false" debug="true">
+      <compilerarg value="-Xlint"/>
+    </javac>
   </target>
 
   <target name="jar" depends="compile" description="generate the distribution">
