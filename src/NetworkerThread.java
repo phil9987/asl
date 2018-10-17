@@ -25,7 +25,7 @@ public class NetworkerThread implements Runnable {
     private final BlockingQueue<Request> blockingRequestQueue;
 
 
-    public NetworkerThread(String ip, int port, BlockingQueue queue) {
+    public NetworkerThread(String ip, int port, BlockingQueue<Request> queue) {
         this.ipAddress = ip;
         this.port = port;
         this.blockingRequestQueue = queue;
