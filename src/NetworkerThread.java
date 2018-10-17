@@ -38,7 +38,9 @@ public class NetworkerThread implements Runnable {
     @Override
     public void run() {
         logger.info(String.format("Starting NetworkerThread %s:%d", ipAddress, port));
-        try (ServerSocketChannel serverSocket = ServerSocketChannel.open();) {
+        try (
+            ServerSocketChannel serverSocket = ServerSocketChannel.open();  // this ensures that the sockets are closed on interrupt
+            ) {
             Selector selector = Selector.open();
             serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port));
             serverSocket.configureBlocking(false);
@@ -49,7 +51,6 @@ public class NetworkerThread implements Runnable {
                 if (numReady == 0) {
                     continue;
                 }
-
                 Set<SelectionKey> selectedKeys = selector.selectedKeys();   // keys of ready channels
                 Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 

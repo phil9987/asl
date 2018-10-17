@@ -60,7 +60,7 @@ public class MyMiddleware {
                     }
                 }
                 else if(numServersPerWorker >= 0) {
-                    // we want to assign a server only every several server indizes
+                    // we want to assign a worker only every several server indizes
                     if(serverOffset == -1) {
                         serverOffset = 0;
                     }
