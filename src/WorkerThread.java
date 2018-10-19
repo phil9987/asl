@@ -116,7 +116,6 @@ public class WorkerThread implements Runnable {
         request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
         logger.debug(String.format("Worker %d sends response to requesting client.", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
-        aggregationLogger.logRequest(request);
         if(errResponse.isEmpty()) {
             serverSetResponseBuffer.rewind();
             while (serverSetResponseBuffer.hasRemaining()) {
@@ -291,6 +290,7 @@ public class WorkerThread implements Runnable {
                     default:
                         logger.error(String.format("Received request with wrong type: %s", type));
                 }
+                aggregationLogger.logRequest(request);
             }
         } catch(InterruptedException e) {
             logger.error(String.format("Worker %d got interrupted", this.id), e);
