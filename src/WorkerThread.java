@@ -280,6 +280,7 @@ public class WorkerThread implements Runnable {
                 request.queueWaitingTime = System.currentTimeMillis() - request.timestampQueueEntered;
                 Request.Type type = request.getType();
                 logger.debug(String.format("Worker %d starts handling request of type %s", this.id, type));
+                boolean log = true;
                 switch(type) {
                     case GET:   processGet(request);
                                 break;
@@ -288,9 +289,10 @@ public class WorkerThread implements Runnable {
                     case SET:   processSet(request);
                                 break;
                     default:
+                        log = false;
                         logger.error(String.format("Received request with wrong type: %s", type));
                 }
-                aggregationLogger.logRequest(request);
+                if(log) aggregationLogger.logRequest(request);
             }
         } catch(InterruptedException e) {
             logger.error(String.format("Worker %d got interrupted", this.id), e);
