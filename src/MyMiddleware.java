@@ -58,6 +58,7 @@ public class MyMiddleware {
             int numServers = this.mcAddresses.size();
             final int numWorkersPerServer;
             final int numServersPerWorker;
+            long initialWorkerTimestamp = System.nanoTime();
             if(numThreadsPTP > numServers) {
                 numWorkersPerServer = numThreadsPTP / numServers;
                 numServersPerWorker = -1;
@@ -84,7 +85,7 @@ public class MyMiddleware {
                     }
                 }
                 logger.info(String.format("Creating worker thread %d with serverOffset=%d (numWorkersPerServer=%d, numServersPerWorker=%d)", i, serverOffset, numWorkersPerServer, numServersPerWorker));
-                Thread worker = new Thread(new WorkerThread(i, this.blockingRequestQueue, this.mcAddresses, this.readSharded, serverOffset));
+                Thread worker = new Thread(new WorkerThread(i, this.blockingRequestQueue, this.mcAddresses, this.readSharded, serverOffset, initialWorkerTimestamp));
                 worker.start();
                 workerThreads[i] = worker;
             }

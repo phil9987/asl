@@ -40,8 +40,9 @@ public class WorkerThread implements Runnable {
     private final List<String> serverAdresses;
     private final SocketChannel[] serverConnections;
     private final boolean readSharded;
+    private final AggregationLogger aggregationLogger;
 
-    public WorkerThread(int id, BlockingQueue<Request> queue, List<String> serverAdresses, boolean readSharded, int serverOffset) {
+    public WorkerThread(int id, BlockingQueue<Request> queue, List<String> serverAdresses, boolean readSharded, int serverOffset, long initialTimestamp) {
         this.id = id;
         this.blockingRequestQueue = queue;
         this.serverAdresses = serverAdresses;
@@ -52,6 +53,7 @@ public class WorkerThread implements Runnable {
         this.roundrobinvariable = -1;
         this.REQ_LINE_END.rewind();
         this.GET_REQ_BEGINING.rewind();
+        this.aggregationLogger = new AggregationLogger(this.id, initialTimestamp, 1000000000);  // aggregationLogger which logs every 1s
         logger.debug(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
     }
 
@@ -114,7 +116,7 @@ public class WorkerThread implements Runnable {
         request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
         logger.debug(String.format("Worker %d sends response to requesting client.", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
-        // TODO: log request object
+        aggregationLogger.logRequest(request);
         if(errResponse.isEmpty()) {
             serverSetResponseBuffer.rewind();
             while (serverSetResponseBuffer.hasRemaining()) {

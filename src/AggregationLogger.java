@@ -5,27 +5,28 @@ import org.apache.logging.log4j.LogManager;
 
 
 public class AggregationLogger {
-    private final long PERIOD;    
     private static final Logger logger = LogManager.getLogger("AggregationLogger");; 
+    private final long PERIOD;    
     private final int workerId;
-    private long currentPeriodStart;               
-    // private long timestampQueueEntered = -1;                 // Timestamp when entering the queue
-    private int numRequests;
-    private int queueLengthSum;                             // Size of queue before this request was added to it by networkerThread
-    private long queueWaitingTimeSum;                      // Time in ms waiting in queue
-    private long timeServerProcessingSum;                  // Time in ms for memcached servers to process request
-    private long timeInMiddlewareSum;                      // Time in 1/10 ms the request spent in middleware
+    private long currentPeriodStart;        
+
+    private double numRequests;
+    private long queueLengthSum;                 // Size of queue before this request was added to it by networkerThread
+    private long queueWaitingTimeSum;           // Time in ms waiting in queue
+    private long timeServerProcessingSum;       // Time in ms for memcached servers to process request
+    private long timeInMiddlewareSum;           // Time in 1/10 ms the request spent in middleware
     private int numMissesSum;  
     private int numGetRequests;
     private int numMultigetRequests;
     private int numSetRequests;
-    private int numKeysSum;
+    private int numMultigetKeysSum;
 
-    public AggregationLogger(int workerId, long initTime, long period) {
+    public AggregationLogger(int workerId, long initTime, int period) {
         this.resetValues();
         this.workerId = workerId;
         this.currentPeriodStart = initTime;
         this.PERIOD = period;
+        logger.debug(String.format("Worker %d instantiated aggregationlogger with a period of %d and a starting timestamp of %d", workerId, period, initTime));
     }
 
     private void resetValues() {
@@ -36,15 +37,39 @@ public class AggregationLogger {
         this.timeInMiddlewareSum = 0;                      // Time in 1/10 ms the request spent in middleware
         this.numMissesSum = 0;  
         this.numGetRequests = 0;
+        this.numMultigetRequests = 0;
         this.numSetRequests = 0;
-        this.numKeysSum = 0;
+        this.numMultigetKeysSum = 0;
     }
 
     private void aggregateLogReset() {
         logger.debug(String.format("Worker %d aggregates log data.", workerId));
-        // TODO: calculate averages
-        // TODO: log aggregates
-        this.resetValues();
+        if(numRequests > 0) {
+            double queueLengthAvg = (double)queueLengthSum / numRequests;
+            double queueWaitingTimeAvg = (double)queueWaitingTimeSum / numRequests;
+            double timeServerProcessingAvg = (double)timeServerProcessingSum / numRequests;
+            double timeInMiddlewareAvg = (double)timeInMiddlewareSum /  numRequests;
+            double numMissesAvg = (double)numMissesSum / numRequests;
+            double numMultigetKeysAvg = (double)numMultigetKeysSum / numRequests;
+            // queueLength queueWaitingTime timeServerProcessing timeInMiddleware numMisses numMultigetKeys numGetRequests numMultigetRequests numSetRequests
+            logger.info(String.format("%d %d %.5f %.5f %.5f %.5f %.5f %.5f %d %d %d", this.currentPeriodStart, 
+                                                                                    this.workerId,
+                                                                                    queueLengthAvg, 
+                                                                                    queueWaitingTimeAvg, 
+                                                                                    timeServerProcessingAvg, 
+                                                                                    timeInMiddlewareAvg, 
+                                                                                    numMissesAvg, 
+                                                                                    numMultigetKeysAvg, 
+                                                                                    numGetRequests, 
+                                                                                    numMultigetRequests, 
+                                                                                    numSetRequests));
+            this.resetValues();
+
+        }
+        else {
+            logger.error("No data to aggregate, numRequests == 0");
+        }
+
     }
 
     private boolean inPeriod (long timestamp) {
@@ -66,11 +91,10 @@ public class AggregationLogger {
                     break;
                 case GET:
                     this.numGetRequests++;
-                    this.numKeysSum++;
                     break;
                 case MULTIGET:
                     this.numMultigetRequests++;
-                    this.numKeysSum += request.numKeys();
+                    this.numMultigetKeysSum += request.numKeys();
                     break;
                 default:
             }
