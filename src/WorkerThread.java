@@ -160,8 +160,7 @@ public class WorkerThread implements Runnable {
         request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
         request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
         int numValues = serverGetResponseBuffer.position()/Request.VALUE_SIZE_MAX;
-        int numMisses = request.numKeys() - numValues;
-        logger.debug(String.format("Received %d values: %d misses", numValues, numMisses));        serverGetResponseBuffer.flip();
+        request.numMissesOnServer = request.numKeys() - numValues;
         //logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, Request.byteBufferToString(serverGetResponseBuffer).trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
         logger.debug(String.format("Worker %d sends response to requesting client", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
@@ -232,8 +231,7 @@ public class WorkerThread implements Runnable {
             request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
             request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
             int numValues = serverGetResponseBuffer.position()/Request.VALUE_SIZE_MAX;
-            int numMisses = request.numKeys() - numValues;
-            logger.debug(String.format("Received %d values: %d misses", numValues, numMisses));
+            request.numMissesOnServer = request.numKeys() - numValues;
             serverGetResponseBuffer.flip();
             //logger.debug(String.format("serverGetResponesBuffer after flip position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
 

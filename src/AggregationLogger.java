@@ -85,19 +85,25 @@ public class AggregationLogger {
             this.timeServerProcessingSum += request.timeServerProcessing;
             this.timeInMiddlewareSum     += request.timeInMiddleware;
             this.numMissesSum            += request.numMissesOnServer; 
+            String t = "";
             switch (request.getType()) {
                 case SET:
                     this.numSetRequests++;
+                    t = "SET";
                     break;
                 case GET:
                     this.numGetRequests++;
+                    t="GET";
                     break;
                 case MULTIGET:
                     this.numMultigetRequests++;
                     this.numMultigetKeysSum += request.numKeys();
+                    t="MGET";
                     break;
                 default:
             }
+            logger.debug(String.format("%s %d %d %d %d %d", t, request.queueLengthBeforeEntering,
+            request.queueWaitingTime, request.timeServerProcessing, request.timeInMiddleware, request.numMissesOnServer ));
         }
         else {
             aggregateLogReset();
