@@ -91,9 +91,7 @@ public class NetworkerThread implements Runnable {
                             newBytesCount = socketChannel.read(request.buffer); // read new data into netthread-buffer
                             logger.info(String.format("Networker has read into buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
                         } catch (Exception e) {
-                            logger.debug(Request.byteBufferToString(request.buffer));
-                            logger.debug(String.format("bytesRead: %d", newBytesCount));
-                            logger.error("Exception occurred",e);
+                            logger.error(String.format("Exception occurred: %s bytesRead: %d", Request.byteBufferToString(request.buffer), newBytesCount),e);
                         }
                         if (newBytesCount == -1) {
                             logger.info("DISCONNECT");
@@ -105,8 +103,7 @@ public class NetworkerThread implements Runnable {
                             logger.debug(String.format("read %d new bytes from request", newBytesCount));
                             ByteBuffer requestBufView = request.buffer.duplicate();
                             requestBufView.flip();
-                            String receivedStr = Request.byteBufferToString(requestBufView);
-                            logger.debug(String.format("Received msg from client: %s", receivedStr));
+                            //logger.debug(String.format("Received msg from client: %s", Request.byteBufferToString(requestBufView)));
                             if(request.isComplete()) {
                                 logger.debug("Request complete, adding it to queue");
                                 logger.debug(String.format("received request of type %s", request.getType()));

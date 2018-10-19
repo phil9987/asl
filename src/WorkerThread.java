@@ -156,7 +156,6 @@ public class WorkerThread implements Runnable {
             serverChannel.write(request.buffer);
         }
 
-        String response = "";
         logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
         serverGetResponseBuffer.clear();
         int bytesRead = 0;
@@ -168,9 +167,8 @@ public class WorkerThread implements Runnable {
         int numValues = serverGetResponseBuffer.position()/Request.VALUE_SIZE_MAX;
         logger.debug(String.format("Received %d values", numValues));
         serverGetResponseBuffer.flip();
-        response = Request.byteBufferToString(serverGetResponseBuffer);
-        logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
-        logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
+        //logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, Request.byteBufferToString(serverGetResponseBuffer).trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
+        logger.info(String.format("Worker %d sends response to requesting client", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
         serverGetResponseBuffer.rewind();
         while (serverGetResponseBuffer.hasRemaining()) {
@@ -201,11 +199,12 @@ public class WorkerThread implements Runnable {
                 bufferPartsGetReq[1] = keyParts[reqId];
                 bufferPartsGetReq[0].rewind();
                 bufferPartsGetReq[2].rewind();
-                String start = Request.byteBufferToString(bufferPartsGetReq[0]);
-                String keyPart = Request.byteBufferToString(bufferPartsGetReq[1]);
-                String endl = Request.byteBufferToString(bufferPartsGetReq[2]);
-                logger.debug(String.format("start len = %d keyPart len = %d endl len = %d", start.length(), keyPart.length(), endl.length()));
-                logger.debug(String.format("Worker %d sends multiget request to memcached server %d: %s%s%s", this.id, serverIdx, start, keyPart, endl));
+                //String start = Request.byteBufferToString(bufferPartsGetReq[0]);
+                //String keyPart = Request.byteBufferToString(bufferPartsGetReq[1]);
+                //String endl = Request.byteBufferToString(bufferPartsGetReq[2]);
+                //logger.debug(String.format("start len = %d keyPart len = %d endl len = %d", start.length(), keyPart.length(), endl.length()));
+                //logger.debug(String.format("Worker %d sends multiget request to memcached server %d: %s%s%s", this.id, serverIdx, start, keyPart, endl));
+                logger.debug(String.format("Worker %d sends multiget request to memcached server %d", this.id, serverIdx));
                 serverChannel.write(bufferPartsGetReq); // blocking
                 serverIdx = (serverIdx + 1) % numServers;
             }
@@ -221,10 +220,11 @@ public class WorkerThread implements Runnable {
                 do{
                     bytesRead = serverChannel.read(serverGetResponseBuffer);
                 } while(!(Request.getResponseIsComplete(serverGetResponseBuffer) || bytesRead == 0 || bytesRead == -1)); // TODO: add better error handling
-                ByteBuffer debugbuf = serverGetResponseBuffer.duplicate();
-                debugbuf.flip();
-                response = Request.byteBufferToString(debugbuf);
-                logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
+                //ByteBuffer debugbuf = serverGetResponseBuffer.duplicate();
+                //debugbuf.flip();
+                //response = Request.byteBufferToString(debugbuf);
+                //logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
+                logger.debug(String.format("Worker %d received response from memcached server %d: Complete: %b", this.id, serverIdx, Request.getResponseIsComplete(serverGetResponseBuffer)));
                 if(reqId < numRequests -1) {
                     // remove end line from all requests but last one
                     // TODO: what if end line does not arrive in one piece?
@@ -242,7 +242,7 @@ public class WorkerThread implements Runnable {
             serverGetResponseBuffer.flip();
             logger.info(String.format("serverGetResponesBuffer after flip position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
 
-            logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor (Complete: %b): %s", this.id, Request.getResponseIsComplete(serverGetResponseBuffer), Request.byteBufferToString(serverGetResponseBuffer)));
+            //logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor (Complete: %b): %s", this.id, Request.getResponseIsComplete(serverGetResponseBuffer), Request.byteBufferToString(serverGetResponseBuffer)));
             SocketChannel requestorChannel = request.getRequestorChannel();
             while (serverGetResponseBuffer.hasRemaining()) {
                 logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));

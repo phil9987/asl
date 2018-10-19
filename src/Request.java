@@ -154,7 +154,6 @@ public class Request {
         int keysPerRequest = numKeys / numServers;
         int overflow = numKeys % numServers;
         int numRequests = numServers;
-        logger.debug(String.format("Number of keys per request: %d (overflow: %d, numRequests: %d)", keysPerRequest, overflow, numRequests));
         if(keysPerRequest == 0) {
             // if there are less keys than servers just put 1 key per request
             keysPerRequest = 1;     
