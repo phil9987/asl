@@ -116,6 +116,7 @@ public class WorkerThread implements Runnable {
         request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
         logger.debug(String.format("Worker %d sends response to requesting client.", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
+        aggregationLogger.logRequest(request);
         if(errResponse.isEmpty()) {
             serverSetResponseBuffer.rewind();
             while (serverSetResponseBuffer.hasRemaining()) {
@@ -164,6 +165,7 @@ public class WorkerThread implements Runnable {
         //logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, Request.byteBufferToString(serverGetResponseBuffer).trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
         logger.debug(String.format("Worker %d sends response to requesting client", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
+        aggregationLogger.logRequest(request);
         serverGetResponseBuffer.rewind();
         while (serverGetResponseBuffer.hasRemaining()) {
             //logger.debug(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
@@ -237,6 +239,7 @@ public class WorkerThread implements Runnable {
 
             //logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor (Complete: %b): %s", this.id, Request.getResponseIsComplete(serverGetResponseBuffer), Request.byteBufferToString(serverGetResponseBuffer)));
             SocketChannel requestorChannel = request.getRequestorChannel();
+            aggregationLogger.logRequest(request);
             while (serverGetResponseBuffer.hasRemaining()) {
                 //logger.debug(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
                 requestorChannel.write(serverGetResponseBuffer);
@@ -278,7 +281,6 @@ public class WorkerThread implements Runnable {
                 request.queueWaitingTime = System.currentTimeMillis() - request.timestampQueueEntered;
                 Request.Type type = request.getType();
                 logger.debug(String.format("Worker %d starts handling request of type %s", this.id, type));
-                boolean log = true;
                 switch(type) {
                     case GET:   processGet(request);
                                 break;
@@ -287,10 +289,8 @@ public class WorkerThread implements Runnable {
                     case SET:   processSet(request);
                                 break;
                     default:
-                        log = false;
                         logger.error(String.format("Received request with wrong type: %s", type));
                 }
-                if(log) aggregationLogger.logRequest(request);
             }
         } catch(InterruptedException e) {
             logger.error(String.format("Worker %d got interrupted", this.id), e);
