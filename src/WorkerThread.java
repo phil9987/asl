@@ -91,7 +91,7 @@ public class WorkerThread implements Runnable {
             logger.debug(String.format("Worker %d sends set request to memcached server %d...", this.id, serverIdx));
             request.buffer.rewind();
             while (request.buffer.hasRemaining()) {
-                logger.debug(String.format("sending request to server, %d remaining", request.buffer.remaining()));
+                //logger.debug(String.format("sending request to server, %d remaining", request.buffer.remaining()));
                 serverChannel.write(request.buffer);
             }
         }
@@ -124,7 +124,7 @@ public class WorkerThread implements Runnable {
         if(errResponse.isEmpty()) {
             serverSetResponseBuffer.rewind();
             while (serverSetResponseBuffer.hasRemaining()) {
-                logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
+                //logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
                 requestorChannel.write(serverSetResponseBuffer);
             } 
         }
@@ -133,7 +133,7 @@ public class WorkerThread implements Runnable {
             ByteBuffer errBuf = Request.stringToByteBuffer(errResponse);
             //logger.info(String.format("errror bytebuffer position: %d limit: %d capacity: %d", errBuf.position(), errBuf.limit(), errBuf.capacity() ));
             while (errBuf.hasRemaining()) {
-                logger.info(String.format("sending error response to requestor, %d remaining", errBuf.remaining()));
+                //logger.info(String.format("sending error response to requestor, %d remaining", errBuf.remaining()));
                 requestorChannel.write(errBuf);
             }
         }
@@ -152,7 +152,7 @@ public class WorkerThread implements Runnable {
         SocketChannel serverChannel = serverConnections[serverIdx];
         long serverProcessingBegin = System.currentTimeMillis();
         while (request.buffer.hasRemaining()) {
-            logger.debug(String.format("sending get request to server, %d remaining", request.buffer.remaining()));
+            //logger.debug(String.format("sending get request to server, %d remaining", request.buffer.remaining()));
             serverChannel.write(request.buffer);
         }
 
@@ -172,7 +172,7 @@ public class WorkerThread implements Runnable {
         SocketChannel requestorChannel = request.getRequestorChannel();
         serverGetResponseBuffer.rewind();
         while (serverGetResponseBuffer.hasRemaining()) {
-            logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
+            //logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
             requestorChannel.write(serverGetResponseBuffer);
         } 
     }
@@ -245,7 +245,7 @@ public class WorkerThread implements Runnable {
             //logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor (Complete: %b): %s", this.id, Request.getResponseIsComplete(serverGetResponseBuffer), Request.byteBufferToString(serverGetResponseBuffer)));
             SocketChannel requestorChannel = request.getRequestorChannel();
             while (serverGetResponseBuffer.hasRemaining()) {
-                logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
+                //logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
                 requestorChannel.write(serverGetResponseBuffer);
             } 
         }
