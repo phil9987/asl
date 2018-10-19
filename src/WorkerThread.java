@@ -237,7 +237,8 @@ public class WorkerThread implements Runnable {
             request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
             request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
             int numValues = serverGetResponseBuffer.position()/Request.VALUE_SIZE_MAX;
-            logger.debug(String.format("Received %d values", numValues));
+            int numMisses = request.numKeys() - numValues;
+            logger.debug(String.format("Received %d values: %d misses", numValues, numMisses));
             serverGetResponseBuffer.flip();
             logger.info(String.format("serverGetResponesBuffer after flip position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
 
