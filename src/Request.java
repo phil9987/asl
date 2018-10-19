@@ -86,9 +86,8 @@ public class Request {
             logger.debug(String.format("first character = %c", firstChar));
             switch(firstChar) {
                 case 'g':   if(this.isComplete()) {
-                                int numSpaces = parseGet();
-                                logger.debug(String.format("NumSpaces from parseGet(): %d", numSpaces));
-                                if(numSpaces == 1) {
+                                parseGet();
+                                if( this.numKeys() == 1) {
                                     this.type = Type.GET;
                                 }
                                 else {
@@ -195,9 +194,9 @@ public class Request {
      * Converts buffer to String and parses it for space characers and endline. 
      * String is stored in this.requestStr and space positions are stored in this.offsets
      * The last element of this.offsets is the position of \r
-     * Returns the number of white spaces that are contained in the request
+     *
      */
-    private int parseGet() {
+    private void parseGet() {
         // requires this.isComplete() == true else might run infinitely
         ByteBuffer buf = this.buffer.duplicate();
         buf.flip();
@@ -209,7 +208,6 @@ public class Request {
             if(spacePos != -1) offsets.add(spacePos);
         } while(spacePos != -1);
         offsets.add(this.requestStr.indexOf('\r'));     // last offset is endline
-        return offsets.size();
     }
 
     public int numKeys() {
