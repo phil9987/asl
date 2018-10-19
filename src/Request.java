@@ -199,14 +199,18 @@ public class Request {
         // requires this.isComplete() == true else might run infinitely
         ByteBuffer buf = this.buffer.duplicate();
         buf.flip();
-        this.requestStr = byteBufferToString(buf);
-        logger.debug(String.format("Parsing get request: %s", requestStr));
-        int spacePos = -1;
+        int pos = 0;
+        byte current_char;
         do {
-            spacePos = this.requestStr.indexOf(' ', spacePos+1);
-            if(spacePos != -1) offsets.add(spacePos);
-        } while(spacePos != -1);
-        offsets.add(this.requestStr.indexOf('\r'));     // last offset is endline
+            current_char = buf.get(pos);
+            if(current_char == ' ') {
+                offsets.add(pos);
+            } else if(current_char == '\r') {
+                offsets.add(pos);
+                break;
+            }
+            pos++;
+        } while(pos != buf.limit() && current_char != '\r');
     }
 
     public int numKeys() {
