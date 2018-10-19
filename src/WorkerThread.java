@@ -112,22 +112,22 @@ public class WorkerThread implements Runnable {
         }
         request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
         request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
-        logger.info(String.format("Worker %d sends response to requesting client.", this.id));
+        logger.debug(String.format("Worker %d sends response to requesting client.", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
         // TODO: log request object
         if(errResponse.isEmpty()) {
             serverSetResponseBuffer.rewind();
             while (serverSetResponseBuffer.hasRemaining()) {
-                //logger.info(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
+                //logger.debug(String.format("sending response to requestor, %d remaining", serverSetResponseBuffer.remaining()));
                 requestorChannel.write(serverSetResponseBuffer);
             } 
         }
         else {
             // error occurred on at least one server, forwarding one of the error messages
             ByteBuffer errBuf = Request.stringToByteBuffer(errResponse);
-            //logger.info(String.format("errror bytebuffer position: %d limit: %d capacity: %d", errBuf.position(), errBuf.limit(), errBuf.capacity() ));
+            //logger.debug(String.format("errror bytebuffer position: %d limit: %d capacity: %d", errBuf.position(), errBuf.limit(), errBuf.capacity() ));
             while (errBuf.hasRemaining()) {
-                //logger.info(String.format("sending error response to requestor, %d remaining", errBuf.remaining()));
+                //logger.debug(String.format("sending error response to requestor, %d remaining", errBuf.remaining()));
                 requestorChannel.write(errBuf);
             }
         }
@@ -162,11 +162,11 @@ public class WorkerThread implements Runnable {
         logger.debug(String.format("Received %d values", numValues));
         serverGetResponseBuffer.flip();
         //logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, Request.byteBufferToString(serverGetResponseBuffer).trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
-        logger.info(String.format("Worker %d sends response to requesting client", this.id));
+        logger.debug(String.format("Worker %d sends response to requesting client", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
         serverGetResponseBuffer.rewind();
         while (serverGetResponseBuffer.hasRemaining()) {
-            //logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
+            //logger.debug(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
             requestorChannel.write(serverGetResponseBuffer);
         } 
     }
@@ -234,12 +234,12 @@ public class WorkerThread implements Runnable {
             int numMisses = request.numKeys() - numValues;
             logger.debug(String.format("Received %d values: %d misses", numValues, numMisses));
             serverGetResponseBuffer.flip();
-            //logger.info(String.format("serverGetResponesBuffer after flip position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+            //logger.debug(String.format("serverGetResponesBuffer after flip position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
 
             //logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor (Complete: %b): %s", this.id, Request.getResponseIsComplete(serverGetResponseBuffer), Request.byteBufferToString(serverGetResponseBuffer)));
             SocketChannel requestorChannel = request.getRequestorChannel();
             while (serverGetResponseBuffer.hasRemaining()) {
-                //logger.info(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
+                //logger.debug(String.format("sending response to requestor, %d remaining", serverGetResponseBuffer.remaining()));
                 requestorChannel.write(serverGetResponseBuffer);
             } 
         }
@@ -278,7 +278,7 @@ public class WorkerThread implements Runnable {
                 Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
                 request.queueWaitingTime = System.currentTimeMillis() - request.timestampQueueEntered;
                 Request.Type type = request.getType();
-                logger.info(String.format("Worker %d starts handling request of type %s", this.id, type));
+                logger.debug(String.format("Worker %d starts handling request of type %s", this.id, type));
                 switch(type) {
                     case GET:   processGet(request);
                                 break;
