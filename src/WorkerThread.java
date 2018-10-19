@@ -62,7 +62,7 @@ public class WorkerThread implements Runnable {
     private int getServerIdx() {
         roundrobinvariable = (roundrobinvariable + 1) % numServers;
         int next_idx = (serverOffset + roundrobinvariable) % numServers;
-        logger.debug(String.format("WorkerThread%d next server idx: %d roundrobinvariable: %d", this.id, next_idx, roundrobinvariable));
+        //logger.debug(String.format("Worker %d next server idx: %d roundrobinvariable: %d", this.id, next_idx, roundrobinvariable));
         return next_idx;
     }
 
@@ -82,7 +82,7 @@ public class WorkerThread implements Runnable {
      * In case one server responded with an error, the error message is sent to the requesting client.
      */
     private void processSet(Request request) throws IOException {
-        logger.debug(String.format("Worker %d sends set request to all memcached servers...", this.id));
+        //logger.debug(String.format("Worker %d sends set request to all memcached servers...", this.id));
         request.buffer.flip();
         long serverProcessingBegin = System.currentTimeMillis();
 
@@ -95,7 +95,6 @@ public class WorkerThread implements Runnable {
                 serverChannel.write(request.buffer);
             }
         }
-        String response = "";
         String errResponse = "";
 
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
@@ -108,17 +107,12 @@ public class WorkerThread implements Runnable {
             //logger.debug(String.format("Worker %d received response from memcached server %d: %s", this.id, serverIdx, response.trim()));
             if (!serverSetResponseBuffer.equals(WorkerThread.SET_POSITIVE_RESPONSE_BUF)) {
                 logger.error(String.format("Memcached server %d returned error to worker %d", serverIdx, this.id));
-                errResponse = response;
+                errResponse = Request.byteBufferToString(serverSetResponseBuffer);
             }
         }
         request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
         request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
-
-        if(!errResponse.isEmpty()) {
-            // at least one server responded an error
-            response = errResponse;
-        }
-        logger.info(String.format("Worker %d sends response to requesting client: %s", this.id, response.trim()));
+        logger.info(String.format("Worker %d sends response to requesting client.", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
         // TODO: log request object
         if(errResponse.isEmpty()) {
