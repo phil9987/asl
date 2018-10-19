@@ -83,7 +83,7 @@ public class Request {
     public Type getType() {
         if(this.type == Type.NOT_SET) {
             byte firstChar = this.buffer.get(0);
-            logger.debug(String.format("first character = %c", firstChar));
+            //logger.debug(String.format("first character = %c", firstChar));
             switch(firstChar) {
                 case 'g':   if(this.isComplete()) {
                                 parseGet();
