@@ -78,7 +78,7 @@ public class AggregationLogger {
 
     public void logRequest(Request request) {
         if(inPeriod(request.timestampReceived)) {
-            logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger"));
+            logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger", request.timestampReceived));
             this.numRequests++;
             this.queueLengthSum          += request.queueLengthBeforeEntering;
             this.queueWaitingTimeSum     += request.queueWaitingTime;
