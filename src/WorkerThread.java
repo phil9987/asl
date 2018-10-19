@@ -162,7 +162,7 @@ public class WorkerThread implements Runnable {
         request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
         int numValues = serverGetResponseBuffer.position()/Request.VALUE_SIZE_MAX;
         request.numMissesOnServer = request.numKeys() - numValues;
-        //logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, Request.byteBufferToString(serverGetResponseBuffer).trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
+        logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, Request.byteBufferToString(serverGetResponseBuffer).trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
         logger.debug(String.format("Worker %d sends response to requesting client", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
         aggregationLogger.logRequest(request);
