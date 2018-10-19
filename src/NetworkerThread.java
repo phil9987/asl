@@ -75,21 +75,19 @@ public class NetworkerThread implements Runnable {
                             // request has been finished already, start a new one
                             logger.debug("Resetting request object");
                             request.reset(socketChannel);
-                            logger.info(String.format("Request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
+                            //logger.info(String.format("Request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
                             //key.attach(request);
                         } else {
+                            // attached request is continued until it is complete
                             logger.debug("Request is not finished yet...");
-                            logger.info(String.format("Request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
+                            //logger.info(String.format("Request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
                         }
-                        // else: attached request is continued until it is complete
 
                         // TODO: add acceptedAt time to request
                         request.timestampReceived = System.nanoTime();
                         int newBytesCount = -1;
                         try{
-                            logger.info(String.format("Networker reads into buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
                             newBytesCount = socketChannel.read(request.buffer); // read new data into netthread-buffer
-                            logger.info(String.format("Networker has read into buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
                         } catch (Exception e) {
                             logger.error(String.format("Exception occurred: %s bytesRead: %d", Request.byteBufferToString(request.buffer), newBytesCount),e);
                         }

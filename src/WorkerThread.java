@@ -131,7 +131,7 @@ public class WorkerThread implements Runnable {
         else {
             // error occurred on at least one server, forwarding one of the error messages
             ByteBuffer errBuf = Request.stringToByteBuffer(errResponse);
-            logger.info(String.format("errror bytebuffer position: %d limit: %d capacity: %d", errBuf.position(), errBuf.limit(), errBuf.capacity() ));
+            //logger.info(String.format("errror bytebuffer position: %d limit: %d capacity: %d", errBuf.position(), errBuf.limit(), errBuf.capacity() ));
             while (errBuf.hasRemaining()) {
                 logger.info(String.format("sending error response to requestor, %d remaining", errBuf.remaining()));
                 requestorChannel.write(errBuf);
@@ -228,9 +228,9 @@ public class WorkerThread implements Runnable {
                 if(reqId < numRequests -1) {
                     // remove end line from all requests but last one
                     // TODO: what if end line does not arrive in one piece?
-                    logger.debug(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", this.id, serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+                    //logger.debug(String.format("Worker %d resets serverGetResponseByteBuffer position: %d limit: %d capacity: %d", this.id, serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
                     serverGetResponseBuffer.position(serverGetResponseBuffer.position()-5);
-                    logger.debug(String.format("Worker %d resetted serverGetResponseByteBuffer position: %d limit: %d capacity: %d", this.id, serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+                    //logger.debug(String.format("Worker %d resetted serverGetResponseByteBuffer position: %d limit: %d capacity: %d", this.id, serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
                 }
                 serverIdx = (serverIdx + 1) % numServers;
             }
@@ -240,7 +240,7 @@ public class WorkerThread implements Runnable {
             int numMisses = request.numKeys() - numValues;
             logger.debug(String.format("Received %d values: %d misses", numValues, numMisses));
             serverGetResponseBuffer.flip();
-            logger.info(String.format("serverGetResponesBuffer after flip position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
+            //logger.info(String.format("serverGetResponesBuffer after flip position: %d limit: %d capacity: %d", serverGetResponseBuffer.position(), serverGetResponseBuffer.limit(), serverGetResponseBuffer.capacity() ));
 
             //logger.debug(String.format("Worker %d sends aggreageted response from memcached servers to requestor (Complete: %b): %s", this.id, Request.getResponseIsComplete(serverGetResponseBuffer), Request.byteBufferToString(serverGetResponseBuffer)));
             SocketChannel requestorChannel = request.getRequestorChannel();
