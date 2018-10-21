@@ -105,10 +105,18 @@ public class AggregationLogger {
             logger.debug(String.format("%s %d %d %d %d %d", t, request.queueLengthBeforeEntering,
             request.queueWaitingTime, request.timeServerProcessing, request.timeInMiddleware, request.numMissesOnServer ));
         }
-        else if(numRequests > 0) {
-            aggregateLogReset();
-            this.currentPeriodStart += this.PERIOD;
-            logRequest(request);
+        else {
+            if(numRequests > 0) {
+                aggregateLogReset();
+                logRequest(request);
+            } else {
+                logger.debug("No requests yet, setting currentPeriodStart s.t. current requests fits in");
+            }
+            do {
+                this.currentPeriodStart += this.PERIOD;
+            } while(!inPeriod(request.timestampReceived));
+            
+
         }
     } 
 
