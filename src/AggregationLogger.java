@@ -63,10 +63,7 @@ public class AggregationLogger {
                                                                                     numGetRequests, 
                                                                                     numMultigetRequests, 
                                                                                     numSetRequests));
-            logger.error("errorlevel test");
-            logger.trace("tracelevel test");
             this.resetValues();
-
         }
         else {
             logger.error("No data to aggregate, numRequests == 0");
