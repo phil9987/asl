@@ -105,7 +105,7 @@ public class NetworkerThread implements Runnable {
                             if(request.isComplete()) {
                                 logger.debug("Request complete, adding it to queue");
                                 //logger.debug(String.format("received request of type %s", request.getType()));
-                                request.timestampQueueEntered = System.nanoTime();
+                                request.timestampQueueEntered = System.currentTimeMillis();
                                 request.queueLengthBeforeEntering = blockingRequestQueue.size();
                                 try {
                                     this.blockingRequestQueue.put(request); // blocking if queue is full
