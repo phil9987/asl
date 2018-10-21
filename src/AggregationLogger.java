@@ -105,6 +105,7 @@ public class AggregationLogger {
             request.queueWaitingTime, request.timeServerProcessing, request.timeInMiddleware, request.numMissesOnServer ));
         }
         else {
+            logger.debug(String.format("Request %d not in period, aggregating and resetting data before increasing currentPeriodStart", request.timestampReceived));
             if(numRequests > 0) {
                 aggregateLogReset();
             } else {
@@ -113,6 +114,7 @@ public class AggregationLogger {
             do {
                 this.currentPeriodStart += this.PERIOD;
             } while(!inPeriod(request.timestampReceived));
+            logger.debug(String.format("Updated currentPeriodStart to %d, logging pending request now", this.currentPeriodStart));
             logRequest(request);
 
             
