@@ -11,6 +11,7 @@
         <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="8388608" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
             <Filters>
+                <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </File>
