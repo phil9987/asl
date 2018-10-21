@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="DEBUG">
     <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-        <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-    </Console>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Filters>
+                    <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </Console>
+        <FastFile name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="10000000" append="false">
+                <PatternLayout pattern="%d{UNIX} %m%n"/>
+                <Filters>
+                    <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
+                    <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
+                </Filters>
+        </FastFile>
+        <FastFile name="Errors" fileName="logs/error.log" append="false">
+            <PatternLayout pattern="%d{UNIX_MILLIS} %m%n"/>
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </FastFile>
     </Appenders>
     <Loggers>
-    <Root level="debug">
-        <AppenderRef ref="Console"/>
-    </Root>
+        <Root level="debug">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Requests"/>
+            <AppenderRef ref="Errors"/>
+        </Root>
     </Loggers>
 </Configuration>
