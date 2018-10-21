@@ -52,7 +52,7 @@ public class AggregationLogger {
             double numMissesAvg = (double)numMissesSum / numRequests;
             double numMultigetKeysAvg = (double)numMultigetKeysSum / numRequests;
             // queueLength queueWaitingTime timeServerProcessing timeInMiddleware numMisses numMultigetKeys numGetRequests numMultigetRequests numSetRequests
-            logger.log(String.format("%d %d %.5f %.5f %.5f %.5f %.5f %.5f %d %d %d", this.currentPeriodStart, 
+            logger.trace(String.format("%d %d %.5f %.5f %.5f %.5f %.5f %.5f %d %d %d", this.currentPeriodStart, 
                                                                                     this.workerId,
                                                                                     queueLengthAvg, 
                                                                                     queueWaitingTimeAvg, 
