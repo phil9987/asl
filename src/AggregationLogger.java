@@ -105,7 +105,7 @@ public class AggregationLogger {
             logger.debug(String.format("%s %d %d %d %d %d", t, request.queueLengthBeforeEntering,
             request.queueWaitingTime, request.timeServerProcessing, request.timeInMiddleware, request.numMissesOnServer ));
         }
-        else {
+        else if(numRequests > 0) {
             aggregateLogReset();
             this.currentPeriodStart += this.PERIOD;
             logRequest(request);
