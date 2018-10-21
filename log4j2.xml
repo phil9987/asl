@@ -7,19 +7,19 @@
                     <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </Console>
-        <FastFile name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="10000000" append="false">
+        <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="10000000" append="false">
                 <PatternLayout pattern="%d{UNIX} %m%n"/>
                 <Filters>
                     <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
                     <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
                 </Filters>
-        </FastFile>
-        <FastFile name="Errors" fileName="logs/error.log" append="false">
+        </File>
+        <File name="Errors" fileName="logs/error.log" append="false">
             <PatternLayout pattern="%d{UNIX_MILLIS} %m%n"/>
             <Filters>
                 <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
-        </FastFile>
+        </File>
     </Appenders>
     <Loggers>
         <Root level="debug">
