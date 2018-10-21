@@ -14,13 +14,13 @@
                     <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
                     <ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="NEUTRAL"/>
                     <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
-                    <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
+                    <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
                 </Filters>
         </File>
         <File name="Errors" fileName="logs/error.log" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
             <Filters>
-                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
             </Filters>
         </File>
     </Appenders>
