@@ -12,12 +12,10 @@
                 <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
                 <Filters>
                     <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
-                    <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
-                    <ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="NEUTRAL"/>
                 </Filters>
         </File>
         <File name="Errors" fileName="logs/error.log" append="false">
-            <PatternLayout pattern="%d{UNIX_MILLIS} %m%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
             <Filters>
                 <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
