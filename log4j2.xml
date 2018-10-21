@@ -8,11 +8,14 @@
                     <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </Console>
-        <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="10000000" append="false">
-                <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
-                <Filters>
-                    <LevelRangeFilter minLevel="TRACE" maxLevel="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
-                </Filters>
+        <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="8388608" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
+            <LevelRangeFilter minLevel="TRACE" maxLevel="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>        
+        </File>
+
+        <File name="asdf" fileName="logs/info.log" immediateFlush="false" bufferSize="8388608" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
+            <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>        
         </File>
         <File name="Errors" fileName="logs/error.log" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
