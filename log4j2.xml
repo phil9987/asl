@@ -11,10 +11,7 @@
         <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="10000000" append="false">
                 <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
                 <Filters>
-                    <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
-                    <ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="NEUTRAL"/>
-                    <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
-                    <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                    <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
                 </Filters>
         </File>
         <File name="Errors" fileName="logs/error.log" append="false">
