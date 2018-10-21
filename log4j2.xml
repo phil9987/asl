@@ -20,7 +20,7 @@
         <File name="Errors" fileName="logs/error.log" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
             <Filters>
-                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </File>
     </Appenders>
