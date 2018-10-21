@@ -63,7 +63,8 @@ public class AggregationLogger {
                                                                                     numGetRequests, 
                                                                                     numMultigetRequests, 
                                                                                     numSetRequests));
-            logger.error("test");
+            logger.error("errorlevel test");
+            logger.trace("tracelevel test");
             this.resetValues();
 
         }
