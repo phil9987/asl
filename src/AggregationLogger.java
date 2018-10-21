@@ -63,6 +63,17 @@ public class AggregationLogger {
                                                                                     numGetRequests, 
                                                                                     numMultigetRequests, 
                                                                                     numSetRequests));
+            logger.error(String.format("%d %d %.5f %.5f %.5f %.5f %.5f %.5f %d %d %d", this.currentPeriodStart, 
+                                                                                    this.workerId,
+                                                                                    queueLengthAvg, 
+                                                                                    queueWaitingTimeAvg, 
+                                                                                    timeServerProcessingAvg, 
+                                                                                    timeInMiddlewareAvg, 
+                                                                                    numMissesAvg, 
+                                                                                    numMultigetKeysAvg, 
+                                                                                    numGetRequests, 
+                                                                                    numMultigetRequests, 
+                                                                                    numSetRequests));
             this.resetValues();
 
         }
@@ -108,13 +119,14 @@ public class AggregationLogger {
         else {
             if(numRequests > 0) {
                 aggregateLogReset();
-                logRequest(request);
             } else {
                 logger.debug("No requests yet, setting currentPeriodStart s.t. current requests fits in");
             }
             do {
                 this.currentPeriodStart += this.PERIOD;
             } while(!inPeriod(request.timestampReceived));
+            logRequest(request);
+
             
 
         }
