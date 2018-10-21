@@ -77,7 +77,7 @@ public class AggregationLogger {
 
     public void logRequest(Request request) {
         if(inPeriod(request.timestampReceived)) {
-            logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger", request.timestampReceived));
+            logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
             this.numRequests++;
             this.queueLengthSum          += request.queueLengthBeforeEntering;
             this.queueWaitingTimeSum     += request.queueWaitingTime;
@@ -105,7 +105,7 @@ public class AggregationLogger {
             request.queueWaitingTime, request.timeServerProcessing, request.timeInMiddleware, request.numMissesOnServer ));
         }
         else {
-            logger.debug(String.format("Request %d not in period, aggregating and resetting data before increasing currentPeriodStart", request.timestampReceived));
+            logger.debug(String.format("Request %d not in period, aggregating and resetting data before increasing currentPeriodStart (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
             if(numRequests > 0) {
                 aggregateLogReset();
             } else {
