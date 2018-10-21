@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="TRACE">
+<Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
@@ -11,6 +11,8 @@
         <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="10000000" append="false">
                 <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
                 <Filters>
+                    <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
+                    <ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="NEUTRAL"/>
                     <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
                 </Filters>
         </File>
