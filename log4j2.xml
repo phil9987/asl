@@ -4,16 +4,16 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Filters>
-                    <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-                    <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+                    <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                    <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
             </Filters>
         </Console>
         <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="10000000" append="false">
                 <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
                 <Filters>
+                    <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
                     <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
                     <ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="NEUTRAL"/>
-                    <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
                 </Filters>
         </File>
         <File name="Errors" fileName="logs/error.log" append="false">
