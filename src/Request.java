@@ -28,7 +28,7 @@ public class Request {
     int queueLengthBeforeEntering = -1;             // Size of queue before this request was added to it by networkerThread
     long queueWaitingTime = -1;                     // Time in ms waiting in queue
     long timeServerProcessing = -1;                 // Time in ms for memcached servers to process request
-    long timeInMiddleware = -1;                     // Time in 1/10 ms the request spent in middleware
+    long timeInMiddleware = -1;                     // Time in ns the request spent in middleware
     int numMissesOnServer = -1;                     // Number of cache misses on memcached server (in response)
 
     /**

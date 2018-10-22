@@ -86,6 +86,7 @@ public class WorkerThread implements Runnable {
     private void processSet(Request request) throws IOException {
         //logger.debug(String.format("Worker %d sends set request to all memcached servers...", this.id));
         request.buffer.flip();
+        request.numMissesOnServer = 0;  // no misses for set requests
         long serverProcessingBegin = System.currentTimeMillis();
 
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
@@ -113,7 +114,7 @@ public class WorkerThread implements Runnable {
             }
         }
         request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
-        request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
+        request.timeInMiddleware = System.nanoTime() - request.timestampReceived;
         logger.debug(String.format("Worker %d sends response to requesting client.", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
         aggregationLogger.logRequest(request);
