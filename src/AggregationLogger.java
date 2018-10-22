@@ -45,7 +45,7 @@ public class AggregationLogger {
     private void aggregateLogReset() {
         logger.debug(String.format("Worker %d aggregates log data.", workerId));
         if(numRequests > 0) {
-            double queueLengthAvg = (double)queueLengthSum / numRequests;
+            /*double queueLengthAvg = (double)queueLengthSum / numRequests;
             double queueWaitingTimeAvg = (double)queueWaitingTimeSum / numRequests;
             double timeServerProcessingAvg = (double)timeServerProcessingSum / numRequests;
             double timeInMiddlewareAvg = (double)timeInMiddlewareSum /  numRequests;
@@ -60,6 +60,17 @@ public class AggregationLogger {
                                                                                     timeInMiddlewareAvg, 
                                                                                     numMissesAvg, 
                                                                                     numMultigetKeysAvg, 
+                                                                                    numGetRequests, 
+                                                                                    numMultigetRequests, 
+                                                                                    numSetRequests));*/
+            logger.trace(String.format("%d %d %.5f %.5f %.5f %.5f %.5f %.5f %d %d %d", this.currentPeriodStart, 
+                                                                                    this.workerId,
+                                                                                    queueLengthSum, 
+                                                                                    queueWaitingTimeSum, 
+                                                                                    timeServerProcessingSum, 
+                                                                                    timeInMiddlewareSum, 
+                                                                                    numMissesSum, 
+                                                                                    numMultigetKeysSum, 
                                                                                     numGetRequests, 
                                                                                     numMultigetRequests, 
                                                                                     numSetRequests));

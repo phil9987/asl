@@ -8,7 +8,7 @@
                     <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </Console>
-        <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="8388608" append="false">
+        <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="10000000" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
             <Filters>
                 <ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="NEUTRAL"/>
