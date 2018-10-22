@@ -51,7 +51,7 @@ public class AggregationLogger {
             double timeInMiddlewareAvg = (double)timeInMiddlewareSum /  numRequests;
             double numMissesAvg = (double)numMissesSum / numRequests;
             double numMultigetKeysAvg = (double)numMultigetKeysSum / numRequests;
-            // queueLength queueWaitingTime timeServerProcessing timeInMiddleware numMisses numMultigetKeys numGetRequests numMultigetRequests numSetRequests
+            // timestamp workerId queueLength queueWaitingTime timeServerProcessing timeInMiddleware numMisses numMultigetKeys numGetRequests numMultigetRequests numSetRequests
             logger.trace(String.format("%d %d %.5f %.5f %.5f %.5f %.5f %.5f %d %d %d", this.currentPeriodStart, 
                                                                                     this.workerId,
                                                                                     queueLengthAvg, 
@@ -63,7 +63,7 @@ public class AggregationLogger {
                                                                                     numGetRequests, 
                                                                                     numMultigetRequests, 
                                                                                     numSetRequests));*/
-            logger.trace(String.format("%d %d %.5f %.5f %.5f %.5f %.5f %.5f %d %d %d", this.currentPeriodStart, 
+            logger.trace(String.format("%d %d %d %d %d %d %d %d %d %d %d", this.currentPeriodStart, 
                                                                                     this.workerId,
                                                                                     queueLengthSum, 
                                                                                     queueWaitingTimeSum, 
