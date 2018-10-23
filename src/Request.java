@@ -30,7 +30,8 @@ public class Request {
     long timeServerProcessing = -1;                 // Time in ms for memcached servers to process request
     long timeInMiddleware = -1;                     // Time in ns the request spent in middleware
     int numMissesOnServer = -1;                     // Number of cache misses on memcached server (in response)
-
+    int firstServerUsed = -1;
+    int numServersUsed = -1;
     /**
      * Constructor
      */
@@ -74,6 +75,13 @@ public class Request {
         this.timeInMiddleware = -1;
         this.queueLengthBeforeEntering = -1;
         this.numMissesOnServer = -1;
+        int firstServerUsed = -1;
+        int numServersUsed = -1;
+    }
+
+    public void setServersUsed(int firstServer, int numServers) {
+        this.firstServerUsed = firstServer;
+        this.numServersUsed = numServers;
     }
 
     /**

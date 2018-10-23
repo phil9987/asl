@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 public class AggregationLogger {
     private static final Logger logger = LogManager.getLogger("AggregationLogger");; 
     private final long PERIOD;    
+    private final int MAX_NUM_SERVERS  = 3;
     private final int workerId;
     private long currentPeriodStart;        
 
@@ -20,12 +21,16 @@ public class AggregationLogger {
     private int numMultigetRequests;
     private int numSetRequests;
     private int numMultigetKeysSum;
+    private int[] serverCounts;
+    private final int numServers;
 
-    public AggregationLogger(int workerId, long initTime, int period) {
-        this.resetValues();
+    public AggregationLogger(int workerId, long initTime, int period, int numServers) {
         this.workerId = workerId;
         this.currentPeriodStart = initTime;
         this.PERIOD = period;
+        this.numServers = numServers;
+        this.serverCounts = new int[MAX_NUM_SERVERS];
+        this.resetValues();
         logger.debug(String.format("Worker %d instantiated aggregationlogger with a period of %d and a starting timestamp of %d", workerId, period, initTime));
     }
 
@@ -40,6 +45,9 @@ public class AggregationLogger {
         this.numMultigetRequests = 0;
         this.numSetRequests = 0;
         this.numMultigetKeysSum = 0;
+        for(int i = 0; i < numServers; i++) {
+            serverCounts[i] = 0;
+        }
     }
 
     private void aggregateLogReset() {
@@ -63,7 +71,7 @@ public class AggregationLogger {
                                                                                     numGetRequests, 
                                                                                     numMultigetRequests, 
                                                                                     numSetRequests));*/
-            logger.trace(String.format("%d %d %d %d %d %d %d %d %d %d %d %d", this.currentPeriodStart, 
+            logger.trace(String.format("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", this.currentPeriodStart, 
                                                                                     this.workerId,
                                                                                     queueLengthSum, 
                                                                                     queueWaitingTimeSum, 
@@ -74,7 +82,10 @@ public class AggregationLogger {
                                                                                     numGetRequests, 
                                                                                     numMultigetRequests, 
                                                                                     numSetRequests,
-                                                                                    numRequests));
+                                                                                    numRequests,
+                                                                                    serverCounts[0],
+                                                                                    serverCounts[1],
+                                                                                    serverCounts[2]));
             this.resetValues();
         }
         else {
@@ -112,6 +123,10 @@ public class AggregationLogger {
                     t="MGET";
                     break;
                 default:
+            }
+            for(int i = 0; i < request.numServersUsed; i++) {
+                int idx = (request.firstServerUsed + i) % numServers;
+                serverCounts[idx] += 1;
             }
             logger.debug(String.format("%s %d %d %d %d %d", t, request.queueLengthBeforeEntering,
             request.queueWaitingTime, request.timeServerProcessing, request.timeInMiddleware, request.numMissesOnServer ));

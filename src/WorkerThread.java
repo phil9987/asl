@@ -53,7 +53,7 @@ public class WorkerThread implements Runnable {
         this.roundrobinvariable = -1;
         this.REQ_LINE_END.rewind();
         this.GET_REQ_BEGINING.rewind();
-        this.aggregationLogger = new AggregationLogger(this.id, initialTimestamp, 1000000000);  // aggregationLogger which logs every 1s
+        this.aggregationLogger = new AggregationLogger(this.id, initialTimestamp, 1000000000, numServers);  // aggregationLogger which logs every 1s
         logger.debug(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
     }
 
@@ -85,6 +85,7 @@ public class WorkerThread implements Runnable {
      */
     private void processSet(Request request) throws IOException {
         //logger.debug(String.format("Worker %d sends set request to all memcached servers...", this.id));
+        request.setServersUsed(0, numServers);
         request.buffer.flip();
         request.numMissesOnServer = 0;  // no misses for set requests
         long serverProcessingBegin = System.currentTimeMillis();
@@ -144,6 +145,7 @@ public class WorkerThread implements Runnable {
      */
     private void processGet(Request request) throws IOException {
         int serverIdx = getServerIdx(); 
+        request.setServersUsed(serverIdx, 1);
         logger.debug(String.format("Worker %d sends get request to memcached server %d.", this.id, serverIdx));
         request.buffer.flip();
         SocketChannel serverChannel = serverConnections[serverIdx];
@@ -188,7 +190,8 @@ public class WorkerThread implements Runnable {
             int numRequests = keyParts.length;
             int initialServerIdx = getServerIdxForSeveralRequests(numRequests);
             int serverIdx = initialServerIdx;
-            logger.debug(String.format("Worker %d sends multiget request to possibly several servers starting with %d.", this.id, initialServerIdx));
+            request.setServersUsed(initialServerIdx, numRequests);
+            logger.debug(String.format("Worker %d sends multiget request to %d servers starting with %d.", this.id, numRequests, initialServerIdx));
             bufferPartsGetReq[0] = this.GET_REQ_BEGINING.duplicate();
             bufferPartsGetReq[2] = this.REQ_LINE_END.duplicate();
             long serverProcessingBegin = System.currentTimeMillis();
