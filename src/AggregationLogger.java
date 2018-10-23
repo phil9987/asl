@@ -10,7 +10,7 @@ public class AggregationLogger {
     private final int workerId;
     private long currentPeriodStart;        
 
-    private double numRequests;
+    private long numRequests;
     private long queueLengthSum;                 // Size of queue before this request was added to it by networkerThread
     private long queueWaitingTimeSum;           // Time in ms waiting in queue
     private long timeServerProcessingSum;       // Time in ms for memcached servers to process request
