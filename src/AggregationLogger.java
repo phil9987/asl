@@ -63,7 +63,7 @@ public class AggregationLogger {
                                                                                     numGetRequests, 
                                                                                     numMultigetRequests, 
                                                                                     numSetRequests));*/
-            logger.trace(String.format("%d %d %d %d %d %d %d %d %d %d %d", this.currentPeriodStart, 
+            logger.trace(String.format("%d %d %d %d %d %d %d %d %d %d %d %d", this.currentPeriodStart, 
                                                                                     this.workerId,
                                                                                     queueLengthSum, 
                                                                                     queueWaitingTimeSum, 
@@ -73,7 +73,8 @@ public class AggregationLogger {
                                                                                     numMultigetKeysSum, 
                                                                                     numGetRequests, 
                                                                                     numMultigetRequests, 
-                                                                                    numSetRequests));
+                                                                                    numSetRequests,
+                                                                                    numRequests));
             this.resetValues();
         }
         else {
