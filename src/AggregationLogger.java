@@ -47,6 +47,7 @@ public class AggregationLogger {
             public void run() {
                 logger.info(String.format("Shutdownhook of aggregationLogger for worker%d executing...", workerId));
                 logHistogram();
+                logger.info(String.format("Histogram info logged for worker%d", workerId));
             }
         });
         logger.debug(String.format("Worker %d instantiated aggregationlogger with a period of %d and a starting timestamp of %d", workerId, period, initTime));
