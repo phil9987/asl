@@ -127,6 +127,13 @@ public class AggregationLogger {
         if(inPeriod(request.timestampReceived)) {
             logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
             long responseTime = request.timeInMiddleware / 10000;   // response time in 100us
+            // 1000000000 ns = 1s
+            // 1000000 us = 1s
+            // 1000 ms = 1s
+            // 
+            if(responseTime < 10) {
+                logger.debug(String.format("Worker%d encountered suspicious responsteTime of %dus: %s", workerId, responseTime*100, Request.byteBufferToString(request.buffer)));
+            }
             MutableInt count = histogramMap.get(responseTime);
             if (count == null) {
                 histogramMap.put(responseTime, new MutableInt());
