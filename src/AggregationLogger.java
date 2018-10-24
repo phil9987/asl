@@ -3,13 +3,17 @@ package ch.ethz.asltest;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.Map;
+import java.util.HashMap;
+
 
 public class AggregationLogger {
-    private static final Logger logger = LogManager.getLogger("AggregationLogger");; 
+    private static final Logger logger = LogManager.getLogger("AggregationLogger");
     private final long PERIOD;    
     private final int MAX_NUM_SERVERS  = 3;
     private final int workerId;
-    private long currentPeriodStart;        
+    private long currentPeriodStart;     
+    private Map<Long, MutableInt> histogramMap = new HashMap<Long, MutableInt>();
 
     private long numRequests;
     private long queueLengthSum;                 // Size of queue before this request was added to it by networkerThread
@@ -24,6 +28,12 @@ public class AggregationLogger {
     private int[] serverCounts;
     private final int numServers;
 
+    private class MutableInt {
+        int value = 1; // note that we start at 1 since we're counting
+        public void increment () { ++value;}
+        public int  get() { return value; }
+    }
+
     public AggregationLogger(int workerId, long initTime, int period, int numServers) {
         this.workerId = workerId;
         this.currentPeriodStart = initTime;
@@ -31,6 +41,14 @@ public class AggregationLogger {
         this.numServers = numServers;
         this.serverCounts = new int[MAX_NUM_SERVERS];
         this.resetValues();
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                logger.info(String.format("Shutdownhook of aggregationLogger for worker%d executing...", workerId));
+                logHistogram();
+            }
+        });
         logger.debug(String.format("Worker %d instantiated aggregationlogger with a period of %d and a starting timestamp of %d", workerId, period, initTime));
     }
 
@@ -47,6 +65,12 @@ public class AggregationLogger {
         this.numMultigetKeysSum = 0;
         for(int i = 0; i < numServers; i++) {
             serverCounts[i] = 0;
+        }
+    }
+    
+    private void logHistogram() {
+        for (Map.Entry<Long, MutableInt> entry : histogramMap.entrySet()){
+            logger.trace(String.format("HISTOGRAM_W%d %d %d", workerId, entry.getKey(), entry.getValue()));
         }
     }
 
@@ -101,6 +125,14 @@ public class AggregationLogger {
     public void logRequest(Request request) {
         if(inPeriod(request.timestampReceived)) {
             logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
+            long responseTime = request.timeInMiddleware / 10000;   // response time in 100us
+            MutableInt count = histogramMap.get(responseTime);
+            if (count == null) {
+                histogramMap.put(responseTime, new MutableInt());
+            }
+            else {
+                count.increment();
+            }
             this.numRequests++;
             this.queueLengthSum          += request.queueLengthBeforeEntering;
             this.queueWaitingTimeSum     += request.queueWaitingTime;
