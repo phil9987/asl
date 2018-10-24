@@ -37,7 +37,7 @@ public class MyMiddleware {
                 for(Thread worker : workerThreads) {
                     worker.interrupt(); // call shutdownhook of each worker
                 }
-                Logmanager.shutdown();
+                LogManager.shutdown();
                 /* TODO: log statistics 
                 Average throughput
                 Average queue length
