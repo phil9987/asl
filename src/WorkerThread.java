@@ -162,7 +162,7 @@ public class WorkerThread implements Runnable {
             bytesRead = serverChannel.read(serverGetResponseBuffer);
         } while(!(Request.getResponseIsComplete(serverGetResponseBuffer) || bytesRead == 0 || bytesRead == -1)); // TODO: add better error handling
         request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
-        request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
+        request.timeInMiddleware = System.nanoTime() - request.timestampReceived;
         int numValues = serverGetResponseBuffer.position()/Request.VALUE_SIZE_MAX;
         request.numMissesOnServer = request.numKeys() - numValues;
         serverGetResponseBuffer.flip();
@@ -236,7 +236,7 @@ public class WorkerThread implements Runnable {
                 serverIdx = (serverIdx + 1) % numServers;
             }
             request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
-            request.timeInMiddleware = (System.nanoTime() - request.timestampReceived) / 100000;
+            request.timeInMiddleware = System.nanoTime() - request.timestampReceived;
             int numValues = serverGetResponseBuffer.position()/Request.VALUE_SIZE_MAX;
             request.numMissesOnServer = request.numKeys() - numValues;
             serverGetResponseBuffer.flip();
