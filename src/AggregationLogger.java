@@ -70,7 +70,7 @@ public class AggregationLogger {
     
     private void logHistogram() {
         for (Map.Entry<Long, MutableInt> entry : histogramMap.entrySet()){
-            logger.trace(String.format("HISTOGRAM_W%d %d %d", workerId, entry.getKey(), entry.getValue()));
+            logger.trace(String.format("HISTOGRAM_W%d %d %d", workerId, entry.getKey(), entry.getValue().get()));
         }
     }
 
