@@ -33,6 +33,11 @@ public class MyMiddleware {
             @Override
             public void run() {
                 logger.info("Shutdownhook executing...");
+
+                for(Thread worker : workerThreads) {
+                    worker.interrupt(); // call shutdownhook of each worker
+                }
+                Logmanager.shutdown();
                 /* TODO: log statistics 
                 Average throughput
                 Average queue length
