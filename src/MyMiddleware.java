@@ -18,6 +18,7 @@ public class MyMiddleware {
 	private final int numThreadsPTP;
     private final boolean readSharded;
     private final Thread[] workerThreads;
+    private Thread networkerThread;
     private final BlockingQueue<Request> blockingRequestQueue;
 
     public MyMiddleware(String ip, int port, List<String> mcAddresses, int numThreadsPTP, boolean readSharded) {
@@ -37,6 +38,7 @@ public class MyMiddleware {
                 for(Thread worker : workerThreads) {
                     worker.interrupt(); // call shutdownhook of each worker
                 }
+                networkerThread.interrupt();
                 LogManager.shutdown();
                 /* TODO: log statistics 
                 Average throughput
@@ -57,7 +59,8 @@ public class MyMiddleware {
         try{
             logger.debug(String.format("Start of MyMiddleware. ip=%s port=%d memcached_addresses=%s number_workerThreads=%d sharded=%b", ip, port, mcAddresses.toString(), numThreadsPTP, readSharded));
             logger.info("Starting NetworkerThread...");
-            Thread networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.blockingRequestQueue));
+            networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.blockingRequestQueue));
+            
             networkerThread.start();
 
             int numServers = this.mcAddresses.size();
@@ -90,9 +93,8 @@ public class MyMiddleware {
                     }
                 }
                 logger.info(String.format("Creating worker thread %d with serverOffset=%d (numWorkersPerServer=%d, numServersPerWorker=%d)", i, serverOffset, numWorkersPerServer, numServersPerWorker));
-                Thread worker = new Thread(new WorkerThread(i, this.blockingRequestQueue, this.mcAddresses, this.readSharded, serverOffset, initialWorkerTimestamp));
-                worker.start();
-                workerThreads[i] = worker;
+                workerThreads[i] = new Thread(new WorkerThread(i, this.blockingRequestQueue, this.mcAddresses, this.readSharded, serverOffset, initialWorkerTimestamp));
+                workerThreads[i].start();
             }
             networkerThread.join();
 

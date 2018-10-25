@@ -304,7 +304,7 @@ public class WorkerThread implements Runnable {
 
         } 
         catch(InterruptedException e) {
-            logger.debug(String.format("Worker %d got interrupted", this.id));
+            logger.info(String.format("Worker %d got interrupted", this.id));
         } 
         catch(IOException e) {
             logger.error(String.format("Worker %d had an IOException", this.id), e);
