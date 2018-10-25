@@ -145,7 +145,7 @@ public class Request {
             //logger.debug("last character of buffer is newline, request is complete");
         }
         else {
-            logger.debug(String.format("last character of buffer is not newline, request not finished yet: %c", lastChar));
+            //logger.debug(String.format("last character of buffer is not newline, request not finished yet: %c", lastChar));
         }
         return res;
     }
@@ -156,9 +156,9 @@ public class Request {
      */
     public ByteBuffer[] splitGetsKeys(int numServers) {
         // requires parseGet() to be executed beforehand. This function is executed by getType() in NetworkerThread
-        logger.debug(String.format("Splitting multiget keys for %d servers", numServers));
+        //logger.debug(String.format("Splitting multiget keys for %d servers", numServers));
         int numKeys = this.numKeys();
-        logger.debug(String.format("Number of keys: %d", numKeys));
+        //logger.debug(String.format("Number of keys: %d", numKeys));
         int keysPerRequest = numKeys / numServers;
         int overflow = numKeys % numServers;
         int numRequests = numServers;
@@ -168,7 +168,7 @@ public class Request {
             overflow = 0;
             numRequests = numKeys;
         }
-        logger.debug(String.format("Number of keys per request: %d (overflow: %d, numRequests: %d)", keysPerRequest, overflow, numRequests));
+        //logger.debug(String.format("Number of keys per request: %d (overflow: %d, numRequests: %d)", keysPerRequest, overflow, numRequests));
 
         ByteBuffer[] res = new ByteBuffer[numRequests];
         if(numKeys > 0) {
@@ -185,7 +185,7 @@ public class Request {
                 int to = offsets.get(offsetPointer + offsetRange);
                 bufferPart.position(from);
                 bufferPart.limit(to);
-                logger.debug(String.format("Keys for request %d: %s", reqId, byteBufferToString(bufferPart)));
+                //logger.debug(String.format("Keys for request %d: %s", reqId, byteBufferToString(bufferPart)));
                 offsetPointer = offsetPointer + offsetRange;
                 res[reqId] = bufferPart;
             }
