@@ -103,7 +103,7 @@ public class AggregationLogger {
     public void logRequest(Request request) {
         if(inPeriod(request.timestampReceived)) {
             //logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
-            long responseTime = request.timeInMiddleware / 10000;   // response time in 100us
+            long responseTime = request.timeInMiddleware / 100000;   // response time in 1/10ms
             MutableInt count = histogramMap.get(responseTime);
             if (count == null) {
                 histogramMap.put(responseTime, new MutableInt());
