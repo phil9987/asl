@@ -41,6 +41,11 @@ public class MyMiddleware {
                 networkerThread.interrupt();
 
                 logger.info("MyMiddleware is waiting before shutting down LogManager, to ensure all threads can log everything");
+                try{
+                    Thread.sleep(500);
+                } catch(InterruptedException e) {
+                    logger.info("MyMiddleware got interrupted while waiting for workerThreads");
+                }
                 for(int i = 0; i < numThreadsPTP; i++) {
                     try{
                         workerThreads[i].join();
@@ -48,6 +53,7 @@ public class MyMiddleware {
                         logger.info(String.format("Worker%d got interrupted and has logged everything"));
                     }
                 }
+                logger.info("MyMiddleware is shutting down LogManager");
                 LogManager.shutdown();
                 /* TODO: log statistics 
                 Average throughput
