@@ -73,17 +73,10 @@ public class NetworkerThread implements Runnable {
                         Request request = (Request) key.attachment();
                         if(request.isComplete()) {
                             // request has been finished already, start a new one
-                            logger.debug("Resetting request object");
+                            //logger.debug("Resetting request object");
                             request.reset(socketChannel);
-                            //logger.info(String.format("Request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
-                            //key.attach(request);
-                        } else {
-                            // attached request is continued until it is complete
-                            logger.debug("Request is not finished yet...");
-                            //logger.info(String.format("Request.buffer position: %d limit: %d capacity: %d", request.buffer.position(), request.buffer.limit(), request.buffer.capacity() ));
                         }
 
-                        // TODO: add acceptedAt time to request
                         request.timestampReceived = System.nanoTime();
                         int newBytesCount = -1;
                         try{
@@ -98,12 +91,12 @@ public class NetworkerThread implements Runnable {
                             //break;
                         } 
                         else if (newBytesCount > 0) {
-                            logger.debug(String.format("read %d new bytes from request", newBytesCount));
+                            //logger.debug(String.format("read %d new bytes from request", newBytesCount));
                             ByteBuffer requestBufView = request.buffer.duplicate();
                             requestBufView.flip();
                             //logger.debug(String.format("Received msg from client: %s", Request.byteBufferToString(requestBufView)));
                             if(request.isComplete()) {
-                                logger.debug("Request complete, adding it to queue");
+                                //logger.debug("Request complete, adding it to queue");
                                 //logger.debug(String.format("received request of type %s", request.getType()));
                                 request.timestampQueueEntered = System.currentTimeMillis();
                                 request.queueLengthBeforeEntering = blockingRequestQueue.size();
@@ -118,7 +111,7 @@ public class NetworkerThread implements Runnable {
                             logger.error("NetworkerThread received 0 new bytes on read");
                         }
                     }
-                    logger.debug("Networker removes processed key from iterator");
+                    //logger.debug("Networker removes processed key from iterator");
                     keyIterator.remove();       // Remove key from set so we don't process it twice
                 }
             

@@ -54,7 +54,7 @@ public class WorkerThread implements Runnable {
         this.REQ_LINE_END.rewind();
         this.GET_REQ_BEGINING.rewind();
         this.aggregationLogger = new AggregationLogger(this.id, initialTimestamp, 1000000000, numServers);  // aggregationLogger which logs every 1s
-        logger.debug(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
+        logger.info(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
     }
 
     /**
@@ -92,7 +92,7 @@ public class WorkerThread implements Runnable {
 
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
             SocketChannel serverChannel = serverConnections[serverIdx];
-            logger.debug(String.format("Worker %d sends set request to memcached server %d...", this.id, serverIdx));
+            //logger.debug(String.format("Worker %d sends set request to memcached server %d...", this.id, serverIdx));
             request.buffer.rewind();
             while (request.buffer.hasRemaining()) {
                 //logger.debug(String.format("sending request to server, %d remaining", request.buffer.remaining()));
@@ -102,7 +102,7 @@ public class WorkerThread implements Runnable {
         String errResponse = "";
 
         for (int serverIdx = 0; serverIdx < serverConnections.length; serverIdx++) {
-            logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
+            //logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
             SocketChannel serverChannel = serverConnections[serverIdx];
             serverSetResponseBuffer.clear();
             serverChannel.read(serverSetResponseBuffer);
@@ -116,7 +116,7 @@ public class WorkerThread implements Runnable {
         }
         request.timeServerProcessing = System.currentTimeMillis() - serverProcessingBegin;
         request.timeInMiddleware = System.nanoTime() - request.timestampReceived;
-        logger.debug(String.format("Worker %d sends response to requesting client.", this.id));
+        //logger.debug(String.format("Worker %d sends response to requesting client.", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
         aggregationLogger.logRequest(request);
         if(errResponse.isEmpty()) {
@@ -146,7 +146,7 @@ public class WorkerThread implements Runnable {
     private void processGet(Request request) throws IOException {
         int serverIdx = getServerIdx(); 
         request.setServersUsed(serverIdx, 1);
-        logger.debug(String.format("Worker %d sends get request to memcached server %d.", this.id, serverIdx));
+        //logger.debug(String.format("Worker %d sends get request to memcached server %d.", this.id, serverIdx));
         request.buffer.flip();
         SocketChannel serverChannel = serverConnections[serverIdx];
         long serverProcessingBegin = System.currentTimeMillis();
@@ -155,7 +155,7 @@ public class WorkerThread implements Runnable {
             serverChannel.write(request.buffer);
         }
 
-        logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
+        //logger.debug(String.format("Worker %d reads response from memcached server %d", this.id, serverIdx));
         serverGetResponseBuffer.clear();
         int bytesRead = 0;
         do {
@@ -167,7 +167,7 @@ public class WorkerThread implements Runnable {
         request.numMissesOnServer = request.numKeys() - numValues;
         serverGetResponseBuffer.flip();
         //logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, Request.byteBufferToString(serverGetResponseBuffer).trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
-        logger.debug(String.format("Worker %d sends response to requesting client", this.id));
+        //logger.debug(String.format("Worker %d sends response to requesting client", this.id));
         SocketChannel requestorChannel = request.getRequestorChannel();
         aggregationLogger.logRequest(request);
         serverGetResponseBuffer.rewind();
@@ -191,7 +191,7 @@ public class WorkerThread implements Runnable {
             int initialServerIdx = getServerIdxForSeveralRequests(numRequests);
             int serverIdx = initialServerIdx;
             request.setServersUsed(initialServerIdx, numRequests);
-            logger.debug(String.format("Worker %d sends multiget request to %d servers starting with %d.", this.id, numRequests, initialServerIdx));
+            //logger.debug(String.format("Worker %d sends multiget request to %d servers starting with %d.", this.id, numRequests, initialServerIdx));
             bufferPartsGetReq[0] = this.GET_REQ_BEGINING.duplicate();
             bufferPartsGetReq[2] = this.REQ_LINE_END.duplicate();
             long serverProcessingBegin = System.currentTimeMillis();
@@ -205,7 +205,7 @@ public class WorkerThread implements Runnable {
                 //String endl = Request.byteBufferToString(bufferPartsGetReq[2]);
                 //logger.debug(String.format("start len = %d keyPart len = %d endl len = %d", start.length(), keyPart.length(), endl.length()));
                 //logger.debug(String.format("Worker %d sends multiget request to memcached server %d: %s%s%s", this.id, serverIdx, start, keyPart, endl));
-                logger.debug(String.format("Worker %d sends multiget request to memcached server %d", this.id, serverIdx));
+                //logger.debug(String.format("Worker %d sends multiget request to memcached server %d", this.id, serverIdx));
                 serverChannel.write(bufferPartsGetReq); // blocking
                 serverIdx = (serverIdx + 1) % numServers;
             }
@@ -215,8 +215,7 @@ public class WorkerThread implements Runnable {
             serverGetResponseBuffer.clear();
             for(int reqId = 0; reqId < numRequests; reqId++) {
                 SocketChannel serverChannel = serverConnections[serverIdx];
-                
-                logger.debug(String.format("Worker %d reads multiget response from memcached server %d", this.id, serverIdx));
+                //logger.debug(String.format("Worker %d reads multiget response from memcached server %d", this.id, serverIdx));
                 int bytesRead = 0;
                 do{
                     bytesRead = serverChannel.read(serverGetResponseBuffer);
@@ -225,7 +224,7 @@ public class WorkerThread implements Runnable {
                 //debugbuf.flip();
                 //response = Request.byteBufferToString(debugbuf);
                 //logger.debug(String.format("Worker %d received response from memcached server %d: %s (Complete: %b)", this.id, serverIdx, response.trim(), Request.getResponseIsComplete(serverGetResponseBuffer)));
-                logger.debug(String.format("Worker %d received response from memcached server %d: Complete: %b", this.id, serverIdx, Request.getResponseIsComplete(serverGetResponseBuffer)));
+                //logger.debug(String.format("Worker %d received response from memcached server %d: Complete: %b", this.id, serverIdx, Request.getResponseIsComplete(serverGetResponseBuffer)));
                 if(reqId < numRequests -1) {
                     // remove end line from all requests but last one
                     // TODO: what if end line does not arrive in one piece?
@@ -261,7 +260,7 @@ public class WorkerThread implements Runnable {
      */
     @Override
     public void run() {
-        logger.debug(String.format("Starting WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
+        logger.info(String.format("Starting WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
         try {    
             for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
                 String serverAddress = serverAdresses.get(serverIdx);
@@ -286,14 +285,17 @@ public class WorkerThread implements Runnable {
                     Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
                     request.queueWaitingTime = System.currentTimeMillis() - request.timestampQueueEntered;
                     Request.Type type = request.getType();
-                    logger.debug(String.format("Worker %d starts handling request of type %s", this.id, type));
+                    //logger.debug(String.format("Worker %d starts handling request of type %s", this.id, type));
                     switch(type) {
-                        case GET:   processGet(request);
-                                    break;
-                        case MULTIGET:  processMultiget(request);
-                                    break;
-                        case SET:   processSet(request);
-                                    break;
+                        case GET:
+                            processGet(request);
+                            break;
+                        case MULTIGET:
+                            processMultiget(request);
+                            break;
+                        case SET:
+                            processSet(request);
+                            break;
                         default:
                             logger.error(String.format("Received request with wrong type: %s", type));
                     }

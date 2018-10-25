@@ -50,7 +50,7 @@ public class AggregationLogger {
                 logger.info(String.format("Histogram info logged for worker%d", workerId));
             }
         });
-        logger.debug(String.format("Worker %d instantiated aggregationlogger with a period of %d and a starting timestamp of %d", workerId, period, initTime));
+        logger.info(String.format("Worker %d instantiated aggregationlogger with a period of %d and a starting timestamp of %d", workerId, period, initTime));
     }
 
     private void resetValues() {
@@ -76,46 +76,23 @@ public class AggregationLogger {
     }
 
     private void aggregateLogReset() {
-        logger.debug(String.format("Worker %d aggregates log data.", workerId));
-        if(numRequests > 0) {
-            /*double queueLengthAvg = (double)queueLengthSum / numRequests;
-            double queueWaitingTimeAvg = (double)queueWaitingTimeSum / numRequests;
-            double timeServerProcessingAvg = (double)timeServerProcessingSum / numRequests;
-            double timeInMiddlewareAvg = (double)timeInMiddlewareSum /  numRequests;
-            double numMissesAvg = (double)numMissesSum / numRequests;
-            double numMultigetKeysAvg = (double)numMultigetKeysSum / numRequests;
-            // timestamp workerId queueLength queueWaitingTime timeServerProcessing timeInMiddleware numMisses numMultigetKeys numGetRequests numMultigetRequests numSetRequests
-            logger.trace(String.format("%d %d %.5f %.5f %.5f %.5f %.5f %.5f %d %d %d", this.currentPeriodStart, 
-                                                                                    this.workerId,
-                                                                                    queueLengthAvg, 
-                                                                                    queueWaitingTimeAvg, 
-                                                                                    timeServerProcessingAvg, 
-                                                                                    timeInMiddlewareAvg, 
-                                                                                    numMissesAvg, 
-                                                                                    numMultigetKeysAvg, 
-                                                                                    numGetRequests, 
-                                                                                    numMultigetRequests, 
-                                                                                    numSetRequests));*/
-            logger.trace(String.format("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", this.currentPeriodStart, 
-                                                                                    this.workerId,
-                                                                                    queueLengthSum, 
-                                                                                    queueWaitingTimeSum, 
-                                                                                    timeServerProcessingSum, 
-                                                                                    timeInMiddlewareSum, 
-                                                                                    numMissesSum, 
-                                                                                    numMultigetKeysSum, 
-                                                                                    numGetRequests, 
-                                                                                    numMultigetRequests, 
-                                                                                    numSetRequests,
-                                                                                    numRequests,
-                                                                                    serverCounts[0],
-                                                                                    serverCounts[1],
-                                                                                    serverCounts[2]));
-            this.resetValues();
-        }
-        else {
-            logger.error("No data to aggregate, numRequests == 0");
-        }
+        //logger.debug(String.format("Worker %d aggregates log data.", workerId));
+        logger.trace(String.format("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", this.currentPeriodStart, 
+                                                                                this.workerId,
+                                                                                queueLengthSum, 
+                                                                                queueWaitingTimeSum, 
+                                                                                timeServerProcessingSum, 
+                                                                                timeInMiddlewareSum, 
+                                                                                numMissesSum, 
+                                                                                numMultigetKeysSum, 
+                                                                                numGetRequests, 
+                                                                                numMultigetRequests, 
+                                                                                numSetRequests,
+                                                                                numRequests,
+                                                                                serverCounts[0],
+                                                                                serverCounts[1],
+                                                                                serverCounts[2]));
+        this.resetValues();
 
     }
 
@@ -125,15 +102,8 @@ public class AggregationLogger {
 
     public void logRequest(Request request) {
         if(inPeriod(request.timestampReceived)) {
-            logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
+            //logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
             long responseTime = request.timeInMiddleware / 10000;   // response time in 100us
-            // 1000000000 ns = 1s
-            // 1000000 us = 1s
-            // 1000 ms = 1s
-            // 
-            if(responseTime < 10) {
-                logger.debug(String.format("Worker%d encountered suspicious responsteTime of %dus: %s", workerId, responseTime*100, Request.byteBufferToString(request.buffer)));
-            }
             MutableInt count = histogramMap.get(responseTime);
             if (count == null) {
                 histogramMap.put(responseTime, new MutableInt());
@@ -168,24 +138,20 @@ public class AggregationLogger {
                 int idx = (request.firstServerUsed + i) % numServers;
                 serverCounts[idx] += 1;
             }
-            logger.debug(String.format("%s %d %d %d %d %d", t, request.queueLengthBeforeEntering,
-            request.queueWaitingTime, request.timeServerProcessing, request.timeInMiddleware, request.numMissesOnServer ));
+            //logger.debug(String.format("%s %d %d %d %d %d", t, request.queueLengthBeforeEntering, request.queueWaitingTime, request.timeServerProcessing, request.timeInMiddleware, request.numMissesOnServer ));
         }
         else {
-            logger.debug(String.format("Request %d not in period, aggregating and resetting data before increasing currentPeriodStart (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
+            //logger.debug(String.format("Request %d not in period, aggregating and resetting data before increasing currentPeriodStart (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
             if(numRequests > 0) {
                 aggregateLogReset();
             } else {
-                logger.debug("No requests yet, setting currentPeriodStart s.t. current requests fits in");
+                //logger.debug("No requests yet, setting currentPeriodStart s.t. current requests fits in");
             }
             do {
                 this.currentPeriodStart += this.PERIOD;
             } while(!inPeriod(request.timestampReceived));
-            logger.debug(String.format("Updated currentPeriodStart to %d, logging pending request now", this.currentPeriodStart));
+            //logger.debug(String.format("Updated currentPeriodStart to %d, logging pending request now", this.currentPeriodStart));
             logRequest(request);
-
-            
-
         }
     } 
 

@@ -57,7 +57,7 @@ public class MyMiddleware {
      */
     void run() {
         try{
-            logger.debug(String.format("Start of MyMiddleware. ip=%s port=%d memcached_addresses=%s number_workerThreads=%d sharded=%b", ip, port, mcAddresses.toString(), numThreadsPTP, readSharded));
+            logger.info(String.format("Start of MyMiddleware. ip=%s port=%d memcached_addresses=%s number_workerThreads=%d sharded=%b", ip, port, mcAddresses.toString(), numThreadsPTP, readSharded));
             logger.info("Starting NetworkerThread...");
             networkerThread = new Thread(new NetworkerThread(this.ip, this.port, this.blockingRequestQueue));
             
