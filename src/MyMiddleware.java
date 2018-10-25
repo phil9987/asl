@@ -39,10 +39,14 @@ public class MyMiddleware {
                     worker.interrupt(); // call shutdownhook of each worker
                 }
                 networkerThread.interrupt();
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    logger.debug("MyMiddleware got interrupted during shutdown sleep");
+
+                logger.info("MyMiddleware is waiting before shutting down LogManager, to ensure all threads can log everything");
+                for(int i = 0; i < numThreadsPTP; i++) {
+                    try{
+                        workerThreads[i].join();
+                    } catch(InterruptedException e) {
+                        logger.info(String.format("Worker%d got interrupted and has logged everything"));
+                    }
                 }
                 LogManager.shutdown();
                 /* TODO: log statistics 
