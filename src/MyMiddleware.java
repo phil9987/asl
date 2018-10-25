@@ -39,6 +39,11 @@ public class MyMiddleware {
                     worker.interrupt(); // call shutdownhook of each worker
                 }
                 networkerThread.interrupt();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    logger.debug("MyMiddleware got interrupted during shutdown sleep");
+                }
                 LogManager.shutdown();
                 /* TODO: log statistics 
                 Average throughput
