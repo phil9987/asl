@@ -3,13 +3,13 @@
 # Run this script from one of the memcached servers
 
 # server1 = "10.0.0.4" # this is the current server
-server2 = "10.0.0.10"
-server3 = "10.0.0.9"
-client1 = "10.0.0.7"
-client2 = "10.0.0.5"
-client3 = "10.0.0.6"
-MW1     = "10.0.0.11"
-MW2     = "10.0.0.8"
+server2="10.0.0.10"
+server3="10.0.0.9"
+client1="10.0.0.7"
+client2="10.0.0.5"
+client3="10.0.0.6"
+MW1="10.0.0.11"
+MW2="10.0.0.8"
 
 # Setup, start memcached servers, fill them with data
 screen -dm -S server1 "memcached -p 11212 -vv"
