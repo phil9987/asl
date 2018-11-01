@@ -17,7 +17,7 @@ ssh -o StrictHostKeyChecking=no junkerp@${server3} "screen -L -dm -S server3 mem
 echo "initializing servers.. sleeping for 3s"
 sleep 3s
 # start middleware1
-ssh -o StrictHostKeyChecking=no junkerp@${MW1} "cd asl; screen -dm -S middleware1 java -jar dist/middleware-junkerp.jar  -l ${MW1} -p 1234 -t 2 -s true -m ${server1}:11212 ${server2}:11212 ${server3}:11212 &> logs/middleware1.log"
+ssh -o StrictHostKeyChecking=no junkerp@${MW1} "cd asl; screen -L -dm -S middleware1 java -jar dist/middleware-junkerp.jar  -l ${MW1} -p 1234 -t 2 -s true -m ${server1}:11212 ${server2}:11212 ${server3}:11212"
 echo "initializing middleware.. sleeping for 5s"
 sleep 5s
 # initialize memcached servers with all keys
