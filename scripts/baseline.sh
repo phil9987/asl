@@ -9,13 +9,13 @@ client3="10.0.0.4"
 MW1="10.0.0.10"
 MW2="10.0.0.9"
 # Setup, start memcached servers, fill them with data
-screen -L -dm -S server1 memcached -p 11212 -vv
-screen -L -dm -S server2 ssh -o StrictHostKeyChecking=no junkerp@${server2} 'memcached -p 11212 -vv'
-screen -L -dm -S server3 ssh -o StrictHostKeyChecking=no junkerp@${server3} 'memcached -p 11212 -vv'
+screen -L -dm -S server1 memcached -p 11212 -vv &> server1.log
+screen -L -dm -S server2 ssh -o StrictHostKeyChecking=no junkerp@${server2} 'memcached -p 11212 -vv &> server2.log'
+screen -L -dm -S server3 ssh -o StrictHostKeyChecking=no junkerp@${server3} 'memcached -p 11212 -vv &> server3.log'
 # start middleware1
-screen -L -dm -S middleware1 ssh -o StrictHostKeyChecking=no junkerp@${MW1} 'cd asl; java -jar dist/middleware-junkerp.jar  -l ${MW1} -p 1234 -t 2 -s true -m ${server1}:11212 ${server2}:11212 ${server3}:11212'
+screen -L -dm -S middleware1 ssh -o StrictHostKeyChecking=no junkerp@${MW1} 'cd asl; java -jar dist/middleware-junkerp.jar  -l ${MW1} -p 1234 -t 2 -s true -m ${server1}:11212 ${server2}:11212 ${server3}:11212 &> middleware1.log'
 # initialize memcached servers with all keys
-cmd="ssh -o StrictHostKeyChecking=no junkerp@${client1} 'memtier_benchmark --server=${MW1} --port=11212 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S'"
+cmd="ssh -o StrictHostKeyChecking=no junkerp@${client1} 'memtier_benchmark --server=${MW1} --port=11212 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S &> memtier1.log'"
 #run the command
 echo $cmd
 $cmd
