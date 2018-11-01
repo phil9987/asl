@@ -8,6 +8,8 @@ client2="10.0.0.6"
 client3="10.0.0.4"
 MW1="10.0.0.10"
 MW2="10.0.0.9"
+#ssh -o StrictHostKeyChecking=no junkerp@10.0.0.10 "cd asl; screen -L -dm -S middleware1 java -jar dist/middleware-junkerp.jar  -l 10.0.0.10 -p 1234 -t 2 -s true -m 10.0.0.8:11212 &> logs/middleware1.log"
+#ssh -o StrictHostKeyChecking=no junkerp@${client1} 'memtier_benchmark --server=10.0.0.10 --port=1234 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S &> memtier1.log'
 # Setup, start memcached servers, fill them with data
 screen -L -dm -S server1 memcached -p 11212 -vv
 ssh -o StrictHostKeyChecking=no junkerp@${server2} "screen -L -dm -S server2 memcached -p 11212 -vv"
@@ -16,10 +18,10 @@ echo "initializing servers.. sleeping for 3s"
 sleep 3s
 # start middleware1
 ssh -o StrictHostKeyChecking=no junkerp@${MW1} "cd asl; screen -dm -S middleware1 java -jar dist/middleware-junkerp.jar  -l ${MW1} -p 1234 -t 2 -s true -m ${server1}:11212 ${server2}:11212 ${server3}:11212 &> logs/middleware1.log"
-echo "initializing middleware.. sleeping for 3s"
+echo "initializing middleware.. sleeping for 5s"
 sleep 5s
 # initialize memcached servers with all keys
-ssh -o StrictHostKeyChecking=no junkerp@${client1} 'memtier_benchmark --server=${MW1} --port=11212 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S'
+ssh -o StrictHostKeyChecking=no junkerp@${client1} 'memtier_benchmark --server=${MW1} --port=1234 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S &> memtier1.log'
 #run the command
 # TODO: check if this script only continues when cmd is done
 #
