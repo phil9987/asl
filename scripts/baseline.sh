@@ -32,5 +32,11 @@ ssh -o StrictHostKeyChecking=no junkerp@${client1} 'memtier_benchmark --server=$
 #
 # 2.2b) Write only, 2 memtier clients with 1 thread each, 2 memcached server
 # virtual clients per memtier client 1..32
-
 # ssh -v -o StrictHostKeyChecking=no junkerp@10.0.0.5 'memtier_benchmark --server=10.0.0.10 --port=11212 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S &> memtier1.log'
+# Cleanup
+screen -X -S server1 quit
+ssh -v -o StrictHostKeyChecking=no junkerp@${server2} "screen -X -S server2 quit"
+ssh -v -o StrictHostKeyChecking=no junkerp@${server3} "screen -X -S server3 quit"
+ssh -v -o StrictHostKeyChecking=no junkerp@${MW1} "screen -X -S middleware1 quit"
+
+
