@@ -21,7 +21,7 @@ ssh -o StrictHostKeyChecking=no junkerp@${MW1} "cd asl; screen -L -dm -S middlew
 echo "initializing middleware.. sleeping for 5s"
 sleep 5s
 # initialize memcached servers with all keys
-ssh -o StrictHostKeyChecking=no junkerp@${client1} 'memtier_benchmark --server=${MW1} --port=1234 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S &> memtier1.log'
+ssh -o StrictHostKeyChecking=no junkerp@${client1} "memtier_benchmark --server=${MW1} --port=1234 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S &> memtier1.log"
 #run the command
 # TODO: check if this script only continues when cmd is done
 #
@@ -40,9 +40,9 @@ ssh -o StrictHostKeyChecking=no junkerp@${client1} 'memtier_benchmark --server=$
 # ssh -v -o StrictHostKeyChecking=no junkerp@10.0.0.10 "cd asl; screen -L -dm -S middleware1 java -jar dist/middleware-junkerp.jar  -l 10.0.0.10 -p 1234 -t 2 -s true -m 10.0.0.8:11212 10.0.0.7:11212 10.0.0.11:11212 &> logs/middleware1.log"
 # memtier_benchmark --server=10.0.0.8 --port=11212 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S
 # Cleanup
-#screen -X -S server1 quit
-#ssh -v -o StrictHostKeyChecking=no junkerp@${server2} "screen -X -S server2 quit"
-#ssh -v -o StrictHostKeyChecking=no junkerp@${server3} "screen -X -S server3 quit"
-#ssh -v -o StrictHostKeyChecking=no junkerp@${MW1} "screen -X -S middleware1 quit"
+screen -X -S server1 quit
+ssh -v -o StrictHostKeyChecking=no junkerp@${server2} "screen -X -S server2 quit"
+ssh -v -o StrictHostKeyChecking=no junkerp@${server3} "screen -X -S server3 quit"
+ssh -v -o StrictHostKeyChecking=no junkerp@${MW1} "screen -X -S middleware1 quit"
 
 
