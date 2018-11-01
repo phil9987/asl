@@ -1,13 +1,13 @@
 #!/bin/bash
 #Run this script from one of the memcached servers
-#server1 = "10.0.0.4" # this is the current server
-server2="10.0.0.10"
-server3="10.0.0.9"
-client1="10.0.0.7"
-client2="10.0.0.5"
-client3="10.0.0.6"
-MW1="10.0.0.11"
-MW2="10.0.0.8"
+#server1 = "10.0.0.8" # this is the current server
+server2="10.0.0.7"
+server3="10.0.0.11"
+client1="10.0.0.5"
+client2="10.0.0.6"
+client3="10.0.0.4"
+MW1="10.0.0.10"
+MW2="10.0.0.9"
 # Setup, start memcached servers, fill them with data
 screen -L -dm -S server1 "memcached -p 11212 -vv"
 screen -L -dm -S server2 "ssh -o StrictHostKeyChecking=no junkerp@${server2} 'memcached -p 11212 -vv'"
