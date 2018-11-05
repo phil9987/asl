@@ -14,19 +14,19 @@ public class AggregationLogger {
     private final int workerId;
     private long currentPeriodStart;     
     private Map<Long, MutableInt> histogramMap = new HashMap<Long, MutableInt>();
+    private final int numServers;           
 
-    private long numRequests;
-    private long queueLengthSum;                 // Size of queue before this request was added to it by networkerThread
-    private long queueWaitingTimeSum;           // Time in ms waiting in queue
-    private long timeServerProcessingSum;       // Time in ms for memcached servers to process request
-    private long timeInMiddlewareSum;           // Time in 1/10 ms the request spent in middleware
-    private int numMissesSum;  
-    private int numGetRequests;
-    private int numMultigetRequests;
-    private int numSetRequests;
-    private int numMultigetKeysSum;
-    private int[] serverCounts;
-    private final int numServers;
+    private long numRequests;                   // Total number of requests during this period
+    private long queueLengthSum;                // Sum of queue length before request has been added to queue
+    private long queueWaitingTimeSum;           // Sum of time in ms request was waiting in queue
+    private long timeServerProcessingSum;       // Sum of time in ms memcached servers used to process request
+    private long timeInMiddlewareSum;           // Sum of time in ns request spent in middleware
+    private int numMissesSum;                   // Sum of misses on memcached servers
+    private int numGetRequests;                 // Total number of get requests during this period
+    private int numMultigetRequests;            // Total number of multiget requests during this period
+    private int numSetRequests;                 // Total number of set requests during this period
+    private int numMultigetKeysSum;             // Sum of multiget keys
+    private int[] serverCounts;                 // A count for each memcached server, indicating how often it has been served a request
 
     private class MutableInt {
         int value = 1; // note that we start at 1 since we're counting

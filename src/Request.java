@@ -30,8 +30,8 @@ public class Request {
     long timeServerProcessing = -1;                 // Time in ms for memcached servers to process request
     long timeInMiddleware = -1;                     // Time in ns the request spent in middleware
     int numMissesOnServer = -1;                     // Number of cache misses on memcached server (in response)
-    int firstServerUsed = -1;
-    int numServersUsed = -1;
+    int firstServerUsed = -1;                       // The first memcached server that has been used for this request
+    int numServersUsed = -1;                        // Total number of memcached servers that has been used for this request (>1 only for sharded multiget)
     /**
      * Constructor
      */
