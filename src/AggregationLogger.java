@@ -13,7 +13,7 @@ public class AggregationLogger {
     private final int MAX_NUM_SERVERS  = 3;
     private final int workerId;
     private long currentPeriodStart;     
-    private Map<Long, MutableInt> histogramMap = new HashMap<Long, MutableInt>();
+    private Map<Long, MutableInt> histogramMap = new HashMap<Long, MutableInt>();      // response time in 100us -> count
     private final int numServers;           
 
     private long numRequests;                   // Total number of requests during this period
