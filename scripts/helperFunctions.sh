@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source variables.sh
+. $PWD/variables.sh
 # logs argument string to file
 log () {
     dt=$(date '+%d/%m/%Y %H:%M:%S');
