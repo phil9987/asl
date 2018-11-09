@@ -4,12 +4,12 @@
 source helperFunctions.sh
 source variables.sh
 # initialize systems
-startMemcachedServers()
-initMemcachedServers()
+startMemcachedServers
+initMemcachedServers
 #
 # 2.1 a) Read only, 3 memtier clients with 2 threads each, 1 memcached server
 # virtual clients per memtier client 1..32
-log "Starting experiment for section 2.1a)"
+: 'log "Starting experiment for section 2.1a)"
 #define parameter ranges
 memtierClients=(1 8 16 32)
 numRepetitions=3
@@ -27,7 +27,8 @@ do
 		$cmd
 	done
 done
-done
+done 
+'
 #
 #
 # 2.1 b) Write only, 3 memtier clients with 2 threads each, 1 memcached server
@@ -41,9 +42,5 @@ done
 # ssh -v -o StrictHostKeyChecking=no junkerp@10.0.0.10 "cd asl; screen -L -dm -S middleware1 java -jar dist/middleware-junkerp.jar  -l 10.0.0.10 -p 1234 -t 2 -s true -m 10.0.0.8:11212 10.0.0.7:11212 10.0.0.11:11212 &> logs/middleware1.log"
 # memtier_benchmark --server=10.0.0.8 --port=11212 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S
 # Cleanup
-screen -X -S server1 quit
-ssh -v -o StrictHostKeyChecking=no junkerp@${server2} "screen -X -S server2 quit"
-ssh -v -o StrictHostKeyChecking=no junkerp@${server3} "screen -X -S server3 quit"
-ssh -v -o StrictHostKeyChecking=no junkerp@${MW1} "screen -X -S middleware1 quit"
 
 
