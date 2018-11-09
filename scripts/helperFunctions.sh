@@ -17,6 +17,15 @@ collectLogsFromMiddleware() {
     scp -o StrictHostKeyChecking=no junkerp@$2:~/asl/logs/error.log $1/$3_error.log
 }
 
+collectLogsFromServers() {
+    #args
+    # $1: path to copy the logfiles to
+    scp -o StrictHostKeyChecking=no junkerp@${SERVER1IP}:~/screenlog.0 $1/${SERVER1DESIGNATOR}_screenlog0.log
+    scp -o StrictHostKeyChecking=no junkerp@${SERVER2IP}:~/screenlog.0 $1/${SERVER2DESIGNATOR}_screenlog0.log
+    scp -o StrictHostKeyChecking=no junkerp@${SERVER3IP}:~/screenlog.0 $1/${SERVER3DESIGNATOR}_screenlog0.log
+
+}
+
 # Starts all 3 servers
 startMemcachedServers() {    
     # Setup, start memcached servers, fill them with data
