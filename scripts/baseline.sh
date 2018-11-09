@@ -1,32 +1,33 @@
 #!/bin/bash
-#Run this script from one of the memcached servers
-server1="10.0.0.8" # this is the current server
-server2="10.0.0.7"
-server3="10.0.0.11"
-client1="10.0.0.5"
-client2="10.0.0.6"
-client3="10.0.0.4"
-MW1="10.0.0.10"
-MW2="10.0.0.9"
-#ssh -o StrictHostKeyChecking=no junkerp@10.0.0.10 "cd asl; screen -L -dm -S middleware1 java -jar dist/middleware-junkerp.jar  -l 10.0.0.10 -p 1234 -t 2 -s true -m 10.0.0.8:11212 &> logs/middleware1.log"
-#ssh -o StrictHostKeyChecking=no junkerp@10.0.0.5 'memtier_benchmark --server=10.0.0.10 --port=1234 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S &> memtier1.log'
-# Setup, start memcached servers, fill them with data
-screen -L -dm -S server1 memcached -p 11212 -vv
-ssh -o StrictHostKeyChecking=no junkerp@${server2} "screen -L -dm -S server2 memcached -p 11212 -vv"
-ssh -o StrictHostKeyChecking=no junkerp@${server3} "screen -L -dm -S server3 memcached -p 11212 -vv"
-echo "initializing servers.. sleeping for 3s"
-sleep 3s
-# start middleware1
-ssh -o StrictHostKeyChecking=no junkerp@${MW1} "cd asl; screen -L -dm -S middleware1 java -jar dist/middleware-junkerp.jar  -l ${MW1} -p 1234 -t 2 -s true -m ${server1}:11212 ${server2}:11212 ${server3}:11212"
-echo "initializing middleware.. sleeping for 5s"
-sleep 5s
-# initialize memcached servers with all keys
-ssh -o StrictHostKeyChecking=no junkerp@${client1} "memtier_benchmark --server=${MW1} --port=1234 --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --debug --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S &> memtier1.log"
-#run the command
-# TODO: check if this script only continues when cmd is done
+#Run this script from the first memtier client
+#Make sure helper.sh is in the same directory
+source helperFunctions.sh
+source variables.sh
+# initialize systems
+startMemcachedServers()
+initMemcachedServers()
 #
 # 2.1 a) Read only, 3 memtier clients with 2 threads each, 1 memcached server
 # virtual clients per memtier client 1..32
+log "Starting experiment for section 2.1a)"
+#define parameter ranges
+memtierClients=(1 8 16 32)
+numRepetitions=3
+ratio=1:0
+
+for i in {1..numRepetitions}
+do
+   log "Starting run $i of section 2.1a)"
+   for c in "${memtierClients[@]}"; do
+	for th in "${threads[@]}"; do
+		#add parameters to the command
+        cmd="memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=${c} --test-time=${time} --ratio=${READ_ONLY} --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 &> client1.log"
+		#run the command
+		log $cmd
+		$cmd
+	done
+done
+done
 #
 #
 # 2.1 b) Write only, 3 memtier clients with 2 threads each, 1 memcached server

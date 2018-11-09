@@ -38,8 +38,10 @@ class RequestEntry:
         self.server3Count += req.server3Count
 
     def __str__(self):
-        return "{} {} {} {} {} {} {} {} {} {} {} {} {} {}\n".format(
-            self.periodStart, 
+        return "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}\n".format(
+            self.timestamp,     # just put a timestamp, we won't need it anyway
+            self.periodStart,
+            -1,                 # placeholder for not needed workerThreadId 
             self.queueLengthSum,
             self.queueWaitingTimeSum,
             self.serverTimeSum,
@@ -65,7 +67,7 @@ class HistogramEntry:
         self.count += histogram.count
 
     def __str__(self):
-        return "{} {}\n".format(self.responseTime, self.count)
+        return "{} {} {} {}\n".format(self.timestamp, "HISTOGRAM", self.responseTime, self.count)
 
 
 def extractRequestsAndHistogram(logfilename):
@@ -103,6 +105,15 @@ def mergeWorkerLogEntries(requests):
             tmpReq.merge(req)
         mergedRequests.append(tmpReq)
     mergedRequests.sort(key = lambda req: req.periodStart)
+    for entry in mergedRequests:
+        print(entry)
+    return mergedRequests
+
+def mergeWorkerLogEntriesFrom2Middlewares(requests1, requests2):
+    mergedRequests = []
+    for req1, req2 in zip(requests1, requests2):
+        req1.merge(req2)
+        mergedRequests.append(req1)
     return mergedRequests
 
 def mergeHistogramLogEntries(histograms):
@@ -122,15 +133,30 @@ def writeToFile(elements, filename):
     with open(filename, 'w') as f:
         f.writelines([str(el) for el in elements])
 
-
-def main():
-    requests, histogram = extractRequestsAndHistogram("./requests.log")
+def mergeLogsFor1Middleware(middlewareLogfileName, mergedFileName):
+    requests, histogram = extractRequestsAndHistogram(middlewareLogfileName)
     print("numberRequests in requests log = {} \n numberRequests in histogram = {}".format(totalNumberRequests(requests), totalNumberRequestsFromHistogram(histogram)))
     mergedRequests = mergeWorkerLogEntries(requests)
     mergedHistogram = mergeHistogramLogEntries(histogram)
-    writeToFile(mergedRequests, "./mergedRequests.log")
-    writeToFile(mergedHistogram, "./mergedHistogram.log")
+    writeToFile(mergedRequests + mergedHistogram, mergedFileName)
     print("--\n after merging:\n numberRequests in mergedRequests = {} \n numberRequests in mergedHistogram = {}".format(totalNumberRequests(mergedRequests), totalNumberRequestsFromHistogram(mergedHistogram)))
+
+def mergeLogsFor2Middlewares(mw1LogfileName, mw2LogfileName, mergedFileName):
+    merged1FileName = "./mergedRequests1.log"
+    merged2FileName = "./mergedRequests2.log"
+    mergeLogsFor1Middleware(mw1LogfileName, merged1FileName)
+    mergeLogsFor1Middleware(mw2LogfileName, merged2FileName)
+    requests1, histogram1 = extractRequestsAndHistogram(merged1FileName)
+    requests2, histogram2 = extractRequestsAndHistogram(merged2FileName)
+    mergedHistogram = mergeHistogramLogEntries(histogram1 + histogram2)
+    mergedRequests = mergeWorkerLogEntriesFrom2Middlewares(requests1, requests2)
+    writeToFile(mergedRequests + mergedHistogram, mergedFileName)
+
+
+
+def main():
+    mergeLogsFor2Middlewares("./requests.log", "./requests_half.log", "./combined.log")
+
 
 
 
