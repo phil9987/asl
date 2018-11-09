@@ -17,13 +17,74 @@ collectLogsFromMiddleware() {
     scp -o StrictHostKeyChecking=no junkerp@$2:~/asl/logs/error.log $1/$3_error.log
 }
 
-collectLogsFromServers() {
+collectLogsFromMiddleware1() {
     #args
     # $1: path to copy the logfiles to
-    scp -o StrictHostKeyChecking=no junkerp@${SERVER1IP}:~/screenlog.0 $1/${SERVER1DESIGNATOR}_screenlog0.log
-    scp -o StrictHostKeyChecking=no junkerp@${SERVER2IP}:~/screenlog.0 $1/${SERVER2DESIGNATOR}_screenlog0.log
-    scp -o StrictHostKeyChecking=no junkerp@${SERVER3IP}:~/screenlog.0 $1/${SERVER3DESIGNATOR}_screenlog0.log
+    collectLogsFromMiddleware $1 ${MW1IP} ${MW1DESIGNATOR}
+}
 
+collectLogsFromMiddleware2() {
+    #args
+    # $1: path to copy the logfiles to
+    collectLogsFromMiddleware $1 ${MW2IP} ${MW2DESIGNATOR}
+}
+
+collectLogsFromServer() {
+    #args
+    # $1: path to copy the logfiles to
+    # $2: serverip
+    # $3: designator
+    scp -o StrictHostKeyChecking=no junkerp@$2:~/screenlog.0 $1/$3_screenlog0.log
+}
+
+collectLogsFromServer1(){
+    #args
+    # $1: path to copy the logfiles to
+    collectLogsFromServer $1 ${SERVER1IP} ${SERVER1DESIGNATOR}
+}
+
+collectLogsFromServer2(){
+    #args
+    # $1: path to copy the logfiles to
+    collectLogsFromServer $1 ${SERVER2IP} ${SERVER2DESIGNATOR}
+}
+
+collectLogsFromServer3(){
+    #args
+    # $1: path to copy the logfiles to
+    collectLogsFromServer $1 ${SERVER3IP} ${SERVER3DESIGNATOR}
+}
+
+collectLogsFromClient() {
+    #args
+    # $1: path to copy the logfiles to
+    # $2: clientip
+    # $3: designator
+    scp -o StrictHostKeyChecking=no junkerp@$2:~/screenlog.0 $1/$3_screenlog0.log
+    scp -o StrictHostKeyChecking=no junkerp@$2:~/$3.log $1/$3.log
+    scp -o StrictHostKeyChecking=no junkerp@$2:~/$3.json $1/$3.json
+}
+
+collectLogsFromClient1() {
+    # This client is the one running the commands, hence it is local
+    #args
+    # $1: path to copy the logfiles to
+    # $2: designator
+    mv $2_screenlog0.log $1/$2_screenlog0.log
+    mv $2.log $1/$2.log
+    mv $2.json $1/$2.json
+}
+
+collectLogsFromClient2() {
+    #args
+    # $1: path to copy the logfiles to
+    collectLogsFromClient $1 ${CLIENT2IP} ${CLIENT2DESIGNATOR}
+}
+
+collectLogsFromClient3() {
+    #args
+    # $1: path to copy the logfiles to
+    collectLogsFromClient $1 ${CLIENT3IP} ${CLIENT3DESIGNATOR}
 }
 
 # Starts all 3 servers
@@ -62,14 +123,14 @@ runMemtierClient() {
     # $4: designator e.g. "client1"
     # $5: client_IP (if not locally executed)
     if [[ $# -eq 4 ]]; then
-        log "starting local memtier client connected to $1 with clients=$2 for $3s and a ratio of $4 writing logs to $5.log"
-        cmd="memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=${TESTTIME} --ratio=$3 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 --out-file=$4.log --json-out-file=$4.json"
+        log "starting local memtier client connected to $1 with clients=$2 and a ratio of $3 writing logs to $4.log"
+        cmd="memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=${TESTTIME} --ratio=$3 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 --out-file=$4.log --json-out-file=$4.json &> $4_screenlog0.log"
         #run the command
         log "$cmd"
         $cmd
     elif [[ $# -eq 5 ]]; then
-        log "starting remote memtier client with ip $6 connected to $1 with clients=$2 for $3s and a ratio of $4 writing logs to $5"
-        ssh -o StrictHostKeyChecking=no junkerp@$6 "screen -dm -S client memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=${TESTTIME} --ratio=$3 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 --out-file=$4.log --json-out-file=$4.json"
+        log "starting remote memtier client with ip $5 connected to $1 with clients=$2 and a ratio of $3 writing logs to screenlog.0"
+        ssh -o StrictHostKeyChecking=no junkerp@$6 "screen -dm -L -S client memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=${TESTTIME} --ratio=$3 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 --out-file=$4.log --json-out-file=$4.json"
     else
         log "ERROR: invalid number of arguments (expected 5 for local and 6 for remote client execution): $#"
     fi
