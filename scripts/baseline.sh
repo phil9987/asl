@@ -1,8 +1,8 @@
 #!/bin/bash
 #Run this script from the first memtier client
 #Make sure helper.sh is in the same directory
-source helperFunctions.sh
-source variables.sh
+source ./helperFunctions.sh
+source ./variables.sh
 # initialize systems
 startMemcachedServers
 initMemcachedServers
