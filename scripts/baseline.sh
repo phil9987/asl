@@ -1,7 +1,7 @@
 #!/bin/bash
 #Run this script from the first memtier client
 #Make sure helper.sh is in the same directory
-echo "test"
+echo "$PWD"
 . helperFunctions.sh
 . variables.sh
 # initialize systems
