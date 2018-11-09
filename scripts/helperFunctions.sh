@@ -123,13 +123,13 @@ runMemtierClient() {
     # $4: designator e.g. "client1"
     # $5: client_IP (if not locally executed)
     if [[ $# -eq 4 ]]; then
-        log "starting local memtier client connected to $1 with clients=$2 and a ratio of $3 writing logs to $4.log"
+        log "starting $4 (local) connected to $1 with clients=$2 and a ratio of $3 writing logs to $4.log"
         cmd="memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=${TESTTIME} --ratio=$3 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 --out-file=$4.log --json-out-file=$4.json &> $4_screenlog0.log"
         #run the command
         log "$cmd"
         $cmd
     elif [[ $# -eq 5 ]]; then
-        log "starting remote memtier client with ip $5 connected to $1 with clients=$2 and a ratio of $3 writing logs to screenlog.0"
+        log "starting $4 (remote, ip=$5) connected to $1 with clients=$2 and a ratio of $3 writing logs to screenlog.0"
         ssh -o StrictHostKeyChecking=no junkerp@$6 "screen -dm -L -S client memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=${TESTTIME} --ratio=$3 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 --out-file=$4.log --json-out-file=$4.json"
     else
         log "ERROR: invalid number of arguments (expected 5 for local and 6 for remote client execution): $#"
@@ -141,14 +141,12 @@ startMiddleware() {
     # $1: middleware_IP 
     # $2: designator e.g. "middleware1"
     # $3: numServers
+    log "Starting $2 with $3 servers (ip=$1)"
     if [[ $3 -eq 1 ]]; then
-        log "Starting middleware with ip $1 using designator $2 and $3 servers"
         ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT}"
     elif [[ $3 -eq 2 ]]; then
-        log "Starting middleware with ip $1 using designator $2 and $3 servers"
         ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
     elif [[ $3 -eq 3 ]]; then
-        log "Starting middleware with ip $1 using designator $2 and $3 servers"
         ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
     else
         log "ERROR: cannot start middleware. Invalid parameter for numServers: $3"
@@ -159,6 +157,7 @@ stopMiddleware() {
     #args:
     # $1: middleware_IP
     # $2: designator e.g. "middleware1"
+    log "Stopping $2 (ip=$2)"
     ssh -o StrictHostKeyChecking=no junkerp@$1 "screen -X -S $2 quit"
 }
 

@@ -4,23 +4,25 @@
 source helperFunctions.sh
 source variables.sh
 #
-# 2.1 a) Read only, 3 memtier clients with 2 threads each, 1 memcached server
+# 3.1a) Read only, 1 middleware, 3 memtier clients with 2 thread each, 1 memcached server
 # virtual clients per memtier client 1..32
-log "Starting experiment for section 2.1a)"
-logFolder="$LOGBASEFOLDER/logSection2_1a"
+# worker threads per middleware 8, 16, 32, 64
+log "Starting experiment for section 3.1a)"
+logFolder="$LOGBASEFOLDER/logSection3_1a"
 mkdir $logFolder
 #define parameter ranges
-memtierClients=(1 16 32)
-#
+memtierClients=(1 32 64)
+
 for c in "${memtierClients[@]}"; do
 	log "Starting configuration memtierClients=$c for section 2.1a)"
 	cliLogFolder="$logFolder/memtierCli$c"
-	mkdir $logFolder
 	for run in {1..${REPETITIONS}}; do
 		log "Starting run $run / ${REPETITIONS}"
+		startMiddleware1 1
 		runMemtierClient ${SERVER1IP} $c ${READONLY} ${CLIENT2DESIGNATOR} ${CLIENT3IP}
 		runMemtierClient ${SERVER1IP} $c ${READONLY} ${CLIENT2DESIGNATOR} ${CLIENT2IP}
 		runMemtierClient ${SERVER1IP} $c ${READONLY} ${CLIENT1DESIGNATOR}
+		stopMiddleware1
 		runLogFolder="$cliLogFolder/run$run"
 		log "Creating folder for run $runLogFolder"
 		mkdir $runLogFolder
@@ -28,15 +30,6 @@ for c in "${memtierClients[@]}"; do
 		collectLogsFromClient1 $runLogFolder
 		collectLogsFromClient2 $runLogFolder
 		collectLogsFromClient3 $runLogFolder
+		collectLogsFromMiddleware1 $runLogFolder
 	done
 done 
-#
-#
-# 2.1 b) Write only, 3 memtier clients with 2 threads each, 1 memcached server
-# virtual clients per memtier client 1..32
-#
-# 2.2a) Read only, 2 memtier clients with 1 thread each, 2 memcached server
-# virtual clients per memtier client 1..32
-#
-# 2.2b) Write only, 2 memtier clients with 1 thread each, 2 memcached server
-# virtual clients per memtier client 1..32
