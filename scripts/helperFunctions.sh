@@ -83,3 +83,10 @@ stopMiddleware() {
     ssh -v -o StrictHostKeyChecking=no junkerp@$1 "screen -X -S $2 quit"
 }
 
+stopMiddleware1() {
+    stopMiddleware ${MW1IP} ${MW1DESIGNATOR}
+}
+
+stopMiddleware2() {
+    stopMiddleware ${MW2IP} ${MW2DESIGNATOR}
+}
