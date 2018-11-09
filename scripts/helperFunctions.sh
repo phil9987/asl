@@ -43,13 +43,13 @@ runMemtierClient() {
     # $4: ratio e.g. ${READONLY}
     # $5: logfilename the filename where the memtier output will be stored
     # $6: client_IP (if not locally executed)
-    if [ $# == 5 ]; then
+    if [[ $# == 5 ]]; then
         log "starting local memtier client connected to $1 with clients=$2 for $3s and a ratio of $4 writing logs to $5"
         cmd="memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=$3 --ratio=$4 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 &> $5"
         #run the command
         log "$cmd"
         $cmd
-    elif [ $# == 6 ]; then
+    elif [[ $# == 6 ]]; then
         log "starting remote memtier client with ip $6 connected to $1 with clients=$2 for $3s and a ratio of $4 writing logs to $5"
         ssh -o StrictHostKeyChecking=no junkerp@$6 "screen -L -dm -S client memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=$3 --ratio=$4 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 &> $5"
     else
@@ -62,13 +62,13 @@ startMiddleware() {
     # $1: middleware_IP 
     # $2: designator e.g. "middleware1"
     # $3: numServers
-    if [ $3 == 1 ]; then
+    if [[ $3 == 1 ]]; then
         log "Starting middleware with ip $1 using designator $2 and $3 servers"
         ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT}"
-    elif [ $3 == 2 ]; then
+    elif [[ $3 == 2 ]]; then
         log "Starting middleware with ip $1 using designator $2 and $3 servers"
         ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
-    elif [ $3 == 3 ]; then
+    elif [[ $3 == 3 ]]; then
         log "Starting middleware with ip $1 using designator $2 and $3 servers"
         ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
     else
