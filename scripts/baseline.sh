@@ -2,7 +2,7 @@
 #Run this script from the first memtier client
 #Make sure helper.sh is in the same directory
 echo "$PWD"
-source $PWD/helperFunctions.sh
+. $PWD/helperFunctions.sh
 source $PWD/variables.sh
 # initialize systems
 startMemcachedServers
