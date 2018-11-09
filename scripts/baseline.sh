@@ -3,7 +3,7 @@
 #Make sure helper.sh is in the same directory
 echo "$PWD"
 . $PWD/helperFunctions.sh
-source $PWD/variables.sh
+. $PWD/variables.sh
 # initialize systems
 startMemcachedServers
 initMemcachedServers
