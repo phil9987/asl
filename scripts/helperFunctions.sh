@@ -62,13 +62,13 @@ startMiddleware() {
     # $1: middleware_IP 
     # $2: designator e.g. "middleware1"
     # $3: numServers
-    if [[ $3 == "1" ]]; then
+    if [[ $3 -eq 1 ]]; then
         log "Starting middleware with ip $1 using designator $2 and $3 servers"
         ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT}"
-    elif [[ $3 == "2" ]]; then
+    elif [[ $3 -eq 2 ]]; then
         log "Starting middleware with ip $1 using designator $2 and $3 servers"
         ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
-    elif [[ $3 == "3" ]]; then
+    elif [[ $3 -eq 3 ]]; then
         log "Starting middleware with ip $1 using designator $2 and $3 servers"
         ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
     else
