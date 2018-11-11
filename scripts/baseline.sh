@@ -16,7 +16,7 @@ for c in "${memtierClients[@]}"; do
 	log "Starting configuration memtierClients=$c for section 2.1a)"
 	cliLogFolder="$logFolder/memtierCli$c"
 	createDirectory $logFolder
-	for run in {1..${REPETITIONS}}; do
+	for run in $(seq 1 ${RESPETITIONS}); do
 		log "Starting run $run / ${REPETITIONS}"
 		numThreads=2
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${numThreads} ${FIRSTMEMTIER} ${CLIENT3IP}
@@ -45,7 +45,7 @@ for c in "${memtierClients[@]}"; do
 	log "Starting configuration memtierClients=$c for section 2.1a)"
 	cliLogFolder="$logFolder/memtierCli$c"
 	createDirectory $logFolder
-	for run in {1..${REPETITIONS}}; do
+	for run in $(seq 1 ${RESPETITIONS}); do
 		log "Starting run $run / ${REPETITIONS}"
 		numThreads=2
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${numThreads} ${FIRSTMEMTIER} ${CLIENT3IP}
@@ -73,7 +73,7 @@ for c in "${memtierClients[@]}"; do
 	log "Starting configuration memtierClients=$c for section 2.2a)"
 	cliLogFolder="$logFolder/memtierCli$c"
 	createDirectory $logFolder
-	for run in {1..${REPETITIONS}}; do
+	for run in $(seq 1 ${RESPETITIONS}); do
 		log "Starting run $run / ${REPETITIONS}"
 		numThreads=1
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numThreads} ${SECONDMEMTIER}
@@ -99,7 +99,7 @@ for c in "${memtierClients[@]}"; do
 	log "Starting configuration memtierClients=$c for section 2.2b)"
 	cliLogFolder="$logFolder/memtierCli$c"
 	createDirectory $logFolder
-	for run in {1..${REPETITIONS}}; do
+	for run in $(seq 1 ${RESPETITIONS}); do
 		log "Starting run $run / ${REPETITIONS}"
 		numThreads=1
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numThreads} ${SECONDMEMTIER}

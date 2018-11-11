@@ -7,8 +7,23 @@ log () {
     echo "$dt $1" >> experiment.log
 }
 
+moveExperimentLog() {
+    #args
+    # $1: destination path
+    mv experiment.log $1/experiment.log
+}
+
 createDirectory() {
     mkdir -p $1
+}
+
+removeFile() {
+    #args
+    # $1: ip
+    # $2: file
+    ip=$1
+    file=$2
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "rm ${file}"
 }
 
 collectLogsFromMiddleware() {
@@ -16,9 +31,13 @@ collectLogsFromMiddleware() {
     # $1: path to copy the logfiles to
     # $2: middlewareip
     # $3: designator
-    scp -o StrictHostKeyChecking=no junkerp@$2:~/asl/screenlog.0 $1/$3_screenlog0.log
-    scp -o StrictHostKeyChecking=no junkerp@$2:~/asl/logs/requests.log $1/$3_requests.log
-    scp -o StrictHostKeyChecking=no junkerp@$2:~/asl/logs/error.log $1/$3_error.log
+    path=$1
+    ip=$2
+    designator=$3
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/screenlog.0 ${path}/${designator}_screenlog0.log
+    removeFile ${ip} "~/asl/screenlog.0"
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/requests.log ${path}/${designator}_requests.log
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/error.log ${path}/${designator}_error.log
 }
 
 collectLogsFromMiddleware1() {
@@ -133,7 +152,18 @@ initMemcachedServers() {
     # initialize memcached servers with all keys
     memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S --out-file=client1_init.log --json-out-file=client1_init.json
     log "servers with values initialized"
+    collectInitLogsFromClient1 ${LOGBASEFOLDER}
     stopMiddleware1
+}
+
+collectInitLogsFromClient1() {
+    #args
+    # $1: path where the logfiles will be stored
+    destPath=$1
+    logname="client1_init"
+    mv screenlog0.log ${destPath}/${logname}_screenlog0.log
+    mv ${logname}.log ${destPath}/${logname}.log
+    mv ${logname}.json ${destPath}/${logname}.json
 }
 
 stopMemcachedServers() {
@@ -188,15 +218,18 @@ startMiddleware() {
     # $1: middleware_IP 
     # $2: designator e.g. "middleware1"
     # $3: numServers
-    log "Starting $2 with $3 servers (ip=$1)"
+    ip=$1
+    designator=$2
+    numServers=$3
+    log "Starting $designator with $numServers servers (ip=$ip)"
     if [[ $3 -eq 1 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@$ip "cd asl; screen -L -dm -S $designator java -jar dist/middleware-junkerp.jar  -l $ip -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT}"
     elif [[ $3 -eq 2 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@$ip "cd asl; screen -L -dm -S $designator java -jar dist/middleware-junkerp.jar  -l $ip -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
     elif [[ $3 -eq 3 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@$1 "cd asl; screen -L -dm -S $2 java -jar dist/middleware-junkerp.jar  -l $1 -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@$ip "cd asl; screen -L -dm -S $designator java -jar dist/middleware-junkerp.jar  -l $ip -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
     else
-        log "ERROR: cannot start middleware. Invalid parameter for numServers: $3"
+        log "ERROR: cannot start middleware. Invalid parameter for numServers: $numServers"
     fi
 }
 
