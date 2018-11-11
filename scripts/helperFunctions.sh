@@ -10,6 +10,7 @@ log () {
 moveExperimentLog() {
     #args
     # $1: destination path
+    echo "moving experiment.log to $1"
     mv experiment.log $1/experiment.log
 }
 
@@ -23,6 +24,7 @@ removeFile() {
     # $2: file
     ip=$1
     file=$2
+    echo "deleting file $file from $ip"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "rm ${file}"
 }
 
@@ -34,6 +36,7 @@ collectLogsFromMiddleware() {
     path=$1
     ip=$2
     designator=$3
+    echo "Collecting logs from $designator ($ip, $path)"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/screenlog.0 ${path}/${designator}_screenlog0.log
     removeFile ${ip} "~/asl/screenlog.0"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/requests.log ${path}/${designator}_requests.log
@@ -57,6 +60,7 @@ collectLogsFromServer() {
     # $1: path to copy the logfiles to
     # $2: serverip
     # $3: designator
+    echo "Collecting logs from server $3 ($2, $1)"
     scp -o StrictHostKeyChecking=no junkerp@$2:~/screenlog.0 $1/$3_screenlog0.log
 }
 
@@ -86,7 +90,7 @@ collectLogsFromClient() {
     destPath=$1
     ip=$2
     designator=$3
-
+    echo "Collecting logs from $designator ($ip, $destPath)"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/screenlog.0 ${destPath}/${designator}_screenlog0.log
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/$3.log ${destPath}/${designator}.log
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/$3.json ${destPath}/${designator}.json
@@ -100,6 +104,7 @@ collectLogsFromClient1() {
     destPath=$1
     instance=$2
     logname=${CLIENT1DESIGNATOR}${instance}
+    echo "Collecting logs from $logname (local, $destpath)"
     if [[ ${instance} == ${FIRSTMEMTIER} ]]; then
         mv ${logname}_screenlog0.log ${destPath}/${logname}_screenlog0.log
         mv ${logname}.log ${destPath}/${logname}.log
@@ -193,19 +198,19 @@ runMemtierClient() {
     baseCmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numClients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${logname}.log --json-out-file=${logname}.json"
     if [[ $# -eq 7 ]]; then
         if [[ instance == ${FIRSTMEMTIER} ]]; then
-            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${designator}.log"
+            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${logname}_screenlog0.log"
             cmd="${baseCmd} &> ${logname}_screenlog0.log"
             #run the command
             log "$cmd"
             $cmd
         else
-            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${designator}.log"
+            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to screenlog0.log"
             screen -dm -L -S ${designator} ${baseCmd}
             #screen -dm -L -S ${designator} memtier_benchmark --server=${ip} --port=${port} --clients=${numClients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${designator}${instance}.log --json-out-file=${designator}${instance}.json
         fi
     elif [[ $# -eq 8 ]]; then
         clientIP=$8
-        log "starting memtier ${designator} (remote, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${designator}.log"
+        log "starting memtier ${designator} (remote, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to screenlog0.log"
         ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S ${designator} ${baseCmd}"
         #ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S client memtier_benchmark --server=${ip} --port=${port} --clients=$3 --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${designator}${instance}.log --json-out-file=${designator}${instance}.json"
     else

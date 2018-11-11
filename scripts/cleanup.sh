@@ -10,7 +10,5 @@ initMemcachedServers
 logBaseFolder="${LOGBASEFOLDER}"
 moveExperimentLog ${logBaseFolder}
 newLogBaseFolder="${LOGBASEFOLDER}_$(date '+%d-%m-%Y_%H-%M-%S')"
-log "Renaming folder for logfiles: $newLogBaseFolder"
 mv ./${logBaseFolder} ./${newLogBaseFolder}
-log "Shutting down memcached servers"
 stopMemcachedServers
