@@ -151,8 +151,9 @@ startMemcachedServers() {
 waitForFile() {
     #args
     # $1: path to file we wait to be created
+    echo "waiting for file $1 to be created"
     while [[ ! -f "$1.json" ]]; do
-        :
+        sleep 1s
     done
 }
 
