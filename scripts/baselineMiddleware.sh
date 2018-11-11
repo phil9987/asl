@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# TODO: fix runMemtierClient FIRST SECOND and PORT arguments are new
+
+
 #Run this script from the first memtier client
 #Make sure variables.sh and helperFunctions.sh are in the same directory
 source helperFunctions.sh
@@ -19,9 +23,9 @@ for c in "${memtierClients[@]}"; do
 	for run in {1..${REPETITIONS}}; do
 		log "Starting run $run / ${REPETITIONS}"
 		startMiddleware1 1
-		runMemtierClient ${SERVER1IP} $c ${READONLY} ${CLIENT2DESIGNATOR} ${CLIENT3IP}
-		runMemtierClient ${SERVER1IP} $c ${READONLY} ${CLIENT2DESIGNATOR} ${CLIENT2IP}
-		runMemtierClient ${SERVER1IP} $c ${READONLY} ${CLIENT1DESIGNATOR}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${CLIENT3IP}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${CLIENT2IP}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR}
 		stopMiddleware1
 		runLogFolder="$cliLogFolder/run$run"
 		log "Creating folder for run $runLogFolder"

@@ -60,31 +60,54 @@ collectLogsFromClient() {
     # $1: path to copy the logfiles to
     # $2: clientip
     # $3: designator
-    scp -o StrictHostKeyChecking=no junkerp@$2:~/screenlog.0 $1/$3_screenlog0.log
-    scp -o StrictHostKeyChecking=no junkerp@$2:~/$3.log $1/$3.log
-    scp -o StrictHostKeyChecking=no junkerp@$2:~/$3.json $1/$3.json
+    destPath=$1
+    ip=$2
+    designator=$3
+
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/screenlog.0 ${destPath}/${designator}_screenlog0.log
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/$3.log ${destPath}/${designator}.log
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/$3.json ${destPath}/${designator}.json
 }
 
 collectLogsFromClient1() {
     # This client is the one running the commands, hence it is local
     #args
     # $1: path to copy the logfiles to
-    # $2: designator
-    mv $2_screenlog0.log $1/$2_screenlog0.log
-    mv $2.log $1/$2.log
-    mv $2.json $1/$2.json
+    # $2: ${FIRSTMEMTIER} if this is the first instance of memtier on this machine or ${SECONDMEMTIER} if this is the second instance
+    destPath=$1
+    instance=$2
+    logname=${CLIENT1DESIGNATOR}${instance}
+    if [[ ${instance} == ${FIRSTMEMTIER} ]]; then
+        mv ${logname}_screenlog0.log ${destPath}/${logname}_screenlog0.log
+        mv ${logname}.log ${destPath}/${logname}.log
+        mv ${logname}.json ${destPath}/${logname}.json
+    elif [[ ${instance} == ${SECONDMEMTIER} ]]; then
+        mv screenlog0.log ${destPath}/${logname}_screenlog0.log
+        mv ${logname}.log ${destPath}/${logname}.log
+        mv ${logname}.json ${destPath}/${logname}.json
+    else
+        log "ERROR: invalid instance argument for collectLogsFromClient1: ${instance}"
+    fi
 }
 
 collectLogsFromClient2() {
     #args
     # $1: path to copy the logfiles to
-    collectLogsFromClient $1 ${CLIENT2IP} ${CLIENT2DESIGNATOR}
+    # $2: ${FIRSTMEMTIER} if this is the first instance of memtier on this machine or ${SECONDMEMTIER} if this is the second instance
+    destPath=$1
+    instance=$2
+    logname=${CLIENT2DESIGNATOR}${instance}
+    collectLogsFromClient ${destPath} ${CLIENT2IP} ${logname}
 }
 
 collectLogsFromClient3() {
     #args
     # $1: path to copy the logfiles to
-    collectLogsFromClient $1 ${CLIENT3IP} ${CLIENT3DESIGNATOR}
+    # $2: ${FIRSTMEMTIER} if this is the first instance of memtier on this machine or ${SECONDMEMTIER} if this is the second instance
+    destPath=$1
+    instance=$2
+    logname=${CLIENT3DESIGNATOR}${instance}
+    collectLogsFromClient ${destPath} ${CLIENT3IP} ${logname}
 }
 
 # Starts all 3 servers
@@ -117,22 +140,42 @@ stopMemcachedServers() {
 
 runMemtierClient() {
     #args: 
-    # $1: middleware_IP
-    # $2: num_clients
-    # $3: ratio e.g. ${READONLY}
-    # $4: designator e.g. "client1"
-    # $5: client_IP (if not locally executed)
-    if [[ $# -eq 4 ]]; then
-        log "starting $4 (local) connected to $1 with clients=$2 and a ratio of $3 writing logs to $4.log"
-        cmd="memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=${TESTTIME} --ratio=$3 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 --out-file=$4.log --json-out-file=$4.json &> $4_screenlog0.log"
-        #run the command
-        log "$cmd"
-        $cmd
-    elif [[ $# -eq 5 ]]; then
-        log "starting $4 (remote, ip=$5) connected to $1 with clients=$2 and a ratio of $3 writing logs to screenlog.0"
-        ssh -o StrictHostKeyChecking=no junkerp@$6 "screen -dm -L -S client memtier_benchmark --server=$1 --port=${MWPORT} --clients=$2 --test-time=${TESTTIME} --ratio=$3 --protocol=memcache_text --run-count=1 --threads=2 --key-maximum=10000  --data-size=4096 --out-file=$4.log --json-out-file=$4.json"
+    # $1: ip to connect to
+    # $2: port to connect to
+    # $3: num_clients
+    # $4: ratio e.g. ${READONLY}
+    # $5: designator e.g. "client1"
+    # $6: numThreads e.g. 2
+    # $7: ${FIRSTMEMTIER} if this is the first instance of memtier on this machine or ${SECONDMEMTIER} if this is the second instance
+    # $8: client_IP (if not locally executed)
+    ip=$1
+    port=$2
+    numClients=$3
+    ratio=$4
+    designator=$5
+    numThreads=$6
+    instance=$7
+    logname=${designator}${instance}
+    baseCmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numClients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${logname}.log --json-out-file=${logname}.json"
+    if [[ $# -eq 7 ]]; then
+        if [[ instance == ${FIRSTMEMTIER} ]]; then
+            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${designator}.log"
+            cmd="${baseCmd} &> ${logname}_screenlog0.log"
+            #run the command
+            log "$cmd"
+            $cmd
+        else
+            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${designator}.log"
+            screen -dm -L -S ${designator} ${baseCmd}
+            #screen -dm -L -S ${designator} memtier_benchmark --server=${ip} --port=${port} --clients=${numClients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${designator}${instance}.log --json-out-file=${designator}${instance}.json
+        fi
+    elif [[ $# -eq 8 ]]; then
+        clientIP=$8
+        log "starting memtier ${designator} (remote, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${designator}.log"
+        ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S ${designator} ${baseCmd}"
+        #ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S client memtier_benchmark --server=${ip} --port=${port} --clients=$3 --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${designator}${instance}.log --json-out-file=${designator}${instance}.json"
     else
-        log "ERROR: invalid number of arguments (expected 5 for local and 6 for remote client execution): $#"
+        log "ERROR: invalid number of arguments (expected 7 for local and 8 for remote client execution): $#"
     fi
 }
 
