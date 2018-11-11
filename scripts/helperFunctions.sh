@@ -104,9 +104,9 @@ collectLogsFromClient1() {
     destPath=$1
     instance=$2
     logname=${CLIENT1DESIGNATOR}${instance}
-    echo "Collecting logs from $logname (local, $destpath)"
+    echo "Collecting logs from $logname (local, $destPath)"
     if [[ ${instance} == ${FIRSTMEMTIER} ]]; then
-        mv ${logname}_screenlog.0 ${destPath}/${logname}_screenlog0.log
+        mv screenlog.0 ${destPath}/${logname}_screenlog0.log
         mv ${logname}.log ${destPath}/${logname}.log
         mv ${logname}.json ${destPath}/${logname}.json
     elif [[ ${instance} == ${SECONDMEMTIER} ]]; then
@@ -201,11 +201,13 @@ runMemtierClient() {
     baseCmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numClients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${logname}.log --json-out-file=${logname}.json"
     if [[ $# -eq 7 ]]; then
         if [[ instance == ${FIRSTMEMTIER} ]]; then
-            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${logname}_screenlog.0"
-            cmd="${baseCmd} &> ${logname}_screenlog.0"
+            log "starting memtier ${designator} (local, ${instance}, blockingmode) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to screenlog.0"
+            #cmd="${baseCmd} &> ${logname}_screenlog.0"
             #run the command
-            log "$cmd"
-            $cmd
+            #log "$cmd"
+            #$cmd
+            screen -L -S ${designator} ${baseCmd}
+            exit
         else
             log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to screenlog.0"
             screen -dm -L -S ${designator} ${baseCmd}
