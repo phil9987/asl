@@ -4,8 +4,8 @@
 source helperFunctions.sh
 source variables.sh
 # initialize systems
-startMemcachedServers
-initMemcachedServers
 logBaseFolder="${LOGBASEFOLDER}"
 log "Creating folder for logfiles: $logBaseFolder"
 createDirectory $logBaseFolder
+startMemcachedServers
+initMemcachedServers

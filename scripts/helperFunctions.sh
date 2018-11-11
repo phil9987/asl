@@ -178,6 +178,7 @@ collectInitLogsFromClient1() {
     # $1: path where the logfiles will be stored
     destPath=$1
     logname="client1_init"
+    ls
     mv ${logname}.log ${destPath}/${logname}.log
     mv ${logname}.json ${destPath}/${logname}.json
 }
