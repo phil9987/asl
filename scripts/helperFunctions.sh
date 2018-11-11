@@ -148,6 +148,14 @@ startMemcachedServers() {
     sleep 2s
 }
 
+waitForFile() {
+    #args
+    # $1: path to file we wait to be created
+    while [[ ! -f "$logname.json" ]]; do
+        :
+    done
+}
+
 initMemcachedServers() {
     # start middleware1
     log "Function initMemcachedServers() entered"
@@ -158,9 +166,7 @@ initMemcachedServers() {
     logname="client1_init"
     memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=1 --requests=10 --protocol=memcache_text --run-count=1 --threads=1 --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S --out-file=$logname.log --json-out-file=$logname.json
     log "servers with values initialized"
-    while [[ -f "$logname.json" ]]; do
-        :
-    done
+    waitForFile "${logname}.json"
     collectInitLogsFromClient1 ${LOGBASEFOLDER}
     stopMiddleware1
 }
