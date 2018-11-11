@@ -106,11 +106,11 @@ collectLogsFromClient1() {
     logname=${CLIENT1DESIGNATOR}${instance}
     echo "Collecting logs from $logname (local, $destpath)"
     if [[ ${instance} == ${FIRSTMEMTIER} ]]; then
-        mv ${logname}_screenlog0.log ${destPath}/${logname}_screenlog0.log
+        mv ${logname}_screenlog.0 ${destPath}/${logname}_screenlog0.log
         mv ${logname}.log ${destPath}/${logname}.log
         mv ${logname}.json ${destPath}/${logname}.json
     elif [[ ${instance} == ${SECONDMEMTIER} ]]; then
-        mv screenlog0.log ${destPath}/${logname}_screenlog0.log
+        mv screenlog.0 ${destPath}/${logname}_screenlog0.log
         mv ${logname}.log ${destPath}/${logname}.log
         mv ${logname}.json ${destPath}/${logname}.json
     else
@@ -201,19 +201,19 @@ runMemtierClient() {
     baseCmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numClients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${logname}.log --json-out-file=${logname}.json"
     if [[ $# -eq 7 ]]; then
         if [[ instance == ${FIRSTMEMTIER} ]]; then
-            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${logname}_screenlog0.log"
-            cmd="${baseCmd} &> ${logname}_screenlog0.log"
+            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to ${logname}_screenlog.0"
+            cmd="${baseCmd} &> ${logname}_screenlog.0"
             #run the command
             log "$cmd"
             $cmd
         else
-            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to screenlog0.log"
+            log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to screenlog.0"
             screen -dm -L -S ${designator} ${baseCmd}
             #screen -dm -L -S ${designator} memtier_benchmark --server=${ip} --port=${port} --clients=${numClients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${designator}${instance}.log --json-out-file=${designator}${instance}.json
         fi
     elif [[ $# -eq 8 ]]; then
         clientIP=$8
-        log "starting memtier ${designator} (remote, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to screenlog0.log"
+        log "starting memtier ${designator} (remote, ${instance}) connected to ${ip}:${port} with clients=${numClients} threads=${numThreads} and a ratio of ${ratio} writing logs to screenlog.0"
         ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S ${designator} ${baseCmd}"
         #ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S client memtier_benchmark --server=${ip} --port=${port} --clients=$3 --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numThreads} --key-maximum=10000  --data-size=4096 --out-file=${designator}${instance}.log --json-out-file=${designator}${instance}.json"
     else
