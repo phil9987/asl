@@ -157,6 +157,7 @@ initMemcachedServers() {
     # initialize memcached servers with all keys
     memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S --out-file=client1_init.log --json-out-file=client1_init.json
     log "servers with values initialized"
+    sleep 1s
     collectInitLogsFromClient1 ${LOGBASEFOLDER}
     stopMiddleware1
 }
@@ -166,7 +167,6 @@ collectInitLogsFromClient1() {
     # $1: path where the logfiles will be stored
     destPath=$1
     logname="client1_init"
-    mv screenlog0.log ${destPath}/${logname}_screenlog0.log
     mv ${logname}.log ${destPath}/${logname}.log
     mv ${logname}.json ${destPath}/${logname}.json
 }
