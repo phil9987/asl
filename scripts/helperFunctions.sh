@@ -175,6 +175,9 @@ stopMemcachedServers() {
     ssh -o StrictHostKeyChecking=no junkerp@${SERVER1IP} "screen -X -S ${SERVER1DESIGNATOR} quit"
     ssh -o StrictHostKeyChecking=no junkerp@${SERVER2IP} "screen -X -S ${SERVER2DESIGNATOR} quit"
     ssh -o StrictHostKeyChecking=no junkerp@${SERVER3IP} "screen -X -S ${SERVER3DESIGNATOR} quit"
+    removeFile ${SERVER1IP} "~/screenlog0.log"
+    removeFile ${SERVER2IP} "~/screenlog0.log"
+    removeFile ${SERVER3IP} "~/screenlog0.log"
 }
 
 runMemtierClient() {
