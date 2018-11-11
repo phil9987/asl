@@ -8,14 +8,14 @@ source variables.sh
 # virtual clients per memtier client 1..32
 log "Starting experiment for section 2.1a)"
 logFolder="$LOGBASEFOLDER/logSection2_1a"
-mkdir $logFolder
+createDirectory $logFolder
 #define parameter ranges
-memtierClients=(1 16 32)
+memtierClients=(1 32)
 #
 for c in "${memtierClients[@]}"; do
 	log "Starting configuration memtierClients=$c for section 2.1a)"
 	cliLogFolder="$logFolder/memtierCli$c"
-	mkdir $logFolder
+	createDirectory $logFolder
 	for run in {1..${REPETITIONS}}; do
 		log "Starting run $run / ${REPETITIONS}"
 		numThreads=2
@@ -24,7 +24,7 @@ for c in "${memtierClients[@]}"; do
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numThreads} ${FIRSTMEMTIER}
 		runLogFolder="$cliLogFolder/run$run"
 		log "Creating folder for run ${runLogFolder}"
-		mkdir ${runLogFolder}
+		createDirectory ${runLogFolder}
 		collectLogsFromServer1 ${runLogFolder}
 		collectLogsFromClient1 ${runLogFolder} ${FIRSTMEMTIER}
 		collectLogsFromClient2 ${runLogFolder} ${FIRSTMEMTIER}
@@ -37,14 +37,14 @@ done
 # virtual clients per memtier client 1..32
 log "Starting experiment for section 2.1b)"
 logFolder="$LOGBASEFOLDER/logSection2_1b"
-mkdir $logFolder
+createDirectory $logFolder
 #define parameter ranges
-memtierClients=(1 16 32)
+memtierClients=(1 32)
 #
 for c in "${memtierClients[@]}"; do
 	log "Starting configuration memtierClients=$c for section 2.1a)"
 	cliLogFolder="$logFolder/memtierCli$c"
-	mkdir $logFolder
+	createDirectory $logFolder
 	for run in {1..${REPETITIONS}}; do
 		log "Starting run $run / ${REPETITIONS}"
 		numThreads=2
@@ -53,7 +53,7 @@ for c in "${memtierClients[@]}"; do
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numThreads} ${FIRSTMEMTIER}
 		runLogFolder="$cliLogFolder/run$run"
 		log "Creating folder for run ${runLogFolder}"
-		mkdir ${runLogFolder}
+		createDirectory ${runLogFolder}
 		collectLogsFromServer1 ${runLogFolder}
 		collectLogsFromClient1 ${runLogFolder} ${FIRSTMEMTIER}
 		collectLogsFromClient2 ${runLogFolder} ${FIRSTMEMTIER}
@@ -65,14 +65,14 @@ done
 # virtual clients per memtier client 1..32
 log "Starting experiment for section 2.2a)"
 logFolder="$LOGBASEFOLDER/logSection2_2a"
-mkdir $logFolder
+createDirectory $logFolder
 #define parameter ranges
-memtierClients=(1 16 32)
+memtierClients=(1 32)
 #
 for c in "${memtierClients[@]}"; do
 	log "Starting configuration memtierClients=$c for section 2.2a)"
 	cliLogFolder="$logFolder/memtierCli$c"
-	mkdir $logFolder
+	createDirectory $logFolder
 	for run in {1..${REPETITIONS}}; do
 		log "Starting run $run / ${REPETITIONS}"
 		numThreads=1
@@ -80,7 +80,7 @@ for c in "${memtierClients[@]}"; do
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numThreads} ${FIRSTMEMTIER}
 		runLogFolder="$cliLogFolder/run$run"
 		log "Creating folder for run ${runLogFolder}"
-		mkdir ${runLogFolder}
+		createDirectory ${runLogFolder}
 		collectLogsFromServer1 ${runLogFolder}
 		collectLogsFromClient1 ${runLogFolder} ${FIRSTMEMTIER}
 		collectLogsFromClient1 ${runLogFolder} ${SECONDMEMTIER}
@@ -91,14 +91,14 @@ done
 # virtual clients per memtier client 1..32
 log "Starting experiment for section 2.2b)"
 logFolder="$LOGBASEFOLDER/logSection2_2b"
-mkdir $logFolder
+createDirectory $logFolder
 #define parameter ranges
-memtierClients=(1 16 32)
+memtierClients=(1 32)
 #
 for c in "${memtierClients[@]}"; do
 	log "Starting configuration memtierClients=$c for section 2.2b)"
 	cliLogFolder="$logFolder/memtierCli$c"
-	mkdir $logFolder
+	createDirectory $logFolder
 	for run in {1..${REPETITIONS}}; do
 		log "Starting run $run / ${REPETITIONS}"
 		numThreads=1
@@ -106,7 +106,7 @@ for c in "${memtierClients[@]}"; do
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numThreads} ${FIRSTMEMTIER}
 		runLogFolder="$cliLogFolder/run$run"
 		log "Creating folder for run ${runLogFolder}"
-		mkdir ${runLogFolder}
+		createDirectory ${runLogFolder}
 		collectLogsFromServer1 ${runLogFolder}
 		collectLogsFromClient1 ${runLogFolder} ${FIRSTMEMTIER}
 		collectLogsFromClient1 ${runLogFolder} ${SECONDMEMTIER}

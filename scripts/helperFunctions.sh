@@ -7,6 +7,10 @@ log () {
     echo "$dt $1" >> experiment.log
 }
 
+createDirectory() {
+    mkdir -p $1
+}
+
 collectLogsFromMiddleware() {
     #args
     # $1: path to copy the logfiles to

@@ -8,4 +8,4 @@ startMemcachedServers
 initMemcachedServers
 logBaseFolder="${LOGBASEFOLDER}"
 log "Creating folder for logfiles: $logBaseFolder"
-mkdir logBaseFolder
+createDirectory $logBaseFolder
