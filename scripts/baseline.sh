@@ -83,7 +83,6 @@ for c in "${memtierClients[@]}"; do
 		createDirectory ${runLogFolder}
 		collectLogsFromServer1 ${runLogFolder}
 		collectLogsFromClient1 ${runLogFolder} ${FIRSTMEMTIER}
-		collectLogsFromClient1 ${runLogFolder} ${SECONDMEMTIER}
 	done
 done 
 #
@@ -109,6 +108,5 @@ for c in "${memtierClients[@]}"; do
 		createDirectory ${runLogFolder}
 		collectLogsFromServer1 ${runLogFolder}
 		collectLogsFromClient1 ${runLogFolder} ${FIRSTMEMTIER}
-		collectLogsFromClient1 ${runLogFolder} ${SECONDMEMTIER}
 	done
 done 
