@@ -273,13 +273,12 @@ runMemtierClient() {
     logname=${designator}${instance}
     basecmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numclients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000  --data-size=4096 --out-file=${logname}.log --json-out-file=${logname}.json"
     if [[ $# -eq 7 ]]; then
-        if [[ instance = ${FIRSTMEMTIER} ]]; then
+        if [[ ${instance} == ${FIRSTMEMTIER} ]]; then
             log "starting memtier ${designator} (local, ${instance}, blockingmode) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
             cmd="${basecmd}"
             log "$cmd"
             $cmd
         else
-            log "instance $instance != $FIRSTMEMTIER"
             log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
             screen -dm -S ${designator} ${basecmd}
         fi
