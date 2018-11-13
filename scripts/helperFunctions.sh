@@ -280,12 +280,12 @@ runMemtierClient() {
             $cmd
         else
             log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-            screen -dm -S ${designator} ${basecmd}
+            screen -dm -S ${logname} ${basecmd}
         fi
     elif [[ $# -eq 8 ]]; then
         clientIP=$8
         log "starting memtier ${designator} (remote, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-        ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -S ${designator} ${basecmd}"
+        ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -S ${logname} ${basecmd}"
     else
         log "ERROR: invalid number of arguments (expected 7 for local and 8 for remote client execution): $#"
     fi
