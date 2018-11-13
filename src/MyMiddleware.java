@@ -5,6 +5,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.io.File;
+import java.io.IOException;
+
 
 
 
@@ -55,8 +58,13 @@ public class MyMiddleware {
                 }
                 logger.info("MyMiddleware is shutting down LogManager");
                 LogManager.shutdown();
-                File f = new File("./logs/done.info");
-                f.createNewFile();
+                try {
+                    File f = new File("./logs/done.info");
+                    f.createNewFile();
+                } catch (IOException e) {
+                    logger.error("Could not create done.info indicator file", e);
+                }
+                
                 /* TODO: log statistics 
                 Average throughput
                 Average queue length
