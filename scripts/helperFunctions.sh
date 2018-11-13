@@ -331,7 +331,7 @@ stopMiddleware() {
     ip=$1
     designator=$2
     log "Stopping ${designator} (ip=${ip})"
-    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designator} quit; while [[ ! -f ~/asl/logs/done.info ]]; do :; done; rm ~/asl/logs/done.info;"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designator} quit; ls; while [[ ! -f ~/asl/logs/done.info ]]; do :; done; rm ~/asl/logs/done.info;"
 
 }
 
