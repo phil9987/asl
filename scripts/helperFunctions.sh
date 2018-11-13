@@ -279,6 +279,7 @@ runMemtierClient() {
             log "$cmd"
             $cmd
         else
+            log "instance $instance != $FIRSTMEMTIER"
             log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
             screen -dm -S ${designator} ${basecmd}
         fi
@@ -332,7 +333,6 @@ stopMiddleware() {
     designator=$2
     log "Stopping ${designator} (ip=${ip})"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "bash -c 'screen -X -S ${designator} quit; ls; while [[ ! -f ~/asl/logs/done.info ]]; do :; done; rm ~/asl/logs/done.info;'"
-
 }
 
 # stops MW1
