@@ -306,7 +306,7 @@ startMiddleware() {
     elif [[ ${numservers} -eq 2 ]]; then
         ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
     elif [[ ${numservers} -eq 3 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -L -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
     else
         log "ERROR: cannot start middleware. Invalid parameter for numservers: ${numservers}"
     fi
@@ -331,7 +331,7 @@ stopMiddleware() {
     ip=$1
     designator=$2
     log "Stopping ${designator} (ip=${ip})"
-    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -L -X -S ${designator} quit; while [[ ! -f ~/asl/logs/done.info ]]; do :; done; rm ~/asl/logs/done.info;"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designator} quit; while [[ ! -f ~/asl/logs/done.info ]]; do :; done; rm ~/asl/logs/done.info;"
 
 }
 
