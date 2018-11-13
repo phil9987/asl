@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" shutdownhook="disable">
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
+        <File name="Debug" fileName="logs/debug.log" immediateFlush="false" bufferSize="10000000" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Filters>
                     <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
                     <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
-        </Console>
+        </File>
         <File name="Requests" fileName="logs/requests.log" immediateFlush="false" bufferSize="10000000" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %m%n"/>
             <Filters>
