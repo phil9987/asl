@@ -10,6 +10,67 @@ log () {
     echo "$dt $1" >> experiment.log
 }
 
+startDstat() {
+    #args
+    # $1: ip
+    # $2: designator
+    ip=$1
+    designator=$2
+    designatordstat="${designator}{DSTATDESIGNATOR}"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -dm -S ${designatordstat} dstat -clmn --noheaders --output ${DSTATFILE}"
+}
+
+stopDstatAndCopyFile() {
+    #args
+    # $1: ip
+    # $2: designator
+    # $3: path to store file
+    ip=$1
+    designator=$2
+    path=$3
+    designatordstat="${designator}{DSTATDESIGNATOR}"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designatordstat} quit"
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${DSTATFILE} ${path}/${designator}_${DSTATFILE}
+}
+
+startPing() {
+    #args
+    # $1: ip from
+    # $2: ip to ping
+    # $3: designator
+    ip=$1
+    iptoping=$2
+    designator=$3
+    designatorping="${designator}{PINGDESIGNATOR}"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -dm -S ${designatorping} ping -nD ${iptoping} >> ${PINGFILE}"
+}
+
+stopPingAndCopyFile() {
+    #args
+    # $1: ip
+    # $2: designator
+    # $3: path to store file
+    ip=$1
+    designator=$2
+    path=$3
+    designatorping="${designator}{PINGDESIGNATOR}"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designatorping} quit"
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${PINGFILE} ${path}/${designator}_${PINGFILE}
+}
+
+iperfTestAndCopyFile() {
+    #args
+    # $1: ip source
+    # $2: ip destination
+    # $3: designator
+    ip=$1
+    iptoping=$2
+    designator=$3
+    designatorping="${designator}{PINGDESIGNATOR}"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -dm -S ${designatorping} ping -nD ${iptoping} >> ${PINGFILE}"
+}
+
+
 # moves experiment.log to destination path
 moveExperimentLog() {
     #args
@@ -234,25 +295,25 @@ runMemtierClient() {
     numthreads=$6
     instance=$7
     logname=${designator}${instance}
-    baseCmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numclients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000  --data-size=4096 --out-file=${logname}.log --json-out-file=${logname}.json"
+    basecmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numclients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000  --data-size=4096 --out-file=${logname}.log --json-out-file=${logname}.json"
     if [[ $# -eq 7 ]]; then
         if [[ instance == ${FIRSTMEMTIER} ]]; then
             log "starting memtier ${designator} (local, ${instance}, blockingmode) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-            cmd="${baseCmd} &> ${logname}_screenlog.0"
+            cmd="${basecmd} &> ${logname}_screenlog.0"
             run the command
             log "$cmd"
             $cmd
-            #screen -L -S ${designator} ${baseCmd}
+            #screen -L -S ${designator} ${basecmd}
             #exit
         else
             log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-            screen -dm -L -S ${designator} ${baseCmd}
+            screen -dm -L -S ${designator} ${basecmd}
             #screen -dm -L -S ${designator} memtier_benchmark --server=${ip} --port=${port} --clients=${numClients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000  --data-size=4096 --out-file=${designator}${instance}.log --json-out-file=${designator}${instance}.json
         fi
     elif [[ $# -eq 8 ]]; then
         clientIP=$8
         log "starting memtier ${designator} (remote, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-        ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S ${designator} ${baseCmd}"
+        ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S ${designator} ${basecmd}"
         #ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S client memtier_benchmark --server=${ip} --port=${port} --clients=$3 --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000  --data-size=4096 --out-file=${designator}${instance}.log --json-out-file=${designator}${instance}.json"
     else
         log "ERROR: invalid number of arguments (expected 7 for local and 8 for remote client execution): $#"
