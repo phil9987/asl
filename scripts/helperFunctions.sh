@@ -99,8 +99,6 @@ collectLogsFromMiddleware() {
     ip=$2
     designator=$3
     echo "Collecting logs from ${designator} ($ip, $path)"
-    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/screenlog.0 ${path}/${designator}_screenlog0.log
-    removeFile ${ip} "~/asl/screenlog.0"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/requests.log ${path}/${designator}_requests.log
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/error.log ${path}/${designator}_error.log
 }
@@ -132,8 +130,6 @@ collectLogsFromServer() {
     designator=$3
     echo "Collecting logs from server ${designator} (${ip}, ${path})"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/screenlog.0 ${path}/${designator}_screenlog0.log
-    removeFile ${ip} "~/screenlog.0"
-
 }
 
 # collects all relevant logs from SERVER1
@@ -170,8 +166,6 @@ collectLogsFromClient() {
     ip=$2
     designator=$3
     echo "Collecting logs from ${designator} (${ip}, ${path})"
-    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/screenlog.0 ${path}/${designator}_screenlog0.log
-    removeFile ${ip} "~/screenlog.0"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${designator}.log ${path}/${designator}.log
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${designator}.json ${path}/${designator}.json
 }
@@ -186,17 +180,8 @@ collectLogsFromClient1() {
     instance=$2
     logname=${CLIENT1DESIGNATOR}${instance}
     echo "Collecting logs from ${logname} (local, ${path})"
-    if [[ ${instance} == ${FIRSTMEMTIER} ]]; then
-        mv screenlog.0 ${path}/${logname}_screenlog0.log
-        mv ${logname}.log ${path}/${logname}.log
-        mv ${logname}.json ${path}/${logname}.json
-    elif [[ ${instance} == ${SECONDMEMTIER} ]]; then
-        #mv screenlog.0 ${path}/${logname}_screenlog0.log
-        mv ${logname}.log ${path}/${logname}.log
-        mv ${logname}.json ${path}/${logname}.json
-    else
-        log "ERROR: invalid instance argument for collectLogsFromClient1: ${instance}"
-    fi
+    mv ${logname}.log ${path}/${logname}.log
+    mv ${logname}.json ${path}/${logname}.json
 }
 
 # collects all relevant logs from CLIENT2
@@ -289,18 +274,17 @@ runMemtierClient() {
     if [[ $# -eq 7 ]]; then
         if [[ instance == ${FIRSTMEMTIER} ]]; then
             log "starting memtier ${designator} (local, ${instance}, blockingmode) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-            cmd="${basecmd} &> ${logname}_screenlog.0"
-            run the command
+            cmd="${basecmd}"
             log "$cmd"
             $cmd
         else
             log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-            screen -dm -L -S ${designator} ${basecmd}
+            screen -dm -S ${designator} ${basecmd}
         fi
     elif [[ $# -eq 8 ]]; then
         clientIP=$8
         log "starting memtier ${designator} (remote, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-        ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -L -S ${designator} ${basecmd}"
+        ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -S ${designator} ${basecmd}"
     else
         log "ERROR: invalid number of arguments (expected 7 for local and 8 for remote client execution): $#"
     fi
@@ -317,11 +301,11 @@ startMiddleware() {
     numservers=$3
     log "Starting $designator with ${numservers} servers (ip=$ip)"
     if [[ ${numservers} -eq 1 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -L -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT}"
     elif [[ ${numservers} -eq 2 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -L -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
     elif [[ ${numservers} -eq 3 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -L -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
     else
         log "ERROR: cannot start middleware. Invalid parameter for numservers: ${numservers}"
     fi
