@@ -227,9 +227,9 @@ initMemcachedServers() {
     logname="client1_init"
     memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=1 --requests=500 --protocol=memcache_text --run-count=1 --threads=1 --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S --out-file=${logname}.log --json-out-file=${logname}.json
     log "servers with values initialized"
+    stopMiddleware1
     collectInitLogsFromClient1 ${LOGBASEFOLDER}
     collectLogsFromMiddleware1 ${LOGBASEFOLDER}
-    stopMiddleware1
 }
 
 # collects the memtier logs which were created during the init of the memcached servers
@@ -312,6 +312,17 @@ startMiddleware() {
     fi
 }
 
+waitForFileToExist() {
+    #args:
+    # $1: ip
+    # $2: path/to/file.info
+    ip=$1
+    file=$2
+    while [[ ! -f ${file} ]]; do
+        :
+    done
+}
+
 # stops a middleware
 stopMiddleware() {
     #args:
@@ -320,7 +331,8 @@ stopMiddleware() {
     ip=$1
     designator=$2
     log "Stopping ${designator} (ip=${ip})"
-    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designator} quit"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designator} quit; while [[ ! -f done.info ]]; do :; done; rm done.info;"
+
 }
 
 # stops MW1
