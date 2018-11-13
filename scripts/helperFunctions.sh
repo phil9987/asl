@@ -42,7 +42,7 @@ startPing() {
     iptoping=$2
     designator=$3
     designatorping="${designator}${PINGDESIGNATOR}"
-    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -dm -S ${designatorping} ping -nD ${iptoping} &> ${PINGFILE}"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -dm -S ${designatorping} bash -c 'ping -nD ${iptoping} &> $PINGFILE'"
 }
 
 stopPingAndCopyFile() {
