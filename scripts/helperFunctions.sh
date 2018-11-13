@@ -101,6 +101,7 @@ collectLogsFromMiddleware() {
     echo "Collecting logs from ${designator} ($ip, $path)"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/requests.log ${path}/${designator}_requests.log
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/error.log ${path}/${designator}_error.log
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/debug.log ${path}/${designator}_debug.log
 }
 
 # collects all relevant logs from MW1
@@ -224,7 +225,7 @@ initMemcachedServers() {
     sleep 2s
     # initialize memcached servers with all keys
     logname="client1_init"
-    memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=1 --requests=10 --protocol=memcache_text --run-count=1 --threads=1 --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S --out-file=${logname}.log --json-out-file=${logname}.json
+    memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=1 --requests=500 --protocol=memcache_text --run-count=1 --threads=1 --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S --out-file=${logname}.log --json-out-file=${logname}.json
     log "servers with values initialized"
     collectInitLogsFromClient1 ${LOGBASEFOLDER}
     collectLogsFromMiddleware1 ${LOGBASEFOLDER}
