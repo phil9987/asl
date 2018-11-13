@@ -55,6 +55,8 @@ public class MyMiddleware {
                 }
                 logger.info("MyMiddleware is shutting down LogManager");
                 LogManager.shutdown();
+                File f = new File("./logs/done.info");
+                f.createNewFile();
                 /* TODO: log statistics 
                 Average throughput
                 Average queue length
