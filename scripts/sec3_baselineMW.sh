@@ -152,6 +152,7 @@ for c in "${memtierclients[@]}"; do
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${SECONDMEMTIER}
 			runMemtierClient ${MW2IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
 			stopMiddleware1
+			stopMiddleware2
 
 			runlogfolder="${clientlogfolder}/run${run}"
 			log "Creating folder for run ${runlogfolder}"
@@ -218,6 +219,7 @@ for c in "${memtierclients[@]}"; do
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${SECONDMEMTIER}
 			runMemtierClient ${MW2IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
 			stopMiddleware1
+			stopMiddleware2
 
 			runlogfolder="${clientlogfolder}/run${run}"
 			log "Creating folder for run ${runlogfolder}"
