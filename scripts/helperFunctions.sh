@@ -161,7 +161,7 @@ stopPingAndCopyFileMW1() {
     # $2: designator destination
     path=$1
     designator2=$2
-    stopPingAndCopyFile ${W1IP} ${MW1DESIGNATOR} ${path} ${designator2}
+    stopPingAndCopyFile ${MW1IP} ${MW1DESIGNATOR} ${path} ${designator2}
 }
 
 stopPingAndCopyFileMW2() {
