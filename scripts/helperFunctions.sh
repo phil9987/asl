@@ -342,8 +342,8 @@ collectLogsFromClient1() {
     instance=$2
     logname=${CLIENT1DESIGNATOR}${instance}
     echo "Collecting logs from ${logname} (local, ${path})"
-    mv ${logname}.log ${path}/${logname}.log
-    mv ${logname}.json ${path}/${logname}.json
+    mv ~/${logname}.log ${path}/${logname}.log
+    mv ~/${logname}.json ${path}/${logname}.json
 }
 
 # collects all relevant logs from CLIENT2
