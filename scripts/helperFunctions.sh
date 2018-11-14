@@ -503,7 +503,7 @@ stopMiddleware() {
     ip=$1
     designator=$2
     log "Stopping ${designator} (ip=${ip})"
-    screencmd="screen -X -S ${designator} quit; ls; while [[ ! -f ~/asl/logs/done.info && ${count} -lt 50 ]]; do sleep 0.1; done; rm ~/asl/logs/done.info;"
+    screencmd="screen -X -S ${designator} quit; ls; while [[ ! -f ~/asl/logs/done.info ]]; do sleep 0.1; done; rm ~/asl/logs/done.info;"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "${screencmd}"
 }
 
