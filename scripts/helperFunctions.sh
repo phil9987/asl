@@ -86,7 +86,7 @@ stopDstatAndCopyFileClient1() {
     # $1: path to store file
     path=$1
     designatordstat="${CLIENT1DESIGNATOR}${DSTATDESIGNATOR}"
-    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designatordstat} quit"
+    screen -X -S ${designatordstat} quit
     mv ~/${DSTATFILE} ${path}/${CLIENT1DESIGNATOR}_${DSTATFILE}
 }
 
@@ -349,8 +349,8 @@ collectLogsFromClient1() {
     instance=$2
     logname=${CLIENT1DESIGNATOR}${instance}
     echo "Collecting logs from ${logname} (local, ${path})"
-    mv ~/${logname}.log ${path}/${logname}.log
-    mv ~/${logname}.json ${path}/${logname}.json
+    mv ${logname}.log ${path}/${logname}.log
+    mv ${logname}.json ${path}/${logname}.json
 }
 
 # collects all relevant logs from CLIENT2
@@ -388,7 +388,7 @@ startMemcachedServers() {
 initMemcachedServers() {
     # start middleware1, connected to all 3 servers
     log "Function initMemcachedServers() entered"
-    startMiddleware1 3
+    startMiddleware1 3 1 ${NONSHARDED}
     log "Started middleware.. sleeping for 2s"
     sleep 2s
     # initialize memcached servers with all keys
