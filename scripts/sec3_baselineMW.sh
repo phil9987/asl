@@ -12,7 +12,7 @@ logfolder="$LOGBASEFOLDER/logSection3_1a"
 createdirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
-workerthreads=(8,64)
+workerthreads=(8 64)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -66,7 +66,7 @@ logfolder="$LOGBASEFOLDER/logSection3_1b"
 createdirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
-workerthreads=(8,64)
+workerthreads=(8 64)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -120,7 +120,7 @@ logfolder="$LOGBASEFOLDER/logSection3_2a"
 createdirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
-workerthreads=(8,64)
+workerthreads=(8 64)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -187,7 +187,7 @@ logfolder="$LOGBASEFOLDER/logSection3_2b"
 createdirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
-workerthreads=(8,64)
+workerthreads=(8 64)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
