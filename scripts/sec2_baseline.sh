@@ -8,7 +8,7 @@ source variables.sh
 # virtual clients per memtier client 1..32
 log "### Starting experiment for section 2.1a)"
 logfolder="$LOGBASEFOLDER/logSection2_1a"
-createdirectory $logfolder
+createDirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
 #
@@ -53,7 +53,7 @@ done
 # virtual clients per memtier client 1..32
 log "### Starting experiment for section 2.1b)"
 logfolder="$LOGBASEFOLDER/logSection2_1b"
-createdirectory $logfolder
+createDirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
 #

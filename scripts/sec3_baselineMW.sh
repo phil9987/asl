@@ -9,7 +9,7 @@ source variables.sh
 # worker threads per middleware 8, 16, 32, 64
 log "### Starting experiment for section 3.1a)"
 logfolder="$LOGBASEFOLDER/logSection3_1a"
-createdirectory $logfolder
+createDirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
 workerthreads=(8 64)
@@ -63,7 +63,7 @@ done
 # worker threads per middleware 8, 16, 32, 64
 log "### Starting experiment for section 3.1b)"
 logfolder="$LOGBASEFOLDER/logSection3_1b"
-createdirectory $logfolder
+createDirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
 workerthreads=(8 64)
@@ -117,7 +117,7 @@ done
 # worker threads per middleware 8, 16, 32, 64
 log "### Starting experiment for section 3.2a)"
 logfolder="$LOGBASEFOLDER/logSection3_2a"
-createdirectory $logfolder
+createDirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
 workerthreads=(8 64)
@@ -184,7 +184,7 @@ done
 # worker threads per middleware 8, 16, 32, 64
 log "### Starting experiment for section 3.2b)"
 logfolder="$LOGBASEFOLDER/logSection3_2b"
-createdirectory $logfolder
+createDirectory $logfolder
 #define parameter ranges
 memtierclients=(1 32)
 workerthreads=(8 64)
