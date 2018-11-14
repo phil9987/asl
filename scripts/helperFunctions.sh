@@ -81,10 +81,13 @@ stopDstatAndCopyFileMW2() {
 }
 
 stopDstatAndCopyFileClient1() {
+    # this is the local machine
     #args
     # $1: path to store file
     path=$1
-    stopDstatAndCopyFile ${CLIENT1IP} ${CLIENT1DESIGNATOR} ${path}
+    designatordstat="${CLIENT1DESIGNATOR}${DSTATDESIGNATOR}"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designatordstat} quit"
+    mv ~/${DSTATFILE} ${path}/${CLIENT1DESIGNATOR}_${DSTATFILE}
 }
 
 stopDstatAndCopyFileClient2() {
@@ -169,12 +172,16 @@ stopPingAndCopyFileMW2() {
 }
 
 stopPingAndCopyFileClient1() {
+    # this is the local machine running the script
     #args
     # $1: path to store file
     # $2: designator destination
     path=$1
     designator2=$2
-    stopPingAndCopyFile ${CLIENT1IP} ${CLIENT1DESIGNATOR} ${path} ${designator2}
+    designator=${CLIENT1DESIGNATOR}${designator2}
+    designatorping="${designator}${PINGDESIGNATOR}"
+    screen -X -S ${designatorping} quit
+    mv ~/${designator}${PINGFILE} ${path}/${designator}${PINGFILE}
 }
 
 stopPingAndCopyFileClient2() {
