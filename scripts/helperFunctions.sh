@@ -337,6 +337,8 @@ collectLogsFromClient() {
     echo "Collecting logs from ${designator} (${ip}, ${path})"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${designator}.log ${path}/${designator}.log
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${designator}.json ${path}/${designator}.json
+    removeFile ~/${designator}.log
+    removeFile ~/${designator}.json
 }
 
 # collects the logfiles from client1 (client from which script is executed)
