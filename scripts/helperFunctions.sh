@@ -135,6 +135,7 @@ startPing() {
     iptoping=$2
     designator=$3$4
     designatorping="${designator}${PINGDESIGNATOR}"
+    log "Starting ping with screen session ${designatorping}, writing to file ${designator}${PINGFILE}"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -dm -S ${designatorping} bash -c 'ping -nD ${iptoping} &> ${designator}${PINGFILE}'"
 }
 
