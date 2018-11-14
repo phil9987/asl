@@ -146,9 +146,10 @@ stopPingAndCopyFile() {
     # $3: path to store file
     # $4: designator destination
     ip=$1
-    designator=$2$4
+    designator="${2}${4}"
     path=$3
     designatorping="${designator}${PINGDESIGNATOR}"
+    echo "stopping ping on $ip with desitnatorping=$designatorping path=$path"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designatorping} quit"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${designator}${PINGFILE} ${path}/${designator}${PINGFILE}
     removeFile ${ip} ${designator}${PINGFILE}
@@ -505,6 +506,8 @@ stopMiddleware() {
     designator=$2
     log "Stopping ${designator} (ip=${ip})"
     screencmd="screen -X -S ${designator} quit; ls; while [[ ! -f ~/asl/logs/done.info ]]; do sleep 0.1; done; rm ~/asl/logs/done.info;"
+    # TODO test this command with timeout and escaped cnt variable
+    #screencmd="screen -X -S ${designator} quit; ls; bash -c 'cnt=0; while [[ ! -f ~/asl/logs/done.info && \${cnt} -lt 50 ]]; do cnt=$((cnt + 1)); sleep 0.1; done; rm ~/asl/logs/done.info;'"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "${screencmd}"
 }
 
