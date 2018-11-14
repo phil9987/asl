@@ -20,6 +20,38 @@ startDstat() {
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -dm -S ${designatordstat} dstat -clmn --noheaders --output ${DSTATFILE}"
 }
 
+startDstatMW1() {
+    startDstat ${MW1IP} ${MW1DESIGNATOR}
+}
+
+startDstatMW2() {
+    startDstat ${MW2IP} ${MW2DESIGNATOR}
+}
+
+startDstatClient1() {
+    startDstat ${CLIENT1IP} ${CLIENT1DESIGNATOR}
+}
+
+startDstatClient2() {
+    startDstat ${CLIENT2IP} ${CLIENT2DESIGNATOR}
+}
+
+startDstatClient3() {
+    startDstat ${CLIENT3IP} ${CLIENT3DESIGNATOR}
+}
+
+startDstatServer1() {
+    startDstat ${SERVER1IP} ${SERVER1DESIGNATOR}
+}
+
+startDstatServer2() {
+    startDstat ${SERVER2IP} ${SERVER2DESIGNATOR}
+}
+
+startDstatServer3() {
+    startDstat ${SERVER3IP} ${SERVER3DESIGNATOR}
+}
+
 stopDstatAndCopyFile() {
     #args
     # $1: ip
@@ -34,32 +66,161 @@ stopDstatAndCopyFile() {
     removeFile ${ip} ${DSTATFILE}
 }
 
+stopDstatAndCopyFileMW1() {
+    #args
+    # $1: path to store file
+    path=$1
+    stopDstatAndCopyFile ${MW1IP} ${MW1DESIGNATOR} ${path}
+}
+
+stopDstatAndCopyFileMW2() {
+    #args
+    # $1: path to store file
+    path=$1
+    stopDstatAndCopyFile ${MW2IP} ${MW2DESIGNATOR} ${path}
+}
+
+stopDstatAndCopyFileClient1() {
+    #args
+    # $1: path to store file
+    path=$1
+    stopDstatAndCopyFile ${CLIENT1IP} ${CLIENT1DESIGNATOR} ${path}
+}
+
+stopDstatAndCopyFileClient2() {
+    #args
+    # $1: path to store file
+    path=$1
+    stopDstatAndCopyFile ${CLIENT2IP} ${CLIENT2DESIGNATOR} ${path}
+}
+
+stopDstatAndCopyFileClient3() {
+    #args
+    # $1: path to store file
+    path=$1
+    stopDstatAndCopyFile ${CLIENT3IP} ${CLIENT3DESIGNATOR} ${path}
+}
+
+stopDstatAndCopyFileServer1() {
+    #args
+    # $1: path to store file
+    path=$1
+    stopDstatAndCopyFile ${SERVER1IP} ${SERVER1DESIGNATOR} ${path}
+}
+
+stopDstatAndCopyFileServer2() {
+    #args
+    # $1: path to store file
+    path=$1
+    stopDstatAndCopyFile ${SERVER2IP} ${SERVER2DESIGNATOR} ${path}
+}
+
+stopDstatAndCopyFileServer3() {
+    #args
+    # $1: path to store file
+    path=$1
+    stopDstatAndCopyFile ${SERVER3IP} ${SERVER3DESIGNATOR} ${path}
+}
+
 startPing() {
     #args
     # $1: ip from
     # $2: ip to ping
-    # $3: designator
+    # $3: designator origin
+    # $4: designator destination
     ip=$1
     iptoping=$2
-    designator=$3
+    designator=$3$4
     designatorping="${designator}${PINGDESIGNATOR}"
-    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -dm -S ${designatorping} bash -c 'ping -nD ${iptoping} &> $PINGFILE'"
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -dm -S ${designatorping} bash -c 'ping -nD ${iptoping} &> ${designator}${PINGFILE}'"
 }
 
 stopPingAndCopyFile() {
     #args
     # $1: ip
-    # $2: designator
+    # $2: designator origin
     # $3: path to store file
+    # $4: designator destination
     ip=$1
-    designator=$2
+    designator=$2$4
     path=$3
     designatorping="${designator}${PINGDESIGNATOR}"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designatorping} quit"
-    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${PINGFILE} ${path}/${designator}_${PINGFILE}
-    removeFile ${ip} ${PINGFILE}
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${designator}${PINGFILE} ${path}/${designator}${PINGFILE}
+    removeFile ${ip} ${designator}${PINGFILE}
 }
 
+stopPingAndCopyFileMW1() {
+    #args
+    # $1: path to store file
+    # $2: designator destination
+    path=$1
+    designator2=$2
+    stopPingAndCopyFile ${W1IP} ${MW1DESIGNATOR} ${path} ${designator2}
+}
+
+stopPingAndCopyFileMW2() {
+    #args
+    # $1: path to store file
+    # $2: designator destination
+    path=$1
+    designator2=$2
+    stopPingAndCopyFile ${MW2IP} ${MW2DESIGNATOR} ${path} ${designator2}
+}
+
+stopPingAndCopyFileClient1() {
+    #args
+    # $1: path to store file
+    # $2: designator destination
+    path=$1
+    designator2=$2
+    stopPingAndCopyFile ${CLIENT1IP} ${CLIENT1DESIGNATOR} ${path} ${designator2}
+}
+
+stopPingAndCopyFileClient2() {
+    #args
+    # $1: path to store file
+    # $2: designator destination
+    path=$1
+    designator2=$2
+    stopPingAndCopyFile ${CLIENT2IP} ${CLIENT2DESIGNATOR} ${path} ${designator2}
+}
+
+stopPingAndCopyFileClient3() {
+    #args
+    # $1: path to store file
+    # $2: designator destination
+    path=$1
+    designator2=$2
+    stopPingAndCopyFile ${CLIENT3IP} ${CLIENT3DESIGNATOR} ${path} ${designator2}
+}
+
+stopPingAndCopyFileServer1() {
+    #args
+    # $1: path to store file
+    # $2: designator destination
+    path=$1
+    designator2=$2
+    stopPingAndCopyFile ${SERVER1IP} ${SERVER1DESIGNATOR} ${path} ${designator2}
+}
+
+stopPingAndCopyFileServer2() {
+    #args
+    # $1: path to store file
+    # $2: designator destination
+    path=$1
+    designator2=$2
+    stopPingAndCopyFile ${SERVER2IP} ${SERVER2DESIGNATOR} ${path} ${designator2}
+}
+
+stopPingAndCopyFileServer3() {
+    #args
+    # $1: path to store file
+    # $2: designator destination
+    path=$1
+    designator2=$2
+    stopPingAndCopyFile ${SERVER3IP} ${SERVER3DESIGNATOR} ${path} ${designator2}
+}
 
 # moves experiment.log to destination path
 moveExperimentLog() {
@@ -297,16 +458,20 @@ startMiddleware() {
     # $1: middleware_IP 
     # $2: designator e.g. "middleware1"
     # $3: numservers
+    # $4: numWorkerThreads
+    # $5: sharded
     ip=$1
     designator=$2
     numservers=$3
+    numthreads=$4
+    sharded=$5
     log "Starting $designator with ${numservers} servers (ip=$ip)"
     if [[ ${numservers} -eq 1 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t ${numthreads} -s ${sharded} -m ${SERVER1IP}:${MEMCACHEDPORT}"
     elif [[ ${numservers} -eq 2 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t ${numthreads} -s ${sharded} -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT}"
     elif [[ ${numservers} -eq 3 ]]; then
-        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t 2 -s true -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
+        ssh -o StrictHostKeyChecking=no junkerp@${ip} "cd asl; screen -dm -S ${designator} java -jar dist/middleware-junkerp.jar  -l ${ip} -p ${MWPORT} -t ${numthreads} -s ${sharded} -m ${SERVER1IP}:${MEMCACHEDPORT} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
     else
         log "ERROR: cannot start middleware. Invalid parameter for numservers: ${numservers}"
     fi
@@ -348,13 +513,21 @@ stopMiddleware2() {
 startMiddleware1() {
     #args
     # $1: numservers
+    # $2: numWorkerThreads
+    # $3: sharded
     numservers=$1
-    startMiddleware ${MW1IP} ${MW1DESIGNATOR} ${numservers}
+    numthreads=$2
+    sharded=$3
+    startMiddleware ${MW1IP} ${MW1DESIGNATOR} ${numservers} ${numthreads} ${sharded}
 }
 
 startMiddleware2() {
     #args
     # $1: numservers
+    # $2: numWorkerThreads
+    # $3: sharded
     numservers=$1
-    startMiddleware ${MW2IP} ${MW2DESIGNATOR} ${numservers}
+    numthreads=$2
+    sharded=$3
+    startMiddleware ${MW2IP} ${MW2DESIGNATOR} ${numservers} ${numthreads} ${sharded}
 }
