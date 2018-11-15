@@ -38,6 +38,7 @@ for c in "${memtierclients[@]}"; do
 		stopAllClient1
 		stopAllClient2
 		stopAllClient3
+		sleep 5
 
 		collectLogsFromServer1 ${runlogfolder}
 		collectLogsFromClient1 ${runlogfolder}
@@ -81,6 +82,7 @@ for c in "${memtierclients[@]}"; do
 		stopAllClient1
 		stopAllClient2
 		stopAllClient3
+		sleep 5
 
 		collectLogsFromServer1 ${runlogfolder}
 		collectLogsFromClient1 ${runlogfolder}
@@ -118,6 +120,7 @@ for c in "${memtierClients[@]}"; do
 		stopAllClient1
 		stopDstatServer1
 		stopDstatServer2
+		sleep 5
 
 		collectLogsFromServer1 ${runlogfolder}
 		collectLogsFromServer2 ${runlogfolder}
@@ -155,6 +158,7 @@ for c in "${memtierClients[@]}"; do
 		stopAllClient1
 		stopDstatServer1
 		stopDstatServer2
+		sleep 5
 
 		collectLogsFromServer1 ${runlogfolder}
 		collectLogsFromServer2 ${runlogfolder}
