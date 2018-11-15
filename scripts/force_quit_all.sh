@@ -5,6 +5,7 @@ source variables.sh
 killScreen() {
     #args
     # $1: ip
+    ip=$1
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "killall screen"
 }
 killall screen  # kill it also on client1 who runs the script

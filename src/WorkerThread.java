@@ -24,7 +24,7 @@ public class WorkerThread implements Runnable {
     private static final ByteBuffer SET_POSITIVE_RESPONSE_BUF = Request.stringToByteBuffer("STORED\r\n");
     private ByteBuffer serverSetResponseBuffer = ByteBuffer.allocateDirect(SET_MAX_RESPONSE_SIZE);
     private static final int MAX_NUM_GET_REQUESTS = 10;
-    private ByteBuffer serverGetResponseBuffer = ByteBuffer.allocateDirect(10*(Request.HEADER_SIZE_MAX + Request.VALUE_SIZE_MAX));       // TODO: does this make sense? Shall we unify response buffers into one big buffer?
+    private ByteBuffer serverGetResponseBuffer = ByteBuffer.allocateDirect(10*(Request.HEADER_SIZE_MAX + Request.VALUE_SIZE_MAX));  
 
     private final ByteBuffer GET_REQ_BEGINING = Request.stringToByteBuffer("get ");
     private final ByteBuffer REQ_LINE_END = Request.stringToByteBuffer("\r\n");
