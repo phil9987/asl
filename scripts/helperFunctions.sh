@@ -391,8 +391,6 @@ initMemcachedServers() {
     # start middleware1, connected to all 3 servers
     log "Function initMemcachedServers() entered"
     startMiddleware1 3 1 ${NONSHARDED}
-    log "Started middleware.. sleeping for 2s"
-    sleep 2s
     # initialize memcached servers with all keys
     logname="client1_init"
     memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=1 --requests=500 --protocol=memcache_text --run-count=1 --threads=1 --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S --out-file=${logname}.log --json-out-file=${logname}.json
@@ -484,6 +482,7 @@ startMiddleware() {
     else
         log "ERROR: cannot start middleware. Invalid parameter for numservers: ${numservers}"
     fi
+    sleep 2
 }
 
 waitForFileToExist() {
