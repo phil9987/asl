@@ -507,7 +507,7 @@ stopMiddleware() {
     log "Stopping ${designator} (ip=${ip})"
     #screencmd="screen -X -S ${designator} quit; ls; while [[ ! -f ~/asl/logs/done.info ]]; do sleep 0.1; done; rm ~/asl/logs/done.info;"
     # TODO test this command with timeout and escaped cnt variable
-    screencmd="screen -X -S ${designator} quit; ls; cnt=0; while [[ ! -f ~/asl/logs/done.info && \${cnt} -lt 50 ]]; do cnt=$((cnt + 1)); sleep 0.1; done; rm ~/asl/logs/done.info;"
+    screencmd="screen -X -S ${designator} quit; ls; cnt=0; while [[ ! -f ~/asl/logs/done.info && \${cnt} -lt 50 ]]; do cnt=\$((cnt + 1)); sleep 0.1; done; rm ~/asl/logs/done.info;"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "${screencmd}"
     log "Middleware stopped"
 }
