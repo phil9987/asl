@@ -171,8 +171,8 @@ log "### Starting experiment for section 3.2b)"
 logfolder="$LOGBASEFOLDER/logSection3_2b"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(1 32)
-workerthreads=(8 64)
+memtierclients=(32)
+workerthreads=(64)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
