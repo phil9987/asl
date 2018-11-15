@@ -348,13 +348,13 @@ stopDstat() {
 }
 
 stopDstatServer1() {
-    stopDstatAndCopyFile ${SERVER1IP} ${SERVER1DESIGNATOR}
+    stopDstat ${SERVER1IP} ${SERVER1DESIGNATOR}
 }
 
 stopDstatServer2() {
-    stopDstatAndCopyFile ${SERVER2IP} ${SERVER2DESIGNATOR}
+    stopDstat ${SERVER2IP} ${SERVER2DESIGNATOR}
 }
 
 stopDstatServer3() {
-    stopDstatAndCopyFile ${SERVER3IP} ${SERVER3DESIGNATOR}
+    stopDstat ${SERVER3IP} ${SERVER3DESIGNATOR}
 }
