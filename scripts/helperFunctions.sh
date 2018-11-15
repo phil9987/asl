@@ -114,6 +114,12 @@ createDirectory() {
     mkdir -p ${dir}
 }
 
+createRemoteDirectory() {
+    ip=$1
+    dir=$2
+    ssh -o StrictHostKeyChecking=no junkerp@${ip} "mkdir -p ${dir}"
+}
+
 # removes a file from a remote server
 removeFile() {
     #args
