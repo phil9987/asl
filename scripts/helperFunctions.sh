@@ -234,8 +234,8 @@ initMemcachedServers() {
     log "servers with values initialized"
     stopAllMW1
     initfolder="${LOGBASEFOLDER}/init"
-    collectLogsFromMiddleware1 initfolder
-    collectLogsFromClient1 initfolder
+    collectLogsFromMiddleware1 ${initfolder}
+    collectLogsFromClient1 ${initfolder}
 }
 
 # stops all 3 memcached servers and deletes the screenlog.0 file
@@ -267,7 +267,7 @@ runMemtierClient() {
     numthreads=$6
     instance=$7
     logname=${designator}${instance}
-    basecmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numclients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000  --data-size=4096 --out-file=${logname}.log --json-out-file=${logname}.json"
+    basecmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numclients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000  --data-size=4096 --out-file=~/asl/logs/${logname}.log --json-out-file=asl/logs/${logname}.json"
     if [[ $# -eq 7 ]]; then
         if [[ ${instance} == ${FIRSTMEMTIER} ]]; then
             log "starting memtier ${designator} (local, ${instance}, blockingmode) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
