@@ -10,7 +10,7 @@ log "### Starting experiment for section 2.1a)"
 logfolder="$LOGBASEFOLDER/logSection2_1a"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(1 32)
+memtierclients=(32)
 #
 for c in "${memtierclients[@]}"; do
 	log "## Starting configuration memtierclients=$c for section 2.1a)"
@@ -30,21 +30,19 @@ for c in "${memtierclients[@]}"; do
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
+		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
 		createDirectory ${runlogfolder}
+		stopDstatServer1 ${runlogfolder}
+		stopAllClient1
+		stopAllClient2
+		stopAllClient3
 
 		collectLogsFromServer1 ${runlogfolder}
-		collectLogsFromClient1 ${runlogfolder} ${FIRSTMEMTIER}
-		collectLogsFromClient2 ${runlogfolder} ${FIRSTMEMTIER}
-		collectLogsFromClient3 ${runlogfolder} ${FIRSTMEMTIER}
-		stopDstatAndCopyFileServer1 ${runlogfolder}
-		stopDstatAndCopyFileClient1 ${runlogfolder}
-		stopDstatAndCopyFileClient2 ${runlogfolder}
-		stopDstatAndCopyFileClient3 ${runlogfolder}
-		stopPingAndCopyFileClient1 ${runlogfolder} ${SERVER1DESIGNATOR}
-		stopPingAndCopyFileClient2 ${runlogfolder} ${SERVER1DESIGNATOR}
-		stopPingAndCopyFileClient3 ${runlogfolder} ${SERVER1DESIGNATOR}
+		collectLogsFromClient1 ${runlogfolder}
+		collectLogsFromClient2 ${runlogfolder}
+		collectLogsFromClient3 ${runlogfolder}
 	done
 done 
 #
@@ -55,7 +53,7 @@ log "### Starting experiment for section 2.1b)"
 logfolder="$LOGBASEFOLDER/logSection2_1b"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(1 32)
+memtierclients=(32)
 #
 for c in "${memtierclients[@]}"; do
 	log "## Starting configuration memtierclients=$c for section 2.1b)"
@@ -75,31 +73,28 @@ for c in "${memtierclients[@]}"; do
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
 		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
+		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
 		createDirectory ${runlogfolder}
+		stopDstatServer1 ${runlogfolder}
+		stopAllClient1
+		stopAllClient2
+		stopAllClient3
 
 		collectLogsFromServer1 ${runlogfolder}
-		collectLogsFromClient1 ${runlogfolder} ${FIRSTMEMTIER}
-		collectLogsFromClient2 ${runlogfolder} ${FIRSTMEMTIER}
-		collectLogsFromClient3 ${runlogfolder} ${FIRSTMEMTIER}
-		stopDstatAndCopyFileServer1 ${runlogfolder}
-		stopDstatAndCopyFileClient1 ${runlogfolder}
-		stopDstatAndCopyFileClient2 ${runlogfolder}
-		stopDstatAndCopyFileClient3 ${runlogfolder}
-		stopPingAndCopyFileClient1 ${runlogfolder} ${SERVER1DESIGNATOR} 
-		stopPingAndCopyFileClient2 ${runlogfolder} ${SERVER1DESIGNATOR} 
-		stopPingAndCopyFileClient3 ${runlogfolder} ${SERVER1DESIGNATOR}
+		collectLogsFromClient1 ${runlogfolder}
+		collectLogsFromClient2 ${runlogfolder}
+		collectLogsFromClient3 ${runlogfolder}
 	done
-done 
-#
+done #
 # 2.2a) Read only, 2 memtier clients with 1 thread each running on one client vm, 2 memcached server
 # virtual clients per memtier client 1..32
 log "### Starting experiment for section 2.2a)"
 logfolder="$LOGBASEFOLDER/logSection2_2a"
 createDirectory $logfolder
 #define parameter ranges
-memtierClients=(1 32)
+memtierClients=(32)
 #
 for c in "${memtierClients[@]}"; do
 	log "## Starting configuration memtierClients=$c for section 2.2a)"
@@ -120,13 +115,13 @@ for c in "${memtierClients[@]}"; do
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
 		createDirectory ${runlogfolder}
+		stopAllClient1
+		stopDstatServer1
+		stopDstatServer2
+
 		collectLogsFromServer1 ${runlogfolder}
-		collectLogsFromClient1 ${runlogfolder} ${FIRSTMEMTIER}
-		stopDstatAndCopyFileServer1 ${runlogfolder}
-		stopDstatAndCopyFileServer2 ${runlogfolder}
-		stopDstatAndCopyFileClient1 ${runlogfolder}
-		stopPingAndCopyFileClient1 ${runlogfolder} ${SERVER1DESIGNATOR}
-		stopPingAndCopyFileClient1 ${runlogfolder} ${SERVER2DESIGNATOR}
+		collectLogsFromServer2 ${runlogfolder}
+		collectLogsFromClient1 ${runlogfolder}
 	done
 done 
 #
@@ -136,7 +131,7 @@ log "### Starting experiment for section 2.2b)"
 logfolder="$LOGBASEFOLDER/logSection2_2b"
 createDirectory $logfolder
 #define parameter ranges
-memtierClients=(1 32)
+memtierClients=(32)
 #
 for c in "${memtierClients[@]}"; do
 	log "## Starting configuration memtierClients=$c for section 2.2b)"
@@ -157,12 +152,12 @@ for c in "${memtierClients[@]}"; do
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
 		createDirectory ${runlogfolder}
+		stopAllClient1
+		stopDstatServer1
+		stopDstatServer2
+
 		collectLogsFromServer1 ${runlogfolder}
-		collectLogsFromClient1 ${runlogfolder} ${FIRSTMEMTIER}
-		stopDstatAndCopyFileServer1 ${runlogfolder}
-		stopDstatAndCopyFileServer2 ${runlogfolder}
-		stopDstatAndCopyFileClient1 ${runlogfolder}
-		stopPingAndCopyFileClient1 ${runlogfolder} ${SERVER1DESIGNATOR}
-		stopPingAndCopyFileClient1 ${runlogfolder} ${SERVER2DESIGNATOR}
+		collectLogsFromServer2 ${runlogfolder}
+		collectLogsFromClient1 ${runlogfolder}
 	done
 done 
