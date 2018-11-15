@@ -141,8 +141,8 @@ collectLogs() {
     designator=$3
     echo "Collecting logs from ${designator} ($ip, $path)"
     dir="${path}/${designator}"
-    createDirectory dir
-    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/* dir
+    createDirectory ${dir}
+    scp -o StrictHostKeyChecking=no junkerp@${ip}:~/asl/logs/* ${dir}
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "rm -r ~/asl/logs; mkdir -p ~/asl/logs"
 }
 
@@ -194,8 +194,8 @@ collectLogsFromClient1() {
     path=$1
     echo "Collecting logs from ${CLIENT1DESIGNATOR} (local, ${path})"
     dir="${path}/${CLIENT1DESIGNATOR}"
-    createDirectory dir
-    mv ~/asl/logs/* dir
+    createDirectory ${dir}
+    mv ~/asl/logs/* ${dir}
 }
 
 # collects all relevant logs from CLIENT2
