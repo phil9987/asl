@@ -63,7 +63,6 @@ stopDstatAndCopyFile() {
     designatordstat="${designator}${DSTATDESIGNATOR}"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designatordstat} quit"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${DSTATFILE} ${path}/${designator}_${DSTATFILE}
-    removeFile ${ip} ${DSTATFILE}
 }
 
 stopDstatAndCopyFileMW1() {
@@ -152,7 +151,6 @@ stopPingAndCopyFile() {
     echo "stopping ping on $ip with desitnatorping=$designatorping path=$path"
     ssh -o StrictHostKeyChecking=no junkerp@${ip} "screen -X -S ${designatorping} quit"
     scp -o StrictHostKeyChecking=no junkerp@${ip}:~/${designator}${PINGFILE} ${path}/${designator}${PINGFILE}
-    removeFile ${ip} ${designator}${PINGFILE}
 }
 
 stopPingAndCopyFileMW1() {
