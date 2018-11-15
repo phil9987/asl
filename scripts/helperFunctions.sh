@@ -267,21 +267,21 @@ runMemtierClient() {
     numthreads=$6
     instance=$7
     logname=${designator}${instance}
-    basecmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numclients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000  --data-size=4096 --out-file=~/asl/logs/${logname}.log --json-out-file=asl/logs/${logname}.json"
+    basecmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numclients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000 --data-size=4096 "
     if [[ $# -eq 7 ]]; then
         if [[ ${instance} == ${FIRSTMEMTIER} ]]; then
             log "starting memtier ${designator} (local, ${instance}, blockingmode) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-            cmd="${basecmd}"
+            cmd="${basecmd} --out-file=../logs/${logname}.log --json-out-file=../logs/${logname}.json"
             log "$cmd"
             $cmd
         else
             log "starting memtier ${designator} (local, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-            screen -dm -S ${logname} ${basecmd}
+            screen -dm -S ${logname} ${basecmd} --out-file=asl/logs/${logname}.log --json-out-file=asl/logs/${logname}.json
         fi
     elif [[ $# -eq 8 ]]; then
         clientIP=$8
         log "starting memtier ${designator} (remote, ${instance}) connected to ${ip}:${port} with clients=${numclients} threads=${numthreads} and a ratio of ${ratio} writing logs to screenlog.0"
-        ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -S ${logname} ${basecmd}"
+        ssh -o StrictHostKeyChecking=no junkerp@${clientIP} "screen -dm -S ${logname} ${basecmd} --out-file=asl/logs/${logname}.log --json-out-file=asl/logs/${logname}.json"
     else
         log "ERROR: invalid number of arguments (expected 7 for local and 8 for remote client execution): $#"
     fi
