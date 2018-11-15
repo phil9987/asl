@@ -64,15 +64,6 @@ public class MyMiddleware {
                 } catch (IOException e) {
                     logger.error("Could not create done.info indicator file", e);
                 }
-                
-                /* TODO: log statistics 
-                Average throughput
-                Average queue length
-                Average waiting time in the queue
-                Average service time of the memcached serversNumber of GET,SET, and multi-GET operations
-                Cache miss ratio (i.e., “empty” responses returned by the memcache servers)
-                Any error message or exception that occurred during the experiment
-                */
             }
         });
     }
