@@ -11,12 +11,12 @@ killScreen() {
 }
 
 stopAllMW1() {
-    ssh -o StrictHostKeyChecking=no junkerp@${ip} "killall screen; cnt=0; while [[ ! -f ~/asl/logs/done.info && \${cnt} -lt 50 ]]; do cnt=\$((cnt + 1)); sleep 0.1; done; rm ~/asl/logs/done.info;"
+    ssh -o StrictHostKeyChecking=no junkerp@${MW1IP} "killall screen; cnt=0; while [[ ! -f ~/asl/logs/done.info && \${cnt} -lt 50 ]]; do cnt=\$((cnt + 1)); sleep 0.1; done; rm ~/asl/logs/done.info;"
     log "Middleware 1 stopped"
 }
 
 stopAllMW2() {
-    ssh -o StrictHostKeyChecking=no junkerp@${ip} "killall screen; cnt=0; while [[ ! -f ~/asl/logs/done.info && \${cnt} -lt 50 ]]; do cnt=\$((cnt + 1)); sleep 0.1; done; rm ~/asl/logs/done.info;"
+    ssh -o StrictHostKeyChecking=no junkerp@${MW2IP} "killall screen; cnt=0; while [[ ! -f ~/asl/logs/done.info && \${cnt} -lt 50 ]]; do cnt=\$((cnt + 1)); sleep 0.1; done; rm ~/asl/logs/done.info;"
     log "Middleware 1 stopped"
 }
 
