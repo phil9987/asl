@@ -228,10 +228,16 @@ startMemcachedServers() {
 initMemcachedServers() {
     # start middleware1, connected to all 3 servers
     log "Function initMemcachedServers() entered"
+    log "starting both middlewares once to avoid first startup problem..."
     startMiddleware1 3 1 ${NONSHARDED}
+    startMiddleware2 3 1 ${NONSHARDED}
+    sleep 5
+    stopAllMW1
+    stopAllMW2
+    log "Now initializing servers"
     # initialize memcached servers with all keys
     logname="../logs/client1_init"
-    memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=1 --requests=500 --protocol=memcache_text --run-count=1 --threads=1 --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S --out-file=${logname}.log --json-out-file=${logname}.json
+    memtier_benchmark --server=${MW1IP} --port=${MWPORT} --clients=1 --requests=10000 --protocol=memcache_text --run-count=1 --threads=1 --key-maximum=10000 --ratio=1:0 --data-size=4096 --key-pattern=S:S --out-file=${logname}.log --json-out-file=${logname}.json
     log "servers with values initialized"
     stopAllMW1
     initfolder="${LOGBASEFOLDER}/init"
