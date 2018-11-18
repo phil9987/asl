@@ -261,7 +261,7 @@ public class WorkerThread implements Runnable {
     @Override
     public void run() {
         logger.info(String.format("Starting WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
-        try {    
+        try (    // ensure that socketchannels are being closed on interrupt
             for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
                 String serverAddress = serverAdresses.get(serverIdx);
                 String[] serverAddressSplitted = serverAddress.split(":");
@@ -280,12 +280,13 @@ public class WorkerThread implements Runnable {
                 serverConnections[serverIdx].connect(new InetSocketAddress(ip, port));
                 serverConnections[serverIdx].configureBlocking(true);
             }
+        ) {
             while(true) {
+                Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
+                request.queueWaitingTime = System.currentTimeMillis() - request.timestampQueueEntered;
+                Request.Type type = request.getType();
+                //logger.debug(String.format("Worker %d starts handling request of type %s", this.id, type));
                 try {
-                    Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
-                    request.queueWaitingTime = System.currentTimeMillis() - request.timestampQueueEntered;
-                    Request.Type type = request.getType();
-                    //logger.debug(String.format("Worker %d starts handling request of type %s", this.id, type));
                     switch(type) {
                         case GET:
                             processGet(request);
@@ -294,13 +295,15 @@ public class WorkerThread implements Runnable {
                             processMultiget(request);
                             break;
                         case SET:
-                            processSet(request);
+                            procfessSet(request);
                             break;
                         default:
                             logger.error(String.format("Received request with wrong type: %s", type));
                     }
                 } catch (IOException e) {
                     logger.error(String.format("Worker %d had an IOException", this.id), e);
+                } catch (Exception e) {
+                    logger.error(String.format("Worker %d had an Exception", this.id), e);
                 }
             }
 
