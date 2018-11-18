@@ -105,6 +105,9 @@ public class NetworkerThread implements Runnable {
                         if(newBytesCount == -1) {
                             logger.debug("ERROR: newBytesCount=-1");
                         }
+                        if(newBytesCount == 0) {
+                            logger.debug("ERROR2: newBytesCount=0");
+                        }
                     }
                     //logger.debug("Networker removes processed key from iterator");
                     keyIterator.remove();       // Remove key from set so we don't process it twice
