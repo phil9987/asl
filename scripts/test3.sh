@@ -12,7 +12,7 @@ logfolder="$LOGBASEFOLDER/logSection3_1a"
 createDirectory $logfolder
 #define parameter ranges
 memtierclients=(32)
-workerthreads=(1)
+workerthreads=(64)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
