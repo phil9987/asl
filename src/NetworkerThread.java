@@ -73,7 +73,7 @@ public class NetworkerThread implements Runnable {
                         Request request = (Request) key.attachment();
                         if(request.isComplete()) {
                             // request has been finished already, start a new one
-                            //logger.debug("Resetting request object");
+                            logger.debug("Resetting request object");
                             request.reset(socketChannel);
                         }
 
@@ -85,6 +85,7 @@ public class NetworkerThread implements Runnable {
                             logger.error(String.format("Exception occurred: %s bytesRead: %d", Request.byteBufferToString(request.buffer), newBytesCount),e);
                         }
                         if (newBytesCount == -1) {
+                            logger.debug(String.format("request: %s \n isComplete: %b", Request.byteBufferToString(request.buffer), request.isComplete()))
                             logger.info("DISCONNECT");
                             key.cancel();
                             socketChannel.close();
