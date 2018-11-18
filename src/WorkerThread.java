@@ -294,7 +294,7 @@ public class WorkerThread implements Runnable {
                             processMultiget(request);
                             break;
                         case SET:
-                            procfessSet(request);
+                            processSet(request);
                             break;
                         default:
                             logger.error(String.format("Received request with wrong type: %s", type));
