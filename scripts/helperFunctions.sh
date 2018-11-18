@@ -280,6 +280,7 @@ runMemtierClient() {
     numthreads=$6
     instance=$7
     logname=${designator}${instance}
+    log "ip=$ip port=$port numclients=$numclients ratio=$ratio designator=$designator numthreads=$numthreads instance=$instance"
     basecmd="memtier_benchmark --server=${ip} --port=${port} --clients=${numclients} --test-time=${TESTTIME} --ratio=${ratio} --protocol=memcache_text --run-count=1 --threads=${numthreads} --key-maximum=10000 --data-size=4096 "
     if [[ $# -eq 7 ]]; then
         if [[ ${instance} == ${FIRSTMEMTIER} ]]; then
