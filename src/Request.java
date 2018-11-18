@@ -128,7 +128,7 @@ public class Request {
      */
     public static boolean isComplete(ByteBuffer buf) {
         boolean res = false;
-        //logger.debug(String.format("Checking if buffer is completed: position: %d limit: %d capacity: %d", buf.position(), buf.limit(), buf.capacity()));
+        logger.debug(String.format("Checking if buffer is completed: position: %d limit: %d capacity: %d", buf.position(), buf.limit(), buf.capacity()));
         byte lastChar = 'a';
         if(buf.position() > 0) {
             logger.debug("Checking lastchar behind buf.position()");

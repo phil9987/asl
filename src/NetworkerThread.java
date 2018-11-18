@@ -95,9 +95,9 @@ public class NetworkerThread implements Runnable {
                             //logger.debug(String.format("read %d new bytes from request", newBytesCount));
                             ByteBuffer requestBufView = request.buffer.duplicate();
                             requestBufView.flip();
-                            //logger.debug(String.format("Received msg from client: %s", Request.byteBufferToString(requestBufView)));
+                            logger.debug(String.format("Received msg from client: %s", Request.byteBufferToString(requestBufView)));
                             if(request.isComplete()) {
-                                //logger.debug("Request complete, adding it to queue");
+                                logger.debug("Request complete, adding it to queue");
                                 //logger.debug(String.format("received request of type %s", request.getType()));
                                 request.timestampQueueEntered = System.currentTimeMillis();
                                 request.queueLengthBeforeEntering = blockingRequestQueue.size();
