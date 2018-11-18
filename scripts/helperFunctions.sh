@@ -282,11 +282,11 @@ startMiddleware() {
     log "Starting $2 with $3 servers (ip=$1)"
     basecmd="cd asl; screen -dm -S $2 java -jar dist/middleware-junkerp.jar -l $1 -p ${MWPORT} -t $4 -s $5 -m ${SERVER1IP}:${MEMCACHEDPORT}"
     log "${basecmd}"
-    if [[ ${numservers} -eq 1 ]]; then
+    if [[ $3 -eq 1 ]]; then
         ssh -o StrictHostKeyChecking=no junkerp@$1 "${basecmd}"
-    elif [[ ${numservers} -eq 2 ]]; then
+    elif [[ $3 -eq 2 ]]; then
         ssh -o StrictHostKeyChecking=no junkerp@$1 "${basecmd} ${SERVER2IP}:${MEMCACHEDPORT}"
-    elif [[ ${numservers} -eq 3 ]]; then
+    elif [[ $3 -eq 3 ]]; then
         thiscmd="${basecmd} ${SERVER2IP}:${MEMCACHEDPORT} ${SERVER3IP}:${MEMCACHEDPORT}"
         ssh -o StrictHostKeyChecking=no junkerp@$1 ${thiscmd}
     else
