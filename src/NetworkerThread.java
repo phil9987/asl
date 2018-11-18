@@ -85,7 +85,7 @@ public class NetworkerThread implements Runnable {
                             logger.error(String.format("Exception occurred: %s bytesRead: %d", Request.byteBufferToString(request.buffer), newBytesCount),e);
                         }
                         if (newBytesCount == -1) {
-                            logger.debug(String.format("request: %s \n isComplete: %b", Request.byteBufferToString(request.buffer), request.isComplete()))
+                            logger.debug(String.format("request: %s \n isComplete: %b", Request.byteBufferToString(request.buffer), request.isComplete()));
                             logger.info("DISCONNECT");
                             key.cancel();
                             socketChannel.close();
@@ -107,6 +107,9 @@ public class NetworkerThread implements Runnable {
                                 catch (InterruptedException e) {
                                     logger.error("Got interrupted while waiting for new space in queue", e);
                                 }
+                            }
+                            else {
+                                logger.debug(String.format("request not complete yet: %s", Request.byteBufferToString(request.buffer)));
                             }
                         } else {
                             logger.error("NetworkerThread received 0 new bytes on read");
