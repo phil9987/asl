@@ -128,25 +128,25 @@ public class Request {
      */
     public static boolean isComplete(ByteBuffer buf) {
         boolean res = false;
-        logger.debug(String.format("Checking if buffer is completed: position: %d limit: %d capacity: %d", buf.position(), buf.limit(), buf.capacity()));
+        //logger.debug(String.format("Checking if buffer is completed: position: %d limit: %d capacity: %d", buf.position(), buf.limit(), buf.capacity()));
         byte lastChar = 'a';
         if(buf.position() > 0) {
-            logger.debug("Checking lastchar behind buf.position()");
+            //logger.debug("Checking lastchar behind buf.position()");
             lastChar = buf.get(buf.position()-1);
         }
         else {
             if(buf.limit() < buf.capacity()) {
-                logger.debug("Checking lastchar behind buf.limit()");
+                //logger.debug("Checking lastchar behind buf.limit()");
                 lastChar = buf.get(buf.limit()-1);
             }
         }
         res = lastChar == '\n';
-         if(res) {
+        /*if(res) {
             logger.debug("last character of buffer is newline, request is complete");
         }
         else {
             logger.debug(String.format("last character of buffer is not newline, request not finished yet: %c", lastChar));
-        }
+        }*/
         return res;
     }
 

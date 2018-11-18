@@ -73,7 +73,7 @@ public class NetworkerThread implements Runnable {
                         Request request = (Request) key.attachment();
                         if(request.isComplete()) {
                             // request has been finished already, start a new one
-                            logger.debug("Resetting request object");
+                            //logger.debug("Resetting request object");
                             request.reset(socketChannel);
                         }
 
@@ -86,27 +86,21 @@ public class NetworkerThread implements Runnable {
                         }
 
                         if(request.isComplete()) {
-                            logger.debug("Request complete, adding it to queue");
-                                //logger.debug(String.format("received request of type %s", request.getType()));
-                                request.timestampQueueEntered = System.currentTimeMillis();
-                                request.queueLengthBeforeEntering = blockingRequestQueue.size();
-                                try {
-                                    this.blockingRequestQueue.put(request); // blocking if queue is full
-                                } 
-                                catch (InterruptedException e) {
-                                    logger.error("Got interrupted while waiting for new space in queue", e);
-                                }
+                            //logger.debug("Request complete, adding it to queue");
+                            //logger.debug(String.format("received request of type %s", request.getType()));
+                            request.timestampQueueEntered = System.currentTimeMillis();
+                            request.queueLengthBeforeEntering = blockingRequestQueue.size();
+                            try {
+                                this.blockingRequestQueue.put(request); // blocking if queue is full
+                            } 
+                            catch (InterruptedException e) {
+                                logger.error("Got interrupted while waiting for new space in queue", e);
+                            }
                         } else if(newBytesCount == -1) {
                             logger.info("DISCONNECT");
                             request.reset(socketChannel);
                             key.cancel();
                             socketChannel.close();
-                        }
-                        if(newBytesCount == -1) {
-                            logger.debug("ERROR: newBytesCount=-1");
-                        }
-                        if(newBytesCount == 0) {
-                            logger.debug("ERROR2: newBytesCount=0");
                         }
                     }
                     //logger.debug("Networker removes processed key from iterator");
