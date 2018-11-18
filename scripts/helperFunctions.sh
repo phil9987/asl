@@ -127,7 +127,7 @@ collectLogs() {
     # $2: ip
     # $3: designator
     echo "Collecting logs from $3 ($2, $1)"
-    dir="$2/$3"
+    dir="$1/$3"
     createDirectory ${dir}
     scp -o StrictHostKeyChecking=no junkerp@$2:~/asl/logs/* ${dir}
     ssh -o StrictHostKeyChecking=no junkerp@$2 "rm -r ~/asl/logs; mkdir -p ~/asl/logs"
