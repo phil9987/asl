@@ -55,3 +55,51 @@ for c in "${memtierclients[@]}"; do
 	done
 done 
 #
+log "### Starting experiment for section 3.1b)"
+logfolder="$LOGBASEFOLDER/logSection3_1b"
+createDirectory $logfolder
+#define parameter ranges
+memtierclients=(32)
+workerthreads=(1 2 64)
+#
+for c in "${memtierclients[@]}"; do
+	for w in "${workerthreads[@]}"; do
+		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 3.1b)"
+		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}"
+		createDirectory ${clientlogfolder}
+		for run in $(seq 1 ${REPETITIONS}); do
+			log "# Starting run ${run} / ${REPETITIONS}"
+			numthreads=2
+			startDstatServer1
+			startDstatClient1
+			startDstatClient2
+			startDstatClient3
+			startDstatMW1
+			startPing ${CLIENT1IP} ${MW1IP} ${CLIENT1DESIGNATOR} ${MW1DESIGNATOR}
+			startPing ${CLIENT2IP} ${MW1IP} ${CLIENT2DESIGNATOR} ${MW1DESIGNATOR}
+			startPing ${CLIENT3IP} ${MW1IP} ${CLIENT3DESIGNATOR} ${MW1DESIGNATOR}
+			startPing ${MW1IP} ${SERVER1IP} ${MW1DESIGNATOR} ${SERVER1DESIGNATOR}
+
+			startMiddleware1 1 ${w} ${NONSHARDED}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
+			stopAllMW1
+			stopAllClient1
+			stopAllClient2
+			stopAllClient3
+			stopDstatServer1
+			sleep 5
+
+			runlogfolder="${clientlogfolder}/run${run}"
+			log "Creating folder for run ${runlogfolder}"
+			createDirectory ${runlogfolder}
+			collectLogsFromMiddleware1 ${runlogfolder}
+			collectLogsFromServer1 ${runlogfolder}
+			collectLogsFromClient1 ${runlogfolder}
+			collectLogsFromClient2 ${runlogfolder}
+			collectLogsFromClient3 ${runlogfolder}
+		done
+	done
+done 
+#
