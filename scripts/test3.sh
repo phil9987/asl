@@ -81,6 +81,7 @@ for c in "${memtierclients[@]}"; do
 			startPing ${MW1IP} ${SERVER1IP} ${MW1DESIGNATOR} ${SERVER1DESIGNATOR}
 
 			startMiddleware1 1 ${w} ${NONSHARDED}
+			log "ARGUMENTS PASSED> ip=${MW1IP} port=${MWPORT} numclients=$c ratio=${WRITEONLY} designator=${CLIENT3DESIGNATOR} numthreads=${numthreads} instance=${FIRSTMEMTIER} clientIP=${CLIENT3IP}"
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
