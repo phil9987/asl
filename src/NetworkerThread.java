@@ -84,20 +84,9 @@ public class NetworkerThread implements Runnable {
                         } catch (Exception e) {
                             logger.error(String.format("Exception occurred: %s bytesRead: %d", Request.byteBufferToString(request.buffer), newBytesCount),e);
                         }
-                        if (newBytesCount == -1) {
-                            logger.debug(String.format("request: %s \n isComplete: %b", Request.byteBufferToString(request.buffer), request.isComplete()));
-                            logger.info("DISCONNECT");
-                            key.cancel();
-                            socketChannel.close();
-                            //break;
-                        } 
-                        else if (newBytesCount > 0) {
-                            //logger.debug(String.format("read %d new bytes from request", newBytesCount));
-                            ByteBuffer requestBufView = request.buffer.duplicate();
-                            requestBufView.flip();
-                            logger.debug(String.format("Received msg from client: %s", Request.byteBufferToString(requestBufView)));
-                            if(request.isComplete()) {
-                                logger.debug("Request complete, adding it to queue");
+
+                        if(request.isComplete()) {
+                            logger.debug("Request complete, adding it to queue");
                                 //logger.debug(String.format("received request of type %s", request.getType()));
                                 request.timestampQueueEntered = System.currentTimeMillis();
                                 request.queueLengthBeforeEntering = blockingRequestQueue.size();
@@ -107,12 +96,11 @@ public class NetworkerThread implements Runnable {
                                 catch (InterruptedException e) {
                                     logger.error("Got interrupted while waiting for new space in queue", e);
                                 }
-                            }
-                            else {
-                                logger.debug(String.format("request not complete yet: %s", Request.byteBufferToString(request.buffer)));
-                            }
-                        } else {
-                            logger.error("NetworkerThread received 0 new bytes on read");
+                        } else if(newBytesCount == -1) {
+                            logger.trace("DISCONNECT");
+                            request.reset(socketChannel);
+                            key.cancel();
+                            socketChannel.close();
                         }
                     }
                     //logger.debug("Networker removes processed key from iterator");
