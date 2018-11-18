@@ -2,6 +2,7 @@
 source variables.sh
 source helperFunctions.sh
 
+logname="test"
 echo "starting MW1"
 startMiddleware1 3 1 ${NONSHARDED}
 echo "MW1 started"
