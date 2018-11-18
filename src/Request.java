@@ -141,12 +141,12 @@ public class Request {
             }
         }
         res = lastChar == '\n';
-        if(res) {
+        /** if(res) {
             //logger.debug("last character of buffer is newline, request is complete");
         }
         else {
             //logger.debug(String.format("last character of buffer is not newline, request not finished yet: %c", lastChar));
-        }
+        }**/
         return res;
     }
 
