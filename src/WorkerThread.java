@@ -261,7 +261,7 @@ public class WorkerThread implements Runnable {
     @Override
     public void run() {
         logger.info(String.format("Starting WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
-        try (    // ensure that socketchannels are being closed on interrupt
+        try {    
             for(int serverIdx = 0; serverIdx < serverAdresses.size(); serverIdx++) {
                 String serverAddress = serverAdresses.get(serverIdx);
                 String[] serverAddressSplitted = serverAddress.split(":");
@@ -280,7 +280,6 @@ public class WorkerThread implements Runnable {
                 serverConnections[serverIdx].connect(new InetSocketAddress(ip, port));
                 serverConnections[serverIdx].configureBlocking(true);
             }
-        ) {
             while(true) {
                 try {
                     Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
