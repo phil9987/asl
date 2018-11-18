@@ -21,7 +21,7 @@ for c in "${memtierclients[@]}"; do
 		createDirectory ${clientlogfolder}
 		for run in $(seq 1 ${REPETITIONS}); do
 			log "# Starting run ${run} / ${REPETITIONS}"
-			numthreads=2
+			memtierthreads=2
 			startDstatServer1
 			startDstatClient1
 			startDstatClient2
@@ -33,9 +33,9 @@ for c in "${memtierclients[@]}"; do
 			startPing ${MW1IP} ${SERVER1IP} ${MW1DESIGNATOR} ${SERVER1DESIGNATOR}
 
 			startMiddleware1 1 ${w} ${NONSHARDED}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER}
 			stopAllMW1
 			stopAllClient1
 			stopAllClient2
@@ -69,7 +69,7 @@ for c in "${memtierclients[@]}"; do
 		createDirectory ${clientlogfolder}
 		for run in $(seq 1 ${REPETITIONS}); do
 			log "# Starting run ${run} / ${REPETITIONS}"
-			numthreads=2
+			memtierthreads=2
 			startDstatServer1
 			startDstatClient1
 			startDstatClient2
@@ -81,10 +81,10 @@ for c in "${memtierclients[@]}"; do
 			startPing ${MW1IP} ${SERVER1IP} ${MW1DESIGNATOR} ${SERVER1DESIGNATOR}
 
 			startMiddleware1 1 ${w} ${NONSHARDED}
-			log "ARGUMENTS PASSED> ip=${MW1IP} port=${MWPORT} numclients=$c ratio=${WRITEONLY} designator=${CLIENT3DESIGNATOR} numthreads=${numthreads} instance=${FIRSTMEMTIER} clientIP=${CLIENT3IP}"
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
+			log "ARGUMENTS PASSED> ip=${MW1IP} port=${MWPORT} numclients=$c ratio=${WRITEONLY} designator=${CLIENT3DESIGNATOR} numthreads=${memtierthreads} instance=${FIRSTMEMTIER} clientIP=${CLIENT3IP}"
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreadsnu} ${FIRSTMEMTIER}
 			stopAllMW1
 			stopAllClient1
 			stopAllClient2
