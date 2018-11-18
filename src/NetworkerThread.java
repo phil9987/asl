@@ -97,7 +97,7 @@ public class NetworkerThread implements Runnable {
                                     logger.error("Got interrupted while waiting for new space in queue", e);
                                 }
                         } else if(newBytesCount == -1) {
-                            logger.trace("DISCONNECT");
+                            logger.info("DISCONNECT");
                             request.reset(socketChannel);
                             key.cancel();
                             socketChannel.close();
