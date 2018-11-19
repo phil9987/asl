@@ -264,7 +264,7 @@ runMemtierClient() {
             screen -dm -S ${logname} ${basecmd} --client-stats=${logname}clientstats --json-out-file=asl/logs/${logname}.json
         fi
     elif [[ $# -eq 8 ]]; then
-        log "starting memtier ${designator} (remote, ${instance}, clientIP=$8)"
+        log "starting memtier ${designator} (remote, $7, clientIP=$8)"
         ssh -o StrictHostKeyChecking=no junkerp@$8 "screen -dm -S ${logname} ${basecmd} --client-stats=${logname}clientstats --json-out-file=asl/logs/${logname}.json"
     else
         log "ERROR: invalid number of arguments (expected 7 for local and 8 for remote client execution): $#"

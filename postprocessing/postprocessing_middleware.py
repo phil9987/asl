@@ -14,41 +14,15 @@ class RequestEntry:
         self.misses = int(splitting[7])
         self.hits = int(splitting[8])
 
-    def merge(self, req):
-        self.numSetRequests += req.numSetRequests
-        self.avgSetLatency += req.avg
-        self.queueLengthSum += req.queueLengthSum
-        self.queueWaitingTimeSum += req.queueWaitingTimeSum
-        self.serverTimeSum += req.serverTimeSum
-        self.middlewareTimeSum += req.middlewareTimeSum
-        self.numMissesSum += req.numMissesSum
-        self.numMultigetKeysSum += req.numMultigetKeysSum
-        self.numGetRequests += req.numGetRequests
-        self.numMultigetRequests += req.numMultigetRequests
-        self.numSetRequests += req.numSetRequests
-        self.numRequests += req.numRequests
-        self.server1Count += req.server1Count
-        self.server2Count += req.server2Count
-        self.server3Count += req.server3Count
-
     def __str__(self):
-        return "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}\n".format(
-            self.timestamp,     # just put a timestamp, we won't need it anyway
-            self.periodStart,
-            -1,                 # placeholder for not needed workerThreadId 
-            self.queueLengthSum,
-            self.queueWaitingTimeSum,
-            self.serverTimeSum,
-            self.middlewareTimeSum,
-            self.numMissesSum,
-            self.numMultigetKeysSum,
-            self.numGetRequests,
-            self.numMultigetRequests,
+        return "{} {} {} {} {} {} {}\n".format(
+            self.timestamp,
             self.numSetRequests,
-            self.numRequests,
-            self.server1Count,
-            self.server2Count,
-            self.server3Count)
+            self.avgSetLatency,
+            self.numGetRequests,
+            self.avgGetLatency,
+            self.misses,
+            self.hits)
 
 class HistogramEntry:
     def __init__(self, splitting):

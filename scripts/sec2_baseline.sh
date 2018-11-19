@@ -19,7 +19,7 @@ for c in "${memtierclients[@]}"; do
 	createDirectory ${clientlogfolder}
 	for run in $(seq 1 ${REPETITIONS}); do
 		log "# Starting run ${run} / ${REPETITIONS}"
-		numthreads=2
+		memtierthreads=2
 		startDstatServer1
 		startDstatClient1
 		startDstatClient2
@@ -28,9 +28,9 @@ for c in "${memtierclients[@]}"; do
 		startPing ${CLIENT2IP} ${SERVER1IP} ${CLIENT2DESIGNATOR} ${SERVER1DESIGNATOR}
 		startPing ${CLIENT3IP} ${SERVER1IP} ${CLIENT3DESIGNATOR} ${SERVER1DESIGNATOR}
 
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER}
 		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
@@ -63,7 +63,7 @@ for c in "${memtierclients[@]}"; do
 	createDirectory ${clientlogfolder}
 	for run in $(seq 1 ${REPETITIONS}); do
 		log "# Starting run ${run} / ${REPETITIONS}"
-		numthreads=2
+		memtierthreads=2
 		startDstatServer1
 		startDstatClient1
 		startDstatClient2
@@ -72,9 +72,9 @@ for c in "${memtierclients[@]}"; do
 		startPing ${CLIENT2IP} ${SERVER1IP} ${CLIENT2DESIGNATOR} ${SERVER1DESIGNATOR}
 		startPing ${CLIENT3IP} ${SERVER1IP} ${CLIENT3DESIGNATOR} ${SERVER1DESIGNATOR}
 
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${numthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER} ${CLIENT3IP}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER} ${CLIENT2IP}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER}
 		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
@@ -105,15 +105,15 @@ for c in "${memtierclients[@]}"; do
 	createDirectory $clientlogfolder
 	for run in $(seq 1 ${REPETITIONS}); do
 		log "# Starting run ${run} / ${REPETITIONS}"
-		numthreads=1
+		memtierthreads=1
 		startDstatClient1
 		startDstatServer1
 		startDstatServer2
 		startPing ${CLIENT1IP} ${SERVER1IP} ${CLIENT1DESIGNATOR} ${SERVER1DESIGNATOR}
 		startPing ${CLIENT1IP} ${SERVER2IP} ${CLIENT1DESIGNATOR} ${SERVER2DESIGNATOR}
 
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${SECONDMEMTIER}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${SECONDMEMTIER}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER}
 		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
@@ -143,15 +143,15 @@ for c in "${memtierclients[@]}"; do
 	createDirectory $clientlogfolder
 	for run in $(seq 1 ${REPETITIONS}); do
 		log "# Starting run ${run} / ${REPETITIONS}"
-		numthreads=1
+		memtierthreads=1
 		startDstatClient1
 		startDstatServer1
 		startDstatServer2
 		startPing ${CLIENT1IP} ${SERVER1IP} ${CLIENT1DESIGNATOR} ${SERVER1DESIGNATOR}
 		startPing ${CLIENT1IP} ${SERVER2IP} ${CLIENT1DESIGNATOR} ${SERVER2DESIGNATOR}
 
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${SECONDMEMTIER}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${numthreads} ${FIRSTMEMTIER}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${SECONDMEMTIER}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${FIRSTMEMTIER}
 		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
