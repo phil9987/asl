@@ -57,6 +57,10 @@ public class WorkerThread implements Runnable {
         logger.info(String.format("Instantiating WorkerThread %d with serverOffset %d", this.id, this.serverOffset));
     }
 
+    public void logCurrentAggregate() {
+        aggregationLogger.prepareForShutdown();
+    }
+
     /**
      * Returns next server to query for get requests.
      * Increases roundrobinvariable by 1.

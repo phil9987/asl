@@ -100,6 +100,10 @@ public class AggregationLogger {
         return (timestamp - currentPeriodStart) <= this.PERIOD;
     }
 
+    public void prepareForShutdown() {
+        this.aggregateLogReset();
+    }
+
     public void logRequest(Request request) {
         if(inPeriod(request.timestampReceived)) {
             //logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));

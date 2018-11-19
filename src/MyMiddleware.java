@@ -39,6 +39,7 @@ public class MyMiddleware {
                 logger.info("Shutdownhook executing...");
 
                 for(Thread worker : workerThreads) {
+                    worker.logCurrentAggregate();
                     worker.interrupt(); // call shutdownhook of each worker
                 }
                 networkerThread.interrupt();

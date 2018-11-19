@@ -88,6 +88,12 @@ def totalNumberRequests(requests):
         numRequests += req.numRequests
     return numRequests
 
+def avgResponseTime(requests):
+    totalMiddlewareTimeSum = 0
+    for req in requests:
+        totalMiddlewareTimeSum += req.middlewareTimeSum
+    return float(totalMiddlewareTimeSum) / float(totalNumberRequests(requests))
+
 def totalNumberRequestsFromHistogram(histogram):
     numRequests = 0
     for entry in histogram:
@@ -152,14 +158,25 @@ def mergeLogsFor2Middlewares(mw1LogfileName, mw2LogfileName, mergedFileName):
     mergedRequests = mergeWorkerLogEntriesFrom2Middlewares(requests1, requests2)
     writeToFile(mergedRequests + mergedHistogram, mergedFileName)
 
+def cutWarmupCooldown(requests, warmup, cooldown):
+    return requests[warmup:len(requests)-cooldown]
+
+
+def cumulativeThroughput(mergedFileName, startup, cooldown):
+    requests, histogram = extractRequestsAndHistogram(mergedFileName)
+    lenBefore = len(requests)
+    requests = cutWarmupCooldown(requests, startup, cooldown)
+    print("requests len {} after cut {}".format(lenBefore, len(requests)))
+    totalNumRequests = totalNumberRequests(requests)
+    avgResponseT = avgResponseTime(requests)
+    print("total throughput: {} avgResponseTime: {}".format(totalNumRequests, avgResponseT))
+    return totalNumRequests, avgResponseT
 
 
 def main():
-    mergeLogsFor2Middlewares("./requests.log", "./requests_half.log", "./combined.log")
-
-
-
-
+    #mergeLogsFor2Middlewares("./requests.log", "./requests_half.log", "./combined.log")
+    #mergeLogsFor1Middleware("../../experiment_logs_18-11-2018_15-41-36/logSection3_1a/memtierCli32workerThreads64/run1/middleware1/requests.log","./combined_real64.log")
+    totalNumRequests, avgResponseT = cumulativeThroughput("./combined_real64.log", 2, 3)
 
 if __name__ == "__main__":
     main()

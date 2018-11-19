@@ -256,16 +256,16 @@ runMemtierClient() {
     if [[ $# -eq 7 ]]; then
         if [[ $7 == ${FIRSTMEMTIER} ]]; then
             log "starting memtier $5 (local, $7, blockingmode)"
-            cmd="${basecmd} --out-file=../logs/${logname}.log --json-out-file=../logs/${logname}.json"
+            cmd="${basecmd} --client-stats=${logname}clientstats --json-out-file=asl/logs/${logname}.json"
             log "$cmd"
             $cmd
         else
             log "starting memtier $5 (local, $7, nonblocking)"
-            screen -dm -S ${logname} ${basecmd} --out-file=asl/logs/${logname}.log --json-out-file=asl/logs/${logname}.json
+            screen -dm -S ${logname} ${basecmd} --client-stats=${logname}clientstats --json-out-file=asl/logs/${logname}.json
         fi
     elif [[ $# -eq 8 ]]; then
         log "starting memtier ${designator} (remote, ${instance}, clientIP=$8)"
-        ssh -o StrictHostKeyChecking=no junkerp@$8 "screen -dm -S ${logname} ${basecmd} --out-file=asl/logs/${logname}.log --json-out-file=asl/logs/${logname}.json"
+        ssh -o StrictHostKeyChecking=no junkerp@$8 "screen -dm -S ${logname} ${basecmd} --client-stats=${logname}clientstats --json-out-file=asl/logs/${logname}.json"
     else
         log "ERROR: invalid number of arguments (expected 7 for local and 8 for remote client execution): $#"
     fi
