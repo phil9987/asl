@@ -46,6 +46,7 @@ public class AggregationLogger {
             @Override
             public void run() {
                 logger.info(String.format("Shutdownhook of aggregationLogger for worker%d executing...", workerId));
+                prepareForShutdown();
                 logHistogram();
                 logger.info(String.format("Histogram info logged for worker%d", workerId));
             }
@@ -100,7 +101,7 @@ public class AggregationLogger {
         return (timestamp - currentPeriodStart) <= this.PERIOD;
     }
 
-    public void prepareForShutdown() {
+    private void prepareForShutdown() {
         this.aggregateLogReset();
     }
 

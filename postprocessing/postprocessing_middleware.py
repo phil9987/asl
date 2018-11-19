@@ -4,25 +4,19 @@ from collections import defaultdict
 
 class RequestEntry:
     def __init__(self, splitting):
-        self.timestamp = splitting[0]
-        self.periodStart = int(splitting[1])
-        self.workerId = int(splitting[2])
-        self.queueLengthSum = int(splitting[3])
-        self.queueWaitingTimeSum = int(splitting[4])
-        self.serverTimeSum = int(splitting[5])
-        self.middlewareTimeSum = int(splitting[6])
-        self.numMissesSum = int(splitting[7])
-        self.numMultigetKeysSum = int(splitting[8])
-        self.numGetRequests = int(splitting[9])
-        self.numMultigetRequests = int(splitting[10])
-        self.numSetRequests = int(splitting[11])
-        self.numRequests = int(splitting[12])
-        self.server1Count = int(splitting[13])
-        self.server2Count = int(splitting[14])
-        self.server3Count = int(splitting[15])
+        # Second,SET Requests,SET Average Latency,SET Total Bytes,GET Requests,GET Average Latency,GET Total Bytes,GET Misses,GET Hits,WAIT Requests,WAIT Average Latency
+        # 0,0,0.000000,0,322,0.003102,7379,322,0,0,0.000000
+        self.timestamp = int(splitting[0])
+        self.numSetRequests = int(splitting[1])
+        self.avgSetLatency = int(splitting[2])
+        self.numGetRequests = int(splitting[4])
+        self.avgGetLatency = int(splitting[5])
+        self.misses = int(splitting[7])
+        self.hits = int(splitting[8])
 
     def merge(self, req):
-        self.workerId = -1
+        self.numSetRequests += req.numSetRequests
+        self.avgSetLatency += req.avg
         self.queueLengthSum += req.queueLengthSum
         self.queueWaitingTimeSum += req.queueWaitingTimeSum
         self.serverTimeSum += req.serverTimeSum
