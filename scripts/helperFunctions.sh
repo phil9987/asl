@@ -254,18 +254,30 @@ runMemtierClient() {
     log "memtier parameters ip=$1 port=$2 numclients=$3 ratio=$4 designator=$5 numthreads=$6 instance=$7 logname=${logname}"
     basecmd="memtier_benchmark --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 "
     if [[ $# -eq 7 ]]; then
-        if [[ $7 == ${FIRSTMEMTIER} ]]; then
-            log "starting memtier $5 (local, $7, blockingmode)"
+        if [[ $7 -eq 1 ]]; then
+            log "starting 1 memtier instance on $5 (local, $7, blockingmode)"
+            logname=$5${FIRSTMEMTIER}
             cmd="${basecmd} --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
             log "$cmd"
             $cmd
         else
-            log "starting memtier $5 (local, $7, nonblocking)"
+            log "starting 2 memtier instances on $5 (local, $7, nonblocking & blocking)"
+            logname=$5${FIRSTMEMTIER}
             screen -dm -S ${logname} ${basecmd} --client-stats=asl/logs/${logname}clientstats --json-out-file=asl/logs/${logname}.json
+            logname=$5${SECONDMEMTIER}
+            cmd="${basecmd} --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
         fi
     elif [[ $# -eq 8 ]]; then
-        log "starting memtier ${designator} (remote, $7, clientIP=$8)"
-        ssh -o StrictHostKeyChecking=no junkerp@$8 "screen -dm -S ${logname} ${basecmd} --client-stats=asl/logs/${logname}clientstats --json-out-file=asl/logs/${logname}.json"
+        if [[ $7 -eq 1 ]]; then
+            log "starting 1 memtier instance on $5 (remote, $7, clientIP=$8)"
+            logname=$5${FIRSTMEMTIER}
+            ssh -o StrictHostKeyChecking=no junkerp@$8 "screen -dm -S ${logname} ${basecmd} --client-stats=asl/logs/${logname}clientstats --json-out-file=asl/logs/${logname}.json"
+        else
+            log "starting 2 memtier instances on $5 (remote, $7, clientIP=$8)"
+            logname1=$5${FIRSTMEMTIER}
+            logname2=$5${SECONDMEMTIER}
+            ssh -o StrictHostKeyChecking=no junkerp@$8 "screen -dm -S ${logname1} ${basecmd} --client-stats=asl/logs/${logname1}clientstats --json-out-file=asl/logs/${logname1}.json; screen -dm -S ${logname2} ${basecmd} --client-stats=asl/logs/${logname2}clientstats --json-out-file=asl/logs/${logname2}.json"
+        fi
     else
         log "ERROR: invalid number of arguments (expected 7 for local and 8 for remote client execution): $#"
     fi
