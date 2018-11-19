@@ -256,7 +256,7 @@ runMemtierClient() {
     if [[ $# -eq 7 ]]; then
         if [[ $7 == ${FIRSTMEMTIER} ]]; then
             log "starting memtier $5 (local, $7, blockingmode)"
-            cmd="${basecmd} --client-stats=asl/logs/${logname}clientstats --json-out-file=asl/logs/${logname}.json"
+            cmd="${basecmd} --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
             log "$cmd"
             $cmd
         else
