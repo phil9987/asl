@@ -262,10 +262,9 @@ runMemtierClient() {
             $cmd
         else
             log "starting 2 memtier instances on $5 (local, $7, nonblocking & blocking)"
-            logname=$5${FIRSTMEMTIER}
-            screen -dm -S ${logname} ${basecmd} --client-stats=asl/logs/${logname}clientstats --json-out-file=asl/logs/${logname}.json
-            logname=$5${SECONDMEMTIER}
-            cmd="${basecmd} --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
+            logname1=$5${FIRSTMEMTIER}
+            logname2=$5${SECONDMEMTIER}
+            cmd="screen -dm -S ${logname1} ${basecmd} --client-stats=asl/logs/${logname1}clientstats --json-out-file=asl/logs/${logname1}.json; ${basecmd} --client-stats=../logs/${logname2}clientstats --json-out-file=../logs/${logname2}.json"
             log "$cmd"
             $cmd
         fi
