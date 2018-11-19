@@ -4,25 +4,57 @@ from collections import defaultdict
 
 class RequestEntry:
     def __init__(self, splitting):
-        # Second,SET Requests,SET Average Latency,SET Total Bytes,GET Requests,GET Average Latency,GET Total Bytes,GET Misses,GET Hits,WAIT Requests,WAIT Average Latency
-        # 0,0,0.000000,0,322,0.003102,7379,322,0,0,0.000000
-        self.timestamp = int(splitting[0])
-        self.numSetRequests = int(splitting[1])
-        self.avgSetLatency = int(splitting[2])
-        self.numGetRequests = int(splitting[4])
-        self.avgGetLatency = int(splitting[5])
-        self.misses = int(splitting[7])
-        self.hits = int(splitting[8])
+        self.timestamp = splitting[0]
+        self.periodStart = int(splitting[1])
+        self.workerId = int(splitting[2])
+        self.queueLengthSum = int(splitting[3])
+        self.queueWaitingTimeSum = int(splitting[4])
+        self.serverTimeSum = int(splitting[5])
+        self.middlewareTimeSum = int(splitting[6])
+        self.numMissesSum = int(splitting[7])
+        self.numMultigetKeysSum = int(splitting[8])
+        self.numGetRequests = int(splitting[9])
+        self.numMultigetRequests = int(splitting[10])
+        self.numSetRequests = int(splitting[11])
+        self.numRequests = int(splitting[12])
+        self.server1Count = int(splitting[13])
+        self.server2Count = int(splitting[14])
+        self.server3Count = int(splitting[15])
+
+    def merge(self, req):
+        self.workerId = -1
+        self.queueLengthSum += req.queueLengthSum
+        self.queueWaitingTimeSum += req.queueWaitingTimeSum
+        self.serverTimeSum += req.serverTimeSum
+        self.middlewareTimeSum += req.middlewareTimeSum
+        self.numMissesSum += req.numMissesSum
+        self.numMultigetKeysSum += req.numMultigetKeysSum
+        self.numGetRequests += req.numGetRequests
+        self.numMultigetRequests += req.numMultigetRequests
+        self.numSetRequests += req.numSetRequests
+        self.numRequests += req.numRequests
+        self.server1Count += req.server1Count
+        self.server2Count += req.server2Count
+        self.server3Count += req.server3Count
 
     def __str__(self):
-        return "{} {} {} {} {} {} {}\n".format(
-            self.timestamp,
-            self.numSetRequests,
-            self.avgSetLatency,
+        return "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}\n".format(
+            self.timestamp,     # just put a timestamp, we won't need it anyway
+            self.periodStart,
+            -1,                 # placeholder for not needed workerThreadId 
+            self.queueLengthSum,
+            self.queueWaitingTimeSum,
+            self.serverTimeSum,
+            self.middlewareTimeSum,
+            self.numMissesSum,
+            self.numMultigetKeysSum,
             self.numGetRequests,
-            self.avgGetLatency,
-            self.misses,
-            self.hits)
+            self.numMultigetRequests,
+            self.numSetRequests,
+            self.numRequests,
+            self.server1Count,
+            self.server2Count,
+            self.server3Count)
 
 class HistogramEntry:
     def __init__(self, splitting):

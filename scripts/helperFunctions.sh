@@ -266,6 +266,8 @@ runMemtierClient() {
             screen -dm -S ${logname} ${basecmd} --client-stats=asl/logs/${logname}clientstats --json-out-file=asl/logs/${logname}.json
             logname=$5${SECONDMEMTIER}
             cmd="${basecmd} --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
+            log "$cmd"
+            $cmd
         fi
     elif [[ $# -eq 8 ]]; then
         if [[ $7 -eq 1 ]]; then
