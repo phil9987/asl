@@ -260,7 +260,9 @@ runMemtierClientLocal() {
         log "starting 2 memtier instances on $5 (local, $7:$8, nonblocking & blocking)"
         logname2=$5${SECONDMEMTIER}
         basecmd2="memtier_benchmark --server=$7 --port=$8 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=../logs/${logname2}clientstats --json-out-file=../logs/${logname2}.json"
-        screen -dm -S ${logname} ${basecmd}
+        cmd1="screen -dm -S ${logname} ${basecmd}"
+        log "executing $cmd1"
+        $cmd1
         log "executing $basecmd2"
         $basecmd2
     else
