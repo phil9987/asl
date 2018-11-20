@@ -239,6 +239,37 @@ stopMemcachedServers() {
     removeFile ${SERVER3IP} "~/screenlog.0"
 }
 
+runMemtierClientLocal() {
+    #args: 
+    # $1: ip to connect to
+    # $2: port to connect to
+    # $3: numclients
+    # $4: ratio e.g. ${READONLY}
+    # $5: designator e.g. "client1"
+    # $6: numthreads e.g. 2
+    # $7: OPTIONAL ip2 to connect to
+    # $8: OPTIONAL port2 to connect to
+    logname=$5$7
+    log "memtier parameters ip=$1 port=$2 numclients=$3 ratio=$4 designator=$5 numthreads=$6 logname=${logname}"
+    basecmd="memtier_benchmark --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
+    if [[ $# -eq 6 ]]; then
+        log "starting 1 memtier instance on $5 (local, $7, blockingmode)"
+        logname=$5${FIRSTMEMTIER}
+        log "executing $basecmd"
+        $basecmd
+    elif [[ $# -eq 8 ]]; then
+        log "starting 2 memtier instances on $5 (local, $7:$8, nonblocking & blocking)"
+        logname1=$5${FIRSTMEMTIER}
+        logname2=$5${SECONDMEMTIER}
+        basecmd2="memtier_benchmark --server=$7 --port=$8 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=../logs/${logname2}clientstats --json-out-file=../logs/${logname2}.json"
+        screen -dm -S ${logname1} ${basecmd}
+        log "executing $basecmd2"
+        $basecmd2
+    else
+        log "ERROR: invalid number of arguments (expected 6 for 1 memtier instance and 8 for two instances): $#"
+    fi
+}
+
 # 
 runMemtierClient() {
     #args: 
@@ -248,40 +279,24 @@ runMemtierClient() {
     # $4: ratio e.g. ${READONLY}
     # $5: designator e.g. "client1"
     # $6: numthreads e.g. 2
-    # $7: ${FIRSTMEMTIER} if this is the first instance of memtier on this machine or ${SECONDMEMTIER} if this is the second instance
-    # $8: client_IP (if not locally executed)
+    # $7: client_IP
+    # $8: OPTIONAL client_IP OR ip2 to connect to
+    # $9: OPTIONAL port2 to connect to
     logname=$5$7
-    log "memtier parameters ip=$1 port=$2 numclients=$3 ratio=$4 designator=$5 numthreads=$6 instance=$7 logname=${logname}"
-    basecmd="memtier_benchmark --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 "
+    log "memtier parameters ip=$1 port=$2 numclients=$3 ratio=$4 designator=$5 numthreads=$6 logname=${logname}"
+    basecmd="memtier_benchmark --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=asl/logs/${logname}clientstats --json-out-file=asl/logs/${logname}.json"
     if [[ $# -eq 7 ]]; then
-        if [[ $7 -eq 1 ]]; then
-            log "starting 1 memtier instance on $5 (local, $7, blockingmode)"
-            logname=$5${FIRSTMEMTIER}
-            cmd="${basecmd} --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
-            log "$cmd"
-            $cmd
-        else
-            log "starting 2 memtier instances on $5 (local, $7, nonblocking & blocking)"
-            logname1=$5${FIRSTMEMTIER}
-            logname2=$5${SECONDMEMTIER}
-            screen -dm -S ${logname1} ${basecmd} --client-stats=../logs/${logname1}clientstats --json-out-file=../logs/${logname1}.json
-            cmd="${basecmd} --client-stats=../logs/${logname2}clientstats --json-out-file=../logs/${logname2}.json"
-            log "$cmd"
-            $cmd
-        fi
-    elif [[ $# -eq 8 ]]; then
-        if [[ $7 -eq 1 ]]; then
-            log "starting 1 memtier instance on $5 (remote, $7, clientIP=$8)"
-            logname=$5${FIRSTMEMTIER}
-            ssh -o StrictHostKeyChecking=no junkerp@$8 "screen -dm -S ${logname} ${basecmd} --client-stats=asl/logs/${logname}clientstats --json-out-file=asl/logs/${logname}.json"
-        else
-            log "starting 2 memtier instances on $5 (remote, $7, clientIP=$8)"
-            logname1=$5${FIRSTMEMTIER}
-            logname2=$5${SECONDMEMTIER}
-            ssh -o StrictHostKeyChecking=no junkerp@$8 "screen -dm -S ${logname1} ${basecmd} --client-stats=asl/logs/${logname1}clientstats --json-out-file=asl/logs/${logname1}.json; screen -dm -S ${logname2} ${basecmd} --client-stats=asl/logs/${logname2}clientstats --json-out-file=asl/logs/${logname2}.json"
-        fi
+        log "starting 1 memtier instance on $5 (remote, $7, clientIP=$8)"
+        logname=$5${FIRSTMEMTIER}
+        ssh -o StrictHostKeyChecking=no junkerp@$7 "screen -dm -S ${logname} ${basecmd}"
+    elif [[ $# -eq 9 ]]; then
+        log "starting 2 memtier instances on $5 (remote, $7, clientIP=$8)"
+        logname1=$5${FIRSTMEMTIER}
+        logname2=$5${SECONDMEMTIER}
+        basecmd2="memtier_benchmark --server=$8 --port=$9 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=asl/logs/${logname2}clientstats --json-out-file=asl/logs/${logname2}.json"
+        ssh -o StrictHostKeyChecking=no junkerp@$7 "screen -dm -S ${logname1} ${basecmd}; screen -dm -S ${logname2} ${basecmd2}"
     else
-        log "ERROR: invalid number of arguments (expected 7 for local and 8 for remote client execution): $#"
+        log "ERROR: invalid number of arguments (expected 7 for 1 memtier instance and 9 for two instances): $#"
     fi
 }
 

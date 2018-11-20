@@ -11,7 +11,7 @@ log "### Starting experiment for section 3.1a)"
 logfolder="$LOGBASEFOLDER/logSection3_1a"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(32)
+memtierclients=(3)
 workerthreads=(16)
 #
 for c in "${memtierclients[@]}"; do
@@ -33,9 +33,9 @@ for c in "${memtierclients[@]}"; do
 			startPing ${MW1IP} ${SERVER1IP} ${MW1DESIGNATOR} ${SERVER1DESIGNATOR}
 
 			startMiddleware1 1 ${w} ${NONSHARDED}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} 1 ${CLIENT3IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} 1 ${CLIENT2IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} 1
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP}
+			runMemtierClientLocal ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads}
 			stopAllMW1
 			stopAllClient1
 			stopAllClient2
@@ -62,6 +62,8 @@ log "### Starting experiment for section 3.1b)"
 logfolder="$LOGBASEFOLDER/logSection3_1b"
 createDirectory $logfolder
 #define parameter ranges
+memtierclients=(32)
+workerthreads=(16)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -82,9 +84,9 @@ for c in "${memtierclients[@]}"; do
 			startPing ${MW1IP} ${SERVER1IP} ${MW1DESIGNATOR} ${SERVER1DESIGNATOR}
 
 			startMiddleware1 1 ${w} ${NONSHARDED}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} 1 ${CLIENT3IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} 1 ${CLIENT2IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} 1
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP}
+			runMemtierClientLocal ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads}
 			stopAllMW1
 			stopAllClient1
 			stopAllClient2
@@ -110,6 +112,8 @@ log "### Starting experiment for section 3.2a)"
 logfolder="$LOGBASEFOLDER/logSection3_2a"
 createDirectory $logfolder
 #define parameter ranges
+memtierclients=(3)
+workerthreads=(16)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -133,9 +137,9 @@ for c in "${memtierclients[@]}"; do
 
 			startMiddleware1 1 ${w} ${NONSHARDED}
 			startMiddleware2 1 ${w} ${NONSHARDED}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} 2 ${CLIENT3IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} 2 ${CLIENT2IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} 2
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP} ${MW2IP} ${MWPORT}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} ${MW2IP} ${MWPORT}
+			runMemtierClientLocal ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${MW2IP} ${MWPORT}
 			stopAllMW1
 			stopAllMW2
 			stopAllClient1
@@ -164,6 +168,8 @@ log "### Starting experiment for section 3.2b)"
 logfolder="$LOGBASEFOLDER/logSection3_2b"
 createDirectory $logfolder
 #define parameter ranges
+memtierclients=(32)
+workerthreads=(64)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -187,9 +193,9 @@ for c in "${memtierclients[@]}"; do
 
 			startMiddleware1 1 ${w} ${NONSHARDED}
 			startMiddleware2 1 ${w} ${NONSHARDED}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} 2 ${CLIENT3IP}
-			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} 2 ${CLIENT2IP}
-			runMemtierClient ${MW2IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} 2
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP} ${MW2IP} ${MWPORT}
+			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} ${MW2IP} ${MWPORT}
+			runMemtierClientLocal ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${MW2IP} ${MWPORT}
 			stopAllMW1
 			stopAllMW2
 			stopAllClient1

@@ -10,7 +10,7 @@ log "### Starting experiment for section 2.1a)"
 logfolder="$LOGBASEFOLDER/logSection2_1a"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(1 2 3 4 5 6 32)
+memtierclients=(1 2 3 4 5 6)
 #
 for c in "${memtierclients[@]}"; do
 	log "## Starting configuration memtierclients=$c for section 2.1a)"
@@ -27,9 +27,9 @@ for c in "${memtierclients[@]}"; do
 		startPing ${CLIENT2IP} ${SERVER1IP} ${CLIENT2DESIGNATOR} ${SERVER1DESIGNATOR}
 		startPing ${CLIENT3IP} ${SERVER1IP} ${CLIENT3DESIGNATOR} ${SERVER1DESIGNATOR}
 
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} 1 ${CLIENT3IP}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} 1 ${CLIENT2IP}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} 1
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP}
+		runMemtierClientLocal ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads}
 		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
@@ -71,9 +71,9 @@ for c in "${memtierclients[@]}"; do
 		startPing ${CLIENT2IP} ${SERVER1IP} ${CLIENT2DESIGNATOR} ${SERVER1DESIGNATOR}
 		startPing ${CLIENT3IP} ${SERVER1IP} ${CLIENT3DESIGNATOR} ${SERVER1DESIGNATOR}
 
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} 1 ${CLIENT3IP}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} 1 ${CLIENT2IP}
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} 1
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP}
+		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP}
+		runMemtierClientLocal ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads}
 		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
@@ -96,7 +96,7 @@ log "### Starting experiment for section 2.2a)"
 logfolder="$LOGBASEFOLDER/logSection2_2a"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(1 2 3 4 5 6 32)
+memtierclients=(1 2 3 4 5 6)
 #
 for c in "${memtierclients[@]}"; do
 	log "## Starting configuration memtierClients=$c for section 2.2a)"
@@ -111,7 +111,7 @@ for c in "${memtierclients[@]}"; do
 		startPing ${CLIENT1IP} ${SERVER1IP} ${CLIENT1DESIGNATOR} ${SERVER1DESIGNATOR}
 		startPing ${CLIENT1IP} ${SERVER2IP} ${CLIENT1DESIGNATOR} ${SERVER2DESIGNATOR}
 
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} 2
+		runMemtierClientLocal ${SERVER1IP} ${MEMCACHEDPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${SERVER2IP} ${MEMCACHEDPORT}
 		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
@@ -148,7 +148,7 @@ for c in "${memtierclients[@]}"; do
 		startPing ${CLIENT1IP} ${SERVER1IP} ${CLIENT1DESIGNATOR} ${SERVER1DESIGNATOR}
 		startPing ${CLIENT1IP} ${SERVER2IP} ${CLIENT1DESIGNATOR} ${SERVER2DESIGNATOR}
 
-		runMemtierClient ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} 2
+		runMemtierClientLocal ${SERVER1IP} ${MEMCACHEDPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${SERVER2IP} ${MEMCACHEDPORT}
 		
 		runlogfolder="${clientlogfolder}/run${run}"
 		log "Creating folder for run ${runlogfolder}"
