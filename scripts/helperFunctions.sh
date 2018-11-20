@@ -292,7 +292,7 @@ runMemtierClient() {
         log "starting 2 memtier instances on $5 (remote, $7, clientIP=$8)"
         logname2=$5${SECONDMEMTIER}
         basecmd2="memtier_benchmark --server=$8 --port=$9 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=asl/logs/${logname2}clientstats --json-out-file=asl/logs/${logname2}.json"
-        ssh -o StrictHostKeyChecking=no junkerp@$7 "screen -dm -S ${logname1} ${basecmd}; screen -dm -S ${logname2} ${basecmd2}"
+        ssh -o StrictHostKeyChecking=no junkerp@$7 "screen -dm -S ${logname} ${basecmd}; screen -dm -S ${logname2} ${basecmd2}"
     else
         log "ERROR: invalid number of arguments (expected 7 for 1 memtier instance and 9 for two instances): $#"
     fi
