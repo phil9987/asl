@@ -308,3 +308,11 @@ TCP window size: 94.5 KByte (default)
 [  5]  0.0-10.0 sec   238 MBytes   199 Mbits/sec
 [  4] local 10.0.0.5 port 5001 connected with 10.0.0.11 port 39152
 [  4]  0.0-10.1 sec   110 MBytes  91.6 Mbits/sec
+
+
+section 2: (7*3*2 + 6*3*2) * 68 = 78 * 68 = 5304s = 88.4min
+section 3: (7*4*3*2 + 6*4*3*2) * 68 = (168 + 144) * 68 = 21216s = 353.6min = 5.9h
+
+total: 7.36h
+start at 12.30
+estimated end at 19.55
