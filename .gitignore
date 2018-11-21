@@ -26,3 +26,4 @@ build/
 dist/
 data/
 *__pycache__/
+.vscode/
