@@ -202,15 +202,27 @@ def readStatsData(fullpathtofile):
     stddevNumReq = 0.0
     meanAvgLatency = 0.0
     stddevAvgLatency = 0.0
+    mwMeanThroughput = 0.0
+    mwStddevThroughput = 0.0
+    mwMeanLatency = 0.0
+    mwStddevLatency = 0.0
     with open(fullpathtofile, 'r') as f:
+        skipLine = True
         for line in f:
+            if skipLine:
+                # skip header line
+                skipLine = False
+                continue
             splitting = line.split(' ')
             meanNumReq = float(splitting[0])
             stddevNumReq = float(splitting[1])
             meanAvgLatency = float(splitting[2])
             stddevAvgLatency = float(splitting[3])
-    return meanNumReq, stddevNumReq, meanAvgLatency, stddevAvgLatency
-
+            mwMeanThroughput = float(splitting[4])
+            mwStddevThroughput = float(splitting[5])
+            mwMeanLatency = float(splitting[6])
+            mwStddevLatency = float(splitting[6])
+    return meanNumReq, stddevNumReq, meanAvgLatency, stddevAvgLatency, mwMeanThroughput, mwStddevThroughput, mwMeanLatency, mwStddevLatency
 
 def mergeLogsFor1Client(clientFolder):
     requests = []
@@ -238,7 +250,7 @@ def mergeLogsFor3Clients(client1Folder, client2Folder, client3Folder):
     mergedRequests = mergeLogsFrom2Clients(mergedRequests, requests3)
     return cumulativeThroughput(mergedRequests, 3, 3)
 
-def mergeLogs(basefolder, clientFolders):
+def mergeMemtierLogs(basefolder, clientFolders):
     numClients = len(clientFolders)
     totalNumGetRequests = 0
     avgLatencyGET = 0.0
@@ -255,13 +267,19 @@ def mergeLogs(basefolder, clientFolders):
         print("ERROR: found {} client directories, no implementation for this yet. clientFolders: {}".format(numClients, clientFolders))
     return totalNumGetRequests, avgLatencyGET, totalNumSetRequests, avgLatencySET
 
+def getFolders(fullPath, startingTerm):
+    matchingFolders = []
+    for f in os.listdir(fullPath):
+        if os.path.isdir(os.path.join(fullPath, f)) and f.startswith(startingTerm):
+            matchingFolders.append(f)
+    return matchingFolders
 
 def getClientFolders(fullFolderPath):
-    clientFolders = []
-    for f in os.listdir(fullFolderPath):
-        if os.path.isdir(fullFolderPath) and f.startswith("client"):
-            clientFolders.append(f)
-    return clientFolders
+    return getFolders(fullFolderPath, 'client')
+
+def getMiddlewareFolders(fullFolderPath):
+    return getFolders(fullFolderPath, 'middleware')
+
 
 def calcMeanAndStdDeviation(data):
     return statistics.mean(data), statistics.pstdev(data)
@@ -290,17 +308,27 @@ def calcStats(basefolder):
                     setReqOverall = []
                     getAvgLatency = []
                     setAvgLatency = []
+                    mwThroughputOverall = []
+                    mwLatencyOverall = []
                     for runDir in os.listdir(fullPathParamDir):
                         fullPathRunDir = os.path.join(fullPathParamDir, runDir)
                         if os.path.isdir(fullPathRunDir):
                             clientFolders = getClientFolders(fullPathRunDir)
+                            middlewareFolders = getMiddlewareFolders(fullPathRunDir)
                             numClients = len(clientFolders)
-                            print("found run directory: {} with {} clients".format(runDir, numClients))
-                            totalNumGetRequests, avgLatencyGET, totalNumSetRequests, avgLatencySET = mergeLogs(fullPathRunDir, clientFolders)
+                            numMiddlewares = len(middlewareFolders)
+                            print("found run directory: {} with {} clients and {} middlewares".format(runDir, numClients, numMiddlewares))
+                            totalNumGetRequests, avgLatencyGET, totalNumSetRequests, avgLatencySET = mergeMemtierLogs(fullPathRunDir, clientFolders)
                             getReqOverall.append(totalNumGetRequests)
                             setReqOverall.append(totalNumSetRequests)
                             getAvgLatency.append(avgLatencyGET)
                             setAvgLatency.append(avgLatencySET)
+
+                            mwproc = MWLogProc(fullPathRunDir, middlewareFolders)
+                            mwThroughput, mwLatency = mwproc.calcStatistics()
+                            mwThroughputOverall.append(mwThroughput)
+                            mwLatencyOverall.append(mwLatency)
+
                     meanNumReq = 0.0
                     stddevNumReq = 0.0
                     meanAvgLatency = 0.0
@@ -313,7 +341,15 @@ def calcStats(basefolder):
                         meanAvgLatency, stddevAvgLatency = calcMeanAndStdDeviation(setAvgLatency)
                     else:
                         print("ERROR: mode {} not implemented yet".format(mode))
-                    data = "{} {} {} {}".format(meanNumReq, stddevNumReq, meanAvgLatency, stddevAvgLatency)
+
+                    ### middleware logs
+                    meanMWThroughput, stddevMWThroughput = calcMeanAndStdDeviation(mwThroughputOverall)
+                    meanMWLatency, stddevMWLatency = calcMeanAndStdDeviation(mwLatencyOverall)
+                    data = 'memtier_meanThroughput memtier_stddevThroughput memtier_meanAvgLatency memtier_stddevAvgLatency mw_meanThroughput mw_stddevThroughput mw_meanLatency mw_stddevLatency\n'
+                    data += "{} {} {} {} {} {} {} {}".format(meanNumReq, stddevNumReq, 
+                                                             meanAvgLatency, stddevAvgLatency, 
+                                                             meanMWThroughput, stddevMWThroughput, 
+                                                             meanMWLatency, stddevMWLatency)
                     writeToFile(data, os.path.join(fullPathParamDir, 'merged_stats.data'))
 
 def extractMemtierParam(foldername):
@@ -341,6 +377,10 @@ def createPlotFiles(basefolder, plotfolder):
             numReqStddev=[]
             avgLatencyMean=[]
             avgLatencyStddev=[]
+            mwThroughputMean=[]
+            mwThroughputStddev=[]
+            mwLatencyMean=[]
+            mwLatencyStddev=[]
             memtierCli=[]
             workerThreads=[]
             if os.path.isdir(fullPathSecDir):
@@ -353,21 +393,29 @@ def createPlotFiles(basefolder, plotfolder):
                         memtierCliParam = extractMemtierParam(paramDir)
                         workerThreadsParam = extractWorkerThreadsParam(paramDir)
                         print("found param directory: {} with memtierCli={} and workerThreads={}".format(paramDir, memtierCliParam, workerThreadsParam))
-                        meanNumReq, stddevNumReq, meanAvgLatency, stddevAvgLatency = readStatsData(os.path.join(fullPathParamDir, 'merged_stats.data'))
+                        meanNumReq, stddevNumReq, meanAvgLatency, stddevAvgLatency, mwMeanThroughput, mwStddevThroughput, mwMeanLatency, mwStddevLatency = readStatsData(os.path.join(fullPathParamDir, 'merged_stats.data'))
                         numReqMean.append(meanNumReq)
                         numReqStddev.append(stddevNumReq)
                         avgLatencyMean.append(meanAvgLatency)
                         avgLatencyStddev.append(stddevAvgLatency)
                         memtierCli.append(memtierCliParam)
                         workerThreads.append(workerThreadsParam)
+                        mwThroughputMean.append(mwMeanThroughput)
+                        mwThroughputStddev.append(mwStddevThroughput)
+                        mwLatencyMean.append(mwMeanLatency)
+                        mwLatencyStddev.append(mwStddevLatency)
                 jsondata = {}
-                jsondata['throughputMean'] = numReqMean
-                jsondata['throughputStddev'] = numReqStddev
-                jsondata['latencyMean'] = avgLatencyMean
-                jsondata['latencyStddev'] = avgLatencyStddev
+                jsondata['memtier_throughputMean'] = numReqMean
+                jsondata['memtier_throughputStddev'] = numReqStddev
+                jsondata['memtier_latencyMean'] = avgLatencyMean
+                jsondata['memtier_latencyStddev'] = avgLatencyStddev
+                jsondata['mw_throughputMean'] = mwThroughputMean
+                jsondata['mw_throughputStddev'] = mwThroughputStddev
+                jsondata['mw_latencyMean'] = mwLatencyMean
+                jsondata['mw_latencyStddev'] = mwLatencyStddev
                 jsondata['memtierCli'] = memtierCli
                 jsondata['workerThreads'] = workerThreads
-                json.dump(jsondata, open(os.path.join(plotfolder, "memtier_{}.plotdata".format(secDir)), 'w'))
+                json.dump(jsondata, open(os.path.join(plotfolder, "{}.plotdata".format(secDir)), 'w'))
 
 def main():
     #basefolder = 'C:/Users/phili/Downloads/experiment_logs_20-11-2018_11-52-02/logSection2_1b/memtierCli32/run1/'
@@ -378,8 +426,7 @@ def main():
     basefolder = 'C:/Users/phili/OneDrive - ETHZ/ETHZ/MSC/AdvancedSystemsLab/Programming/data/logs_sec2_sec3_22112018/experiment_logs_20-11-2018_22-22-23'
     plotfolder = 'C:/Users/phili/OneDrive - ETHZ/ETHZ/MSC/AdvancedSystemsLab/Programming/aggregated_avg/'
     #calcStats(basefolder)
-    #createPlotFiles(basefolder, plotfolder)
-    mwproc = MWLogProc("C:/Users/phili/OneDrive - ETHZ/ETHZ/MSC/AdvancedSystemsLab/Programming/data/logs_sec2_sec3_22112018/experiment_logs_20-11-2018_22-22-23/logSection3_1a/memtierCli1workerThreads8/run1/middleware1/requests.log")
+    createPlotFiles(basefolder, plotfolder)
 
 
 

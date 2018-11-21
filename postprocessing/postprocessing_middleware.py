@@ -4,11 +4,18 @@ from collections import defaultdict
 
 class MWLogProc:
 
-    def __init__(self, pathToLog1, pathToLog2=''):
-        if not pathToLog2:
-            self.requests, self.histogram = self.mergeLogsFor1Middleware(pathToLog1)
+    def __init__(self, basepath, middlewareFolders):
+        if len(middlewareFolders) == 0:
+            # no middleware logs...
+            self.nothing = True
         else:
-            self.requests, self.histogram = self.mergeLogsFor2Middlewares(pathToLog1, pathToLog2)
+            self.nothing = False
+            logpath1 = os.path.join(basepath, middlewareFolders[0], 'requests.log')
+            if len(middlewareFolders) == 1:
+                self.requests, self.histogram = self.mergeLogsFor1Middleware(logpath1)
+            else:
+                logpath2 = os.path.join(basepath, middlewareFolders[1], 'requests.log')
+                self.requests, self.histogram = self.mergeLogsFor2Middlewares(logpath1, logpath2)
 
     @staticmethod
     def extractRequestsAndHistogram(logfilename):
@@ -35,6 +42,11 @@ class MWLogProc:
         for req in self.requests:
             totalMiddlewareTimeSum += req.middlewareTimeSum
         return float(totalMiddlewareTimeSum) / float(MWLogProc.totalNumberRequests(self.requests))
+
+    def calcStatistics(self):
+        if self.nothing:
+            return -1, -1
+        return MWLogProc.totalNumberRequests(self.requests), self.avgResponseTime()
 
     @staticmethod
     def totalNumberRequestsFromHistogram(histogram):
@@ -94,9 +106,9 @@ class MWLogProc:
         return mergedRequests, mergedHistogram
 
     @staticmethod
-    def mergeLogsFor2Middlewares(mw1LogfileName, mw2LogfileName, mergedFileName):
-        requests1, histogram1 = mergeLogsFor1Middleware(mw1LogfileName)
-        requests2, histogram2 = mergeLogsFor1Middleware(mw2LogfileName)
+    def mergeLogsFor2Middlewares(mw1LogfileName, mw2LogfileName):
+        requests1, histogram1 = MWLogProc.mergeLogsFor1Middleware(mw1LogfileName)
+        requests2, histogram2 = MWLogProc.mergeLogsFor1Middleware(mw2LogfileName)
         print("MW1: numberRequests in requests log = {} \nnumberRequests in histogram = {}".format(MWLogProc.totalNumberRequests(requests1), MWLogProc.totalNumberRequestsFromHistogram(histogram1)))
         print("MW2: numberRequests in requests log = {} \nnumberRequests in histogram = {}".format(MWLogProc.totalNumberRequests(requests2), MWLogProc.totalNumberRequestsFromHistogram(histogram2)))
         mergedHistogram = MWLogProc.mergeHistogramLogEntries(histogram1 + histogram2)
@@ -185,7 +197,7 @@ class HistogramEntry:
 
 def main():
     #mergeLogsFor2Middlewares("./requests.log", "./requests_half.log", "./combined.log")
-    mwproc = MWLogProc("C:/Users/phili/OneDrive - ETHZ/ETHZ/MSC/AdvancedSystemsLab/Programming/data/logs_sec2_sec3_22112018/experiment_logs_20-11-2018_22-22-23/logSection3_1a/memtierCli1workerThreads8/run1/middleware1/requests.log")
+    mwproc = MWLogProc(["C:/Users/phili/OneDrive - ETHZ/ETHZ/MSC/AdvancedSystemsLab/Programming/data/logs_sec2_sec3_22112018/experiment_logs_20-11-2018_22-22-23/logSection3_1a/memtierCli1workerThreads8/run1/middleware1/requests.log"])
     mwproc.cutWarmupCooldown(3,3)
     totalNumRequests, avgResponseT = mwproc.cumulativeThroughput()
 
