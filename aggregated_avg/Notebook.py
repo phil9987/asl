@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[3]:
+# In[33]:
 
 
 get_ipython().magic(u'matplotlib inline')
@@ -12,7 +12,7 @@ import os
 import json
 
 
-def plot_generic(xs, ys, yerrs=None, labels='', fmt=".-", markersize=8, capsize=8,
+def plot_generic(xs, ys, yerrs=None, labels='', fmt=".-", markersize=6, linewidth=1, capsize=8,
          ymax=None, title='', xlabel='', ylabel='',
          xticks=None, yticks=None, save_file=None, size=None):
     '''
@@ -49,9 +49,9 @@ def plot_generic(xs, ys, yerrs=None, labels='', fmt=".-", markersize=8, capsize=
         y_tmp = -1
         for (x, y, yerr, label, f) in zip(xs, ys, yerrs, labels, fmt):
             if yerr is not None:
-                ax.errorbar(x, y, yerr=yerr, fmt=f, markersize=markersize, capsize=capsize, label=label)
+                ax.errorbar(x, y, yerr=yerr, fmt=f, markersize=markersize, capsize=capsize, label=label, linewidth=linewidth)
             else:
-                ax.plot(x, y, f, markersize=markersize, label=label)
+                ax.plot(x, y, f, markersize=markersize, label=label, linewidth=linewidth)
             if ymax is None and y_tmp < max(y):
                 y_tmp = max(y)
         if ymax is None:
@@ -71,6 +71,7 @@ def plot_generic(xs, ys, yerrs=None, labels='', fmt=".-", markersize=8, capsize=
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
+    plt.grid(linestyle=':', linewidth=0.8)
     if xticks is not None:
         plt.xticks(xticks)
     if yticks is not None:
@@ -81,7 +82,7 @@ def plot_generic(xs, ys, yerrs=None, labels='', fmt=".-", markersize=8, capsize=
     plt.clf()
 
 
-# In[4]:
+# In[34]:
 
 
 jsonfile = './plotdata/logSection2_1a.plotdata'
