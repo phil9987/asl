@@ -4,7 +4,8 @@ from collections import defaultdict
 
 class MWLogProc:
 
-    def __init__(self, basepath, middlewareFolders):
+    def __init__(self, basepath, middlewareFolders, warmup, cooldown):
+        self.basepath = basepath
         if len(middlewareFolders) == 0:
             # no middleware logs...
             self.nothing = True
@@ -16,6 +17,7 @@ class MWLogProc:
             else:
                 logpath2 = os.path.join(basepath, middlewareFolders[1], 'requests.log')
                 self.requests, self.histogram = self.mergeLogsFor2Middlewares(logpath1, logpath2)
+            self.cutWarmupCooldown(warmup, cooldown)
 
     @staticmethod
     def extractRequestsAndHistogram(logfilename):
@@ -46,7 +48,12 @@ class MWLogProc:
     def calcStatistics(self):
         if self.nothing:
             return -1, -1
-        return MWLogProc.totalNumberRequests(self.requests), self.avgResponseTime()
+        numReqPerSec = 0.0
+        if len(self.requests) > 0:
+            numReqPerSec = MWLogProc.totalNumberRequests(self.requests)/len(self.requests)
+        else:
+            print("ERROR MW postprocessing: no requests for {}".format(self.basepath))
+        return numReqPerSec, self.avgResponseTime()
 
     @staticmethod
     def totalNumberRequestsFromHistogram(histogram):
@@ -119,14 +126,7 @@ class MWLogProc:
     def cutWarmupCooldown(self, warmup, cooldown):
         lenBefore = len(self.requests)
         self.requests = self.requests[warmup:len(self.requests)-cooldown]
-        print("Cut warmup and cooldown from requests. Before: {} after: {}".format(lenBefore, len(self.requests)))
-
-
-    def cumulativeThroughput(self):
-        totalNumRequests = MWLogProc.totalNumberRequests(self.requests)
-        avgResponseT = self.avgResponseTime()
-        print("total throughput: {} avgResponseTime: {}".format(totalNumRequests, avgResponseT))
-        return totalNumRequests, avgResponseT
+        #print("Cut warmup and cooldown from requests. Before: {} after: {}".format(lenBefore, len(self.requests)))
 
 class RequestEntry:
     def __init__(self, splitting):
@@ -199,7 +199,7 @@ def main():
     #mergeLogsFor2Middlewares("./requests.log", "./requests_half.log", "./combined.log")
     mwproc = MWLogProc(["C:/Users/phili/OneDrive - ETHZ/ETHZ/MSC/AdvancedSystemsLab/Programming/data/logs_sec2_sec3_22112018/experiment_logs_20-11-2018_22-22-23/logSection3_1a/memtierCli1workerThreads8/run1/middleware1/requests.log"])
     mwproc.cutWarmupCooldown(3,3)
-    totalNumRequests, avgResponseT = mwproc.cumulativeThroughput()
+    totalNumRequests, avgResponseT = mwproc.calcStatistics()
 
 if __name__ == "__main__":
     main()

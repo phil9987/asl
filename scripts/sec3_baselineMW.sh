@@ -11,7 +11,7 @@ log "### Starting experiment for section 3.1a)"
 logfolder="$LOGBASEFOLDER/logSection3_1a"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(1 2 3 4 5 6)
+memtierclients=(1 2 3 4 5 6 32)
 workerthreads=(8 16 32 64)
 #
 for c in "${memtierclients[@]}"; do
@@ -62,7 +62,7 @@ log "### Starting experiment for section 3.1b)"
 logfolder="$LOGBASEFOLDER/logSection3_1b"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(1 3 6 12 20 32)
+memtierclients=(1 3 6 12 20 32 40)
 workerthreads=(8 16 32 64)
 #
 for c in "${memtierclients[@]}"; do
@@ -112,7 +112,7 @@ log "### Starting experiment for section 3.2a)"
 logfolder="$LOGBASEFOLDER/logSection3_2a"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(1 2 3 4 5 6)
+memtierclients=(1 2 3 4 5 6 32)
 workerthreads=(8 16 32 64)
 #
 for c in "${memtierclients[@]}"; do
