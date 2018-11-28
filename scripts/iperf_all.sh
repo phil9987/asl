@@ -21,6 +21,7 @@ startIperfClientBlocking() {
 }
 
 startIperfServer ${MW1IP}
+sleep 2s
 echo "client1 <-> MW1"
 startIperfClientBlocking ${CLIENT1IP} ${MW1IP}
 echo "client2 <-> MW1"
@@ -36,6 +37,7 @@ startIperfClientBlocking ${SERVER3IP} ${MW1IP}
 stopIperfServer ${MW1IP}
 
 startIperfServer ${MW2IP}
+sleep 2s
 echo "client1 <-> MW2"
 startIperfClientBlocking ${CLIENT1IP} ${MW2IP}
 echo "client2 <-> MW2"
