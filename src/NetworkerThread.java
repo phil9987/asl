@@ -42,7 +42,7 @@ public class NetworkerThread implements Runnable {
             ServerSocketChannel serverSocket = ServerSocketChannel.open();  // this ensures that the sockets are closed on interrupt
             ) {
             Selector selector = Selector.open();
-            serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port), 4096);
+            serverSocket.socket().bind(new InetSocketAddress(this.ipAddress, this.port), 512);
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
