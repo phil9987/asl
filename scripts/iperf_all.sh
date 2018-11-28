@@ -1,24 +1,6 @@
 #!/bin/bash
 source variables.sh
-
-stopIperfServer() {
-    #args
-    # $1: ip
-    ssh -o StrictHostKeyChecking=no junkerp@$1 "killall screen"
-}
-
-startIperfServer() {
-    #args
-    # $1: ip
-    ssh -o StrictHostKeyChecking=no junkerp@$1 "screen -dm -S iperf iperf -s"
-}
-
-startIperfClientBlocking() {
-    #args
-    # $1: ip of iperf client
-    # $2: ip of iperf server to connect to
-    ssh -o StrictHostKeyChecking=no junkerp@$1 "iperf -c $2 -r"
-}
+source helperFunctions.sh
 
 startIperfServer ${MW1IP}
 sleep 2s
@@ -34,7 +16,7 @@ echo "server2 <-> MW1"
 startIperfClientBlocking ${SERVER2IP} ${MW1IP}
 echo "server3 <-> MW1"
 startIperfClientBlocking ${SERVER3IP} ${MW1IP}
-stopIperfServer ${MW1IP}
+killScreen ${MW1IP}
 
 startIperfServer ${MW2IP}
 sleep 2s
@@ -50,5 +32,5 @@ echo "server2 <-> MW2"
 startIperfClientBlocking ${SERVER2IP} ${MW2IP}
 echo "server3 <-> MW2"
 startIperfClientBlocking ${SERVER3IP} ${MW2IP}
-stopIperfServer ${MW2IP}
+killScreen ${MW2IP}
 
