@@ -1,6 +1,6 @@
 #!/bin/bash
-source variables.sh
 source helperFunctions.sh
+source variables.sh
 
 startIperfServer ${MW1IP}
 sleep 2s
