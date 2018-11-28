@@ -28,11 +28,11 @@ startIperfClientBlocking ${CLIENT2IP} ${MW1IP}
 echo "client3 <-> MW1"
 startIperfClientBlocking ${CLIENT3IP} ${MW1IP}
 echo "server1 <-> MW1"
-startIperfClientBlocking ${SERVER1} ${MW1IP}
+startIperfClientBlocking ${SERVER1IP} ${MW1IP}
 echo "server2 <-> MW1"
-startIperfClientBlocking ${SERVER2} ${MW1IP}
+startIperfClientBlocking ${SERVER2IP} ${MW1IP}
 echo "server3 <-> MW1"
-startIperfClientBlocking ${SERVER3} ${MW1IP}
+startIperfClientBlocking ${SERVER3IP} ${MW1IP}
 stopIperfServer ${MW1IP}
 
 startIperfServer ${MW2IP}
@@ -43,10 +43,10 @@ startIperfClientBlocking ${CLIENT2IP} ${MW2IP}
 echo "client3 <-> MW2"
 startIperfClientBlocking ${CLIENT3IP} ${MW2IP}
 echo "server1 <-> MW2"
-startIperfClientBlocking ${SERVER1} ${MW2IP}
+startIperfClientBlocking ${SERVER1IP} ${MW2IP}
 echo "server2 <-> MW2"
-startIperfClientBlocking ${SERVER2} ${MW2IP}
+startIperfClientBlocking ${SERVER2IP} ${MW2IP}
 echo "server3 <-> MW2"
-startIperfClientBlocking ${SERVER3} ${MW2IP}
+startIperfClientBlocking ${SERVER3IP} ${MW2IP}
 stopIperfServer ${MW2IP}
 
