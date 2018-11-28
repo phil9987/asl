@@ -17,7 +17,6 @@ startIperfClientBlocking() {
 killScreen() {
     #args
     # $1: ip
-    log "killing all screen sessions of $1"
     ssh -o StrictHostKeyChecking=no junkerp@$1 "killall screen"
 }
 
