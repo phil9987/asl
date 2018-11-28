@@ -1,6 +1,25 @@
 #!/bin/bash
-source helperFunctions.sh
 source variables.sh
+
+startIperfServer() {
+    #args
+    # $1: ip
+    ssh -o StrictHostKeyChecking=no junkerp@$1 "screen -dm -S iperf iperf -s"
+}
+
+startIperfClientBlocking() {
+    #args
+    # $1: ip of iperf client
+    # $2: ip of iperf server to connect to
+    ssh -o StrictHostKeyChecking=no junkerp@$1 "iperf -c $2 -r"
+}
+
+killScreen() {
+    #args
+    # $1: ip
+    log "killing all screen sessions of $1"
+    ssh -o StrictHostKeyChecking=no junkerp@$1 "killall screen"
+}
 
 startIperfServer ${MW1IP}
 sleep 2s
