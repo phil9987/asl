@@ -125,7 +125,7 @@ public class AggregationLogger {
             long responseTime = request.timeInMiddleware / 100000;   // response time in 1/10ms
             Map<Long, MutableInt> histogramMap;
             Request.Type type = request.getType();
-            if (type == GET || type == MULTIGET) {
+            if (type == Request.Type.GET || type == Request.Type.MULTIGET) {
                 incrementHistogramMap(this.histogramMapGet);
             } else {
                 incrementHistogramMap(this.histogramMapSet);
