@@ -45,7 +45,7 @@ startDstat() {
     # $1: ip
     # $2: designator
     designatordstat="$2${DSTATDESIGNATOR}"
-    ssh -o StrictHostKeyChecking=no junkerp@$1 "screen -dm -S ${designatordstat} dstat -clmn --noheaders --output ${DSTATFILE}"
+    ssh -o StrictHostKeyChecking=no junkerp@$1 "screen -dm -S ${designatordstat} dstat -clmn --output ${DSTATFILE}"
 }
 
 startDstatMW1() {
