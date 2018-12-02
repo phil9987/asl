@@ -13,7 +13,8 @@ public class AggregationLogger {
     private final int MAX_NUM_SERVERS  = 3;
     private final int workerId;
     private long currentPeriodStart;     
-    private Map<Long, MutableInt> histogramMap = new HashMap<Long, MutableInt>();      // response time in 100us -> count
+    private Map<Long, MutableInt> histogramMapGet = new HashMap<Long, MutableInt>();      // response time in 100us -> count
+    private Map<Long, MutableInt> histogramMapSet = new HashMap<Long, MutableInt>();      // response time in 100us -> count
     private final int numServers;           
 
     private long numRequests;                   // Total number of requests during this period
@@ -71,8 +72,11 @@ public class AggregationLogger {
     }
     
     private void logHistogram() {
-        for (Map.Entry<Long, MutableInt> entry : histogramMap.entrySet()){
-            logger.trace(String.format("HISTOGRAM_W%d %d %d", workerId, entry.getKey(), entry.getValue().get()));
+        for (Map.Entry<Long, MutableInt> entry : histogramMapGet.entrySet()){
+            logger.trace(String.format("HISTOGRAM_GET_W%d %d %d", workerId, entry.getKey(), entry.getValue().get()));
+        }
+        for (Map.Entry<Long, MutableInt> entry : histogramMapSet.entrySet()){
+            logger.trace(String.format("HISTOGRAM_SET_W%d %d %d", workerId, entry.getKey(), entry.getValue().get()));
         }
     }
 
@@ -105,16 +109,26 @@ public class AggregationLogger {
         this.aggregateLogReset();
     }
 
+    private void incrementHistogramMap(Map<Long, MutableInt> histogramMap) {
+        MutableInt count = histogramMap.get(responseTime);
+        if (count == null) {
+            histogramMap.put(responseTime, new MutableInt());
+        }
+        else {
+            count.increment();
+        }
+    }
+
     public void logRequest(Request request) {
         if(inPeriod(request.timestampReceived)) {
             //logger.debug(String.format("Request %d is in period, adding its values to AggregationLogger (currentPeriodStart=%d)", request.timestampReceived, this.currentPeriodStart));
             long responseTime = request.timeInMiddleware / 100000;   // response time in 1/10ms
-            MutableInt count = histogramMap.get(responseTime);
-            if (count == null) {
-                histogramMap.put(responseTime, new MutableInt());
-            }
-            else {
-                count.increment();
+            Map<Long, MutableInt> histogramMap;
+            Request.Type type = request.getType();
+            if (type == GET || type == MULTIGET) {
+                incrementHistogramMap(this.histogramMapGet);
+            } else {
+                incrementHistogramMap(this.histogramMapSet);
             }
             this.numRequests++;
             this.queueLengthSum          += request.queueLengthBeforeEntering;
