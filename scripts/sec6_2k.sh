@@ -13,7 +13,7 @@ createDirectory $logfolder
 #define parameter ranges
 
 memtierclients=(32)
-workerthreads=(8, 32)
+workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -52,7 +52,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
-			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -69,7 +68,7 @@ createDirectory $logfolder
 #define parameter ranges
 
 memtierclients=(32)
-workerthreads=(8, 32)
+workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -111,7 +110,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
-			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -128,7 +126,7 @@ createDirectory $logfolder
 #define parameter ranges
 
 memtierclients=(32)
-workerthreads=(8, 32)
+workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -174,7 +172,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
-			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -191,7 +188,7 @@ createDirectory $logfolder
 #define parameter ranges
 
 memtierclients=(32)
-workerthreads=(8, 32)
+workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -203,7 +200,6 @@ for c in "${memtierclients[@]}"; do
 			memtierthreads=1
 			startDstatServer1
 			startDstatServer2
-			startDstatServer3
 			startDstatClient1
 			startDstatClient2
 			startDstatClient3
@@ -217,10 +213,8 @@ for c in "${memtierclients[@]}"; do
 			startPing ${CLIENT3IP} ${MW2IP} ${CLIENT3DESIGNATOR} ${MW2DESIGNATOR}
 			startPing ${MW1IP} ${SERVER1IP} ${MW1DESIGNATOR} ${SERVER1DESIGNATOR}
 			startPing ${MW1IP} ${SERVER2IP} ${MW1DESIGNATOR} ${SERVER2DESIGNATOR}
-			startPing ${MW1IP} ${SERVER3IP} ${MW1DESIGNATOR} ${SERVER3DESIGNATOR}
 			startPing ${MW2IP} ${SERVER1IP} ${MW2DESIGNATOR} ${SERVER1DESIGNATOR}
 			startPing ${MW2IP} ${SERVER2IP} ${MW2DESIGNATOR} ${SERVER2DESIGNATOR}
-			startPing ${MW2IP} ${SERVER3IP} ${MW2DESIGNATOR} ${SERVER3DESIGNATOR}
 
 
 			startMiddleware1 2 ${w} ${NONSHARDED}
@@ -235,7 +229,6 @@ for c in "${memtierclients[@]}"; do
 			stopAllClient3
 			stopDstatServer1
 			stopDstatServer2
-			stopDstatServer3
 			sleep 5
 
 			runlogfolder="${clientlogfolder}/run${run}"
@@ -245,7 +238,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
-			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -265,7 +257,7 @@ createDirectory $logfolder
 #define parameter ranges
 
 memtierclients=(32)
-workerthreads=(8, 32)
+workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -304,7 +296,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
-			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -321,7 +312,7 @@ createDirectory $logfolder
 #define parameter ranges
 
 memtierclients=(32)
-workerthreads=(8, 32)
+workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -363,7 +354,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
-			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -380,7 +370,7 @@ createDirectory $logfolder
 #define parameter ranges
 
 memtierclients=(32)
-workerthreads=(8, 32)
+workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -426,7 +416,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
-			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -443,7 +432,7 @@ createDirectory $logfolder
 #define parameter ranges
 
 memtierclients=(32)
-workerthreads=(8, 32)
+workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
@@ -455,7 +444,6 @@ for c in "${memtierclients[@]}"; do
 			memtierthreads=1
 			startDstatServer1
 			startDstatServer2
-			startDstatServer3
 			startDstatClient1
 			startDstatClient2
 			startDstatClient3
@@ -469,10 +457,8 @@ for c in "${memtierclients[@]}"; do
 			startPing ${CLIENT3IP} ${MW2IP} ${CLIENT3DESIGNATOR} ${MW2DESIGNATOR}
 			startPing ${MW1IP} ${SERVER1IP} ${MW1DESIGNATOR} ${SERVER1DESIGNATOR}
 			startPing ${MW1IP} ${SERVER2IP} ${MW1DESIGNATOR} ${SERVER2DESIGNATOR}
-			startPing ${MW1IP} ${SERVER3IP} ${MW1DESIGNATOR} ${SERVER3DESIGNATOR}
 			startPing ${MW2IP} ${SERVER1IP} ${MW2DESIGNATOR} ${SERVER1DESIGNATOR}
 			startPing ${MW2IP} ${SERVER2IP} ${MW2DESIGNATOR} ${SERVER2DESIGNATOR}
-			startPing ${MW2IP} ${SERVER3IP} ${MW2DESIGNATOR} ${SERVER3DESIGNATOR}
 
 
 			startMiddleware1 2 ${w} ${NONSHARDED}
@@ -487,7 +473,6 @@ for c in "${memtierclients[@]}"; do
 			stopAllClient3
 			stopDstatServer1
 			stopDstatServer2
-			stopDstatServer3
 			sleep 5
 
 			runlogfolder="${clientlogfolder}/run${run}"
@@ -497,7 +482,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
-			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}

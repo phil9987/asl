@@ -1,6 +1,6 @@
 #!/bin/bash
 REPETITIONS=1
-TESTTIME=8
+TESTTIME=4
 SERVER1IP="10.0.0.8" # this is the current server
 SERVER1DESIGNATOR="server1"
 SERVER2IP="10.0.0.7"

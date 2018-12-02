@@ -58,7 +58,7 @@ startDstatMW2() {
 
 startDstatClient1() {
     designatordstat="${CLIENT1DESIGNATOR}${DSTATDESIGNATOR}"
-    screen -L -dm -S ${designatordstat} dstat -clmn --output ../logs/dstat.csv
+    screen -dm -S ${designatordstat} dstat -clmn --output ../logs/dstat.csv
 }
 
 startDstatClient2() {
