@@ -109,7 +109,7 @@ public class AggregationLogger {
         this.aggregateLogReset();
     }
 
-    private void incrementHistogramMap(Map<Long, MutableInt> histogramMap) {
+    private void incrementHistogramMap(Map<Long, MutableInt> histogramMap, long responseTime) {
         MutableInt count = histogramMap.get(responseTime);
         if (count == null) {
             histogramMap.put(responseTime, new MutableInt());
@@ -126,9 +126,9 @@ public class AggregationLogger {
             Map<Long, MutableInt> histogramMap;
             Request.Type type = request.getType();
             if (type == Request.Type.GET || type == Request.Type.MULTIGET) {
-                incrementHistogramMap(this.histogramMapGet);
+                incrementHistogramMap(this.histogramMapGet, responseTime);
             } else {
-                incrementHistogramMap(this.histogramMapSet);
+                incrementHistogramMap(this.histogramMapSet, responseTime);
             }
             this.numRequests++;
             this.queueLengthSum          += request.queueLengthBeforeEntering;
