@@ -7,16 +7,19 @@ source variables.sh
 # 4) Write only, full system 2 middlewares, 2 memtier clients per vm with 1 thread each on 3 client vms, 3 memcached servers
 # virtual clients per memtier client 1..32
 # worker threads per middleware 8, 16, 32, 64
-log "### Starting experiment for section 3.1a)"
-logfolder="$LOGBASEFOLDER/logSection3_1a"
+log "### Starting experiment for section 4b)"
+logfolder="$LOGBASEFOLDER/logSection4b"
 createDirectory $logfolder
 #define parameter ranges
-memtierclients=(1 3 6 12 20 32)
-workerthreads=(8 16 32 64 128)
+#memtierclients=(1 3 6 12 20 32)
+#workerthreads=(8 16 32 64 128)
+
+memtierclients=(20)
+workerthreads=(128)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
-		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 4)"
+		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 4b)"
 		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}"
 		createDirectory ${clientlogfolder}
 		for run in $(seq 1 ${REPETITIONS}); do
@@ -45,7 +48,7 @@ for c in "${memtierclients[@]}"; do
 
 
 			startMiddleware1 3 ${w} ${NONSHARDED}
-			startMiddleware1 3 ${w} ${NONSHARDED}
+			startMiddleware2 3 ${w} ${NONSHARDED}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP} ${MW2IP} ${MWPORT}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} ${MW2IP} ${MWPORT}
 			runMemtierClientLocal ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${MW2IP} ${MWPORT}
