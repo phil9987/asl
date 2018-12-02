@@ -11,7 +11,6 @@ log "### Starting experiment for section 6a)"
 logfolder="$LOGBASEFOLDER/logSection6a"
 createDirectory $logfolder
 #define parameter ranges
-
 memtierclients=(32)
 workerthreads=(8 32)
 #
