@@ -50,7 +50,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware1 ${runlogfolder}
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
-			collectLogsFromServer2 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -170,7 +169,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware1 ${runlogfolder}
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
-			collectLogsFromServer2 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -294,7 +292,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware1 ${runlogfolder}
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
-			collectLogsFromServer2 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -414,7 +411,6 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware1 ${runlogfolder}
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
-			collectLogsFromServer2 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}

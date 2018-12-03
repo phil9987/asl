@@ -385,7 +385,11 @@ def extractSection(foldername):
     relevantPart = splitting[1]
     splitting = relevantPart.split('_')
     relevantPart = splitting[0]
-    subsection = splitting[1]
+    if len(splitting) > 1:
+        subsection = splitting[1]
+    else:
+        subsection = relevantPart[1]
+        relevantPart = relevantPart[0]
     return int(relevantPart), subsection
 
 def plotFilesForWorkerthreadDict(workerthreadDict, title, filename):
@@ -436,7 +440,7 @@ def createPlotFiles(basefolder, plotfolder):
                 json.dump(jsondata, open(os.path.join(plotfolder, "{}.plotdata".format(secDir)), 'w'))
 
 def main():
-    basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/logs_sec2_sec3_22112018/experiment_logs_20-11-2018_22-22-23'
+    basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/temp_experiment_logs/experiment_logs'
     plotfolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/aggregated_avg/'
     calcStats(basefolder)
     createPlotFiles(basefolder, plotfolder)
