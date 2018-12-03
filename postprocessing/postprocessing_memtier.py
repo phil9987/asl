@@ -346,7 +346,7 @@ def calcStats(basefolder):
                                 memtierLatencyOverall.append(avgLatencyGET)
                             elif mode == 'WRITE':
                                 memtierThroughputOverall.append(avgNumSetPerSec)
-                                memtierLatencyOverall.append(avgLatencySET)                                
+                                memtierLatencyOverall.append(avgLatencySET)       
                             else:
                                 print("ERROR: mode {} not implemented yet".format(mode))
 
