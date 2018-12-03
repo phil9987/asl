@@ -52,3 +52,32 @@ echo "server3 <-> MW2"
 startIperfClientBlocking ${SERVER3IP} ${MW2IP}
 killScreen ${MW2IP}
 
+startIperfServer ${SERVER1IP}
+echo "client1 <-> SERVER1"
+startIperfClientBlocking ${CLIENT1IP} ${SERVER1IP}
+echo "client2 <-> SERVER1"
+startIperfClientBlocking ${CLIENT2IP} ${SERVER1IP}
+echo "client3 <-> SERVER1"
+startIperfClientBlocking ${CLIENT3IP} ${SERVER1IP}
+killScreen ${SERVER1IP}
+
+startIperfServer ${SERVER2IP}
+echo "client1 <-> SERVER2"
+startIperfClientBlocking ${CLIENT1IP} ${SERVER2IP}
+echo "client2 <-> SERVER2"
+startIperfClientBlocking ${CLIENT2IP} ${SERVER2IP}
+echo "client3 <-> SERVER2"
+startIperfClientBlocking ${CLIENT3IP} ${SERVER2IP}
+killScreen ${SERVER2IP}
+
+startIperfServer ${SERVER3IP}
+echo "client1 <-> SERVER3"
+startIperfClientBlocking ${CLIENT1IP} ${SERVER3IP}
+echo "client2 <-> SERVER3"
+startIperfClientBlocking ${CLIENT2IP} ${SERVER3IP}
+echo "client3 <-> SERVER3"
+startIperfClientBlocking ${CLIENT3IP} ${SERVER3IP}
+killScreen ${SERVER3IP}
+
+
+
