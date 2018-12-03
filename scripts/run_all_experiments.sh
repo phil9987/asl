@@ -2,7 +2,7 @@
 #Run this script from the first memtier client
 #Make sure variables.sh and helperFunctions.sh are in the same directory
 ./init.sh
-./repeat.sh
+./repeat2.sh
 #./sec2_baseline.sh
 #./sec3_baselineMW.sh
 #./sec4_write.sh
