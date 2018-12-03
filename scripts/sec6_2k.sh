@@ -48,7 +48,6 @@ for c in "${memtierclients[@]}"; do
 			log "Creating folder for run ${runlogfolder}"
 			createDirectory ${runlogfolder}
 			collectLogsFromMiddleware1 ${runlogfolder}
-			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
@@ -105,7 +104,6 @@ for c in "${memtierclients[@]}"; do
 			log "Creating folder for run ${runlogfolder}"
 			createDirectory ${runlogfolder}
 			collectLogsFromMiddleware1 ${runlogfolder}
-			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
@@ -290,7 +288,6 @@ for c in "${memtierclients[@]}"; do
 			log "Creating folder for run ${runlogfolder}"
 			createDirectory ${runlogfolder}
 			collectLogsFromMiddleware1 ${runlogfolder}
-			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
@@ -312,7 +309,7 @@ workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
-		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6b) 2server 1 mw"
+		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6b) 2server 1mw"
 		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}_2server_1mw"
 		createDirectory ${clientlogfolder}
 		for run in $(seq 1 ${REPETITIONS}); do
@@ -347,7 +344,6 @@ for c in "${memtierclients[@]}"; do
 			log "Creating folder for run ${runlogfolder}"
 			createDirectory ${runlogfolder}
 			collectLogsFromMiddleware1 ${runlogfolder}
-			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}

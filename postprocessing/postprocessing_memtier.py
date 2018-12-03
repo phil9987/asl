@@ -312,6 +312,14 @@ def calcStats(basefolder):
             elif secDir.endswith('b'):
                 # this is a WRITE only experiment for sections 2 and 3
                 mode = 'WRITE'
+            elif secDir.endswith('c'):
+                # sharded multiget
+                #mode = 'MGETSHARDED'
+                mode = 'READ'
+            elif secDir.endswith('d'):
+                # nonsharded multiget
+                #mode = 'MGETNONSHARDED'
+                mode = 'READ'
             elif secDir.startswith('init'):
                 continue
             else:
@@ -338,7 +346,7 @@ def calcStats(basefolder):
                                 memtierLatencyOverall.append(avgLatencyGET)
                             elif mode == 'WRITE':
                                 memtierThroughputOverall.append(avgNumSetPerSec)
-                                memtierLatencyOverall.append(avgLatencySET)
+                                memtierLatencyOverall.append(avgLatencySET)                                
                             else:
                                 print("ERROR: mode {} not implemented yet".format(mode))
 
@@ -378,7 +386,13 @@ def extractWorkerThreadsParam(foldername):
         return -1
     else:
         relevantPart = splitting[1]
+        splitting = relevantPart.split('keys')
+        relevantPart = splitting[0]
         return int(relevantPart)
+
+def extractKeyParam(foldername):
+    splitting = foldername.split('keys')
+    return int(splitting[1])
 
 def extractSection(foldername):
     splitting = foldername.split('logSection')
@@ -416,21 +430,27 @@ def createPlotFiles(basefolder, plotfolder):
                     fullPathParamDir = os.path.join(fullPathSecDir, paramDir)
                     if os.path.isdir(fullPathParamDir):
                         memtierCliParam = extractMemtierParam(paramDir)
-                        workerThreadsParam = extractWorkerThreadsParam(paramDir)
-                        print("found param directory: {} with memtierCli={} and workerThreads={}".format(paramDir, memtierCliParam, workerThreadsParam))
+                        if section is not 6:
+                            workerThreadsParam = extractWorkerThreadsParam(paramDir)
+                        else:
+                            workerThreadsParam = -1
+                        if section is 5:
+                            keyParam = extractKeyParam(paramDir)
+                            print("found param directory: {} with memtierCli={}, workerThreads={} and keys={}".format(paramDir, memtierCliParam, workerThreadsParam, keyParam))
+                            key = keyParam
+                        else: 
+                            print("found param directory: {} with memtierCli={} and workerThreads={}".format(paramDir, memtierCliParam, workerThreadsParam))
+                            key = workerThreadsParam
+
                         memtierMeanThroughput, memtierStddevThroughput, memtierMeanLatency, memtierStddevLatency, mwMeanThroughput, mwStddevThroughput, mwMeanLatency, mwStddevLatency = readStatsData(os.path.join(fullPathParamDir, 'merged_stats.data'))
-                        memtierThroughput.setdefault(workerThreadsParam, [])
-                        memtierThroughput[workerThreadsParam].append((memtierCliParam, memtierMeanThroughput, memtierStddevThroughput))
-                        memtierLatency.setdefault(workerThreadsParam, [])
-                        memtierLatency[workerThreadsParam].append((memtierCliParam, memtierMeanLatency, memtierStddevLatency))
-                        mwThroughput.setdefault(workerThreadsParam, [])
-                        mwThroughput[workerThreadsParam].append((memtierCliParam, mwMeanThroughput, mwStddevThroughput))
-                        mwLatency.setdefault(workerThreadsParam, [])
-                        mwLatency[workerThreadsParam].append((memtierCliParam, mwMeanLatency, mwStddevLatency))
-                #plotFilesForWorkerthreadDict(memtierThroughput, "numMemtierClients meanThroughput stddev", os.path.join(plotfolder, "{}_memtierThroughput".format(secDir)))
-                #plotFilesForWorkerthreadDict(memtierLatency, "numMemtierClients meanLatency stddev", os.path.join(plotfolder,"{}_memtierLatency".format(secDir)))
-                #plotFilesForWorkerthreadDict(mwThroughput, "numMemtierClients meanThroughput stddev", os.path.join(plotfolder,"{}_mwThroughput".format(secDir)))
-                #plotFilesForWorkerthreadDict(mwLatency, "numMemtierClients meanLatency stddev", os.path.join(plotfolder,"{}_mwLatency".format(secDir)))
+                        memtierThroughput.setdefault(key, [])
+                        memtierThroughput[key].append((memtierCliParam, memtierMeanThroughput, memtierStddevThroughput))
+                        memtierLatency.setdefault(key, [])
+                        memtierLatency[key].append((memtierCliParam, memtierMeanLatency, memtierStddevLatency))
+                        mwThroughput.setdefault(key, [])
+                        mwThroughput[key].append((memtierCliParam, mwMeanThroughput, mwStddevThroughput))
+                        mwLatency.setdefault(key, [])
+                        mwLatency[key].append((memtierCliParam, mwMeanLatency, mwStddevLatency))
 
                 jsondata = {}
                 jsondata['memtierThroughput'] = memtierThroughput
@@ -440,7 +460,7 @@ def createPlotFiles(basefolder, plotfolder):
                 json.dump(jsondata, open(os.path.join(plotfolder, "{}.plotdata".format(secDir)), 'w'))
 
 def main():
-    basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/temp_experiment_logs/experiment_logs'
+    basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/'
     plotfolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/aggregated_avg/'
     calcStats(basefolder)
     createPlotFiles(basefolder, plotfolder)
