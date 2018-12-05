@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 get_ipython().magic(u'matplotlib inline')
@@ -97,83 +97,129 @@ def getDataFromJsonNoWorkers(section, key, workers='-1'):
     x,y,s = zip(*throughputJson)
     return list(x), list(y), list(s)
 
-def getDataFromJsonAllWorkers(section, key):
+def getDataFromJsonAllSpecialKeys(section, key, specialKeys, label):
     xs = []
     ys = []
     stddevs = []
     labels = []
-    for w in ['8','16','32','64']:
+    for w in specialKeys:
         x, y, stddev = getDataFromJsonNoWorkers(section, key, w)
         xs.append(x)
         ys.append(y)
         stddevs.append(stddev)
-        labels.append("{} WT".format(w))
+        labels.append("{} {}".format(w, label))
     return xs, ys, stddevs, labels
+
+def getDataFromJsonAllWorkers(section, key):
+    return getDataFromJsonAllSpecialKeys(section, key, ['8','16','32','64','128'], 'WT')
+
+def getDataFromJsonSpecificWorkers(secion, key, workers):
+    return getDataFromJsonAllSpecialKeys(secion, key, workers, 'WT')
+
+def getDataFromJsonAllKeys(section, key):
+    x = []
+    y = []
+    stddev = []
+    for k in ['1','3','6','9']:
+        x_, y_, stddev_ = getDataFromJsonNoWorkers(section, key, k)
+        x.append(k)
+        y.append(y_[0])
+        stddev.append(stddev_[0])
+    return x, y, stddev
+
+def numClients(numMemtier, numThreads, numClientsPerThread):
+    return numMemtier*numThreads*numClientsPerThread
+
+def calcXticks(xs1, xs2):
+    x_ticks = set(xs1 + xs2)
+    x_ticks = list(x_ticks)
+    x_ticks.sort()
+    return x_ticks
+    
 
     
 
 
-# In[2]:
+# In[ ]:
 
 
-memtierCli, throughput, stddev = getDataFromJsonNoWorkers('2_1a', 'memtierThroughput')
-print(memtierCli)
-print(throughput)
-print(stddev)
-plot_generic(memtierCli, throughput, stddev, title='Section 2.1 Cumulative Client Throughput read only (memtier)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels='throughput', save_file='2_1a_throughputMemtier.eps')
-memtierCli, latency, stddev = getDataFromJsonNoWorkers('2_1a', 'memtierLatency')
-print(memtierCli)
-print(latency)
-print(stddev)
-plot_generic(memtierCli, latency, stddev, title='Section 2.1 Average Client Response Time read only (memtier)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels='throughput', save_file='2_1a_latencyMemtier.eps')
+x_ro, ys_ro, err_ro = getDataFromJsonNoWorkers('2_1a', 'memtierThroughput')
+x_wo, ys_wo, err_wo = getDataFromJsonNoWorkers('2_1b', 'memtierThroughput')
+x_ro = [numClients(3, 2, el) for el in x_ro]
+x_wo = [numClients(3, 2, el) for el in x_wo]
+
+print(calcXticks(x_ro, x_wo))
+
+xs = [x_ro, x_wo]
+ys = [ys_ro, ys_wo]
+err = [err_ro, err_wo]
+plot_generic(xs, ys, err, 
+             title='Cumulative Client Throughput', 
+             xlabel='Number of Clients', 
+             ylabel='Throughput [requests / second]', 
+             labels=['Read only', 'Write only'],
+             xticks=[6, 18, 36, 72, 120, 192], 
+             save_file='2_1_throughput.eps')
+
+x_ro, ys_ro, err_ro = getDataFromJsonNoWorkers('2_1a', 'memtierLatency')
+x_wo, ys_wo, err_wo = getDataFromJsonNoWorkers('2_1b', 'memtierLatency')
+ys_ro = [el*1000 for el in ys_ro]
+ys_wo = [el*1000 for el in ys_wo]
+x_ro = [numClients(3, 2, el) for el in x_ro]
+x_wo = [numClients(3, 2, el) for el in x_wo]
+xs = [x_ro, x_wo]
+ys = [ys_ro, ys_wo]
+err = [err_ro, err_wo]
+plot_generic(xs, ys, err, 
+             title='Average Client Response Time', 
+             xlabel='Number of Clients', 
+             ylabel='Response Time [ms]', 
+             labels=['Read only', 'Write only'],
+             xticks=[6, 18, 36, 72, 120, 192], 
+             save_file='2_1_latency.eps')
 
 
-# In[3]:
+# In[ ]:
 
 
-memtierCli, throughput, stddev = getDataFromJsonNoWorkers('2_1b', 'memtierThroughput')
-print(memtierCli)
-print(throughput)
-print(stddev)
-plot_generic(memtierCli, throughput, stddev, title='Section 2.1 Cumulative Client Throughput write only (memtier)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels='throughput', save_file='2_1b_throughputMemtier.eps')
-memtierCli, throughput, stddev = getDataFromJsonNoWorkers('2_1b', 'memtierLatency')
-print(memtierCli)
-print(throughput)
-print(stddev)
-plot_generic(memtierCli, throughput, stddev, title='Section 2.1 Average Client Response Time write only (memtier)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels='throughput', save_file='2_1b_latencyMemtier.eps')
+x_ro, ys_ro, err_ro = getDataFromJsonNoWorkers('2_2a', 'memtierThroughput')
+x_wo, ys_wo, err_wo = getDataFromJsonNoWorkers('2_2b', 'memtierThroughput')
+x_ro = [numClients(3, 2, el) for el in x_ro]
+x_wo = [numClients(3, 2, el) for el in x_wo]
+
+print(calcXticks(x_ro, x_wo))
+
+xs = [x_ro, x_wo]
+ys = [ys_ro, ys_wo]
+err = [err_ro, err_wo]
+plot_generic(xs, ys, err, 
+             title='Cumulative Client Throughput', 
+             xlabel='Number of Clients', 
+             ylabel='Throughput [requests / second]', 
+             labels=['Read only', 'Write only'],
+             xticks=[6, 18, 36, 72, 120, 192], 
+             save_file='2_2_throughput.eps')
 
 
-# In[4]:
+x_ro, ys_ro, err_ro = getDataFromJsonNoWorkers('2_1a', 'memtierLatency')
+x_wo, ys_wo, err_wo = getDataFromJsonNoWorkers('2_1b', 'memtierLatency')
+ys_ro = [el*1000 for el in ys_ro]
+ys_wo = [el*1000 for el in ys_wo]
+x_ro = [numClients(3, 2, el) for el in x_ro]
+x_wo = [numClients(3, 2, el) for el in x_wo]
+xs = [x_ro, x_wo]
+ys = [ys_ro, ys_wo]
+err = [err_ro, err_wo]
+plot_generic(xs, ys, err, 
+             title='Average Client Response Time', 
+             xlabel='Number of Clients', 
+             ylabel='Response Time [ms]', 
+             labels=['Read only', 'Write only'],
+             xticks=[6, 18, 36, 72, 120, 192], 
+             save_file='2_2_latency.eps')
 
 
-memtierCli, throughput, stddev = getDataFromJsonNoWorkers('2_2a', 'memtierThroughput')
-print(memtierCli)
-print(throughput)
-print(stddev)
-plot_generic(memtierCli, throughput, stddev, title='Section 2.2 Cumulative Client Throughput read only (memtier)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels='throughput', save_file='2_2a_throughputMemtier.eps')
-memtierCli, latency, stddev = getDataFromJsonNoWorkers('2_2a', 'memtierLatency')
-print(memtierCli)
-print(latency)
-print(stddev)
-plot_generic(memtierCli, latency, stddev, title='Section 2.2 Average Client Response Time read only (memtier)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels='throughput', save_file='2_2a_latencyMemtier.eps')
-
-
-# In[5]:
-
-
-memtierCli, throughput, stddev = getDataFromJsonNoWorkers('2_2b', 'memtierThroughput')
-print(memtierCli)
-print(throughput)
-print(stddev)
-plot_generic(memtierCli, throughput, stddev, title='Section 2.2 Cumulative Client Throughput write only (memtier)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels='throughput', save_file='2_2b_throughputMemtier.eps')
-memtierCli, throughput, stddev = getDataFromJsonNoWorkers('2_2b', 'memtierLatency')
-print(memtierCli)
-print(throughput)
-print(stddev)
-plot_generic(memtierCli, throughput, stddev, title='Section 2.2 Average Client Response Time write only (memtier)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels='throughput', save_file='2_2b_latencyMemtier.eps')
-
-
-# In[6]:
+# In[ ]:
 
 
 xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_1a', 'memtierThroughput')
@@ -188,22 +234,22 @@ xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_1a', 'memtierLatency')
 plot_generic(xs, ys, stddevs, title='Section 3.1 Average Client Response Time read only (middleware)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels=labels, save_file='3_1a_latencyMiddleware.eps')
 
 
-# In[7]:
+# In[ ]:
 
 
-xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_1b', 'memtierThroughput')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('3_1b', 'memtierThroughput', ['8','16','32','64','128','160','192'])
 plot_generic(xs, ys, stddevs, title='Section 3.1 Cumulative Client Throughput write only (memtier)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels=labels, save_file='3_1b_throughputMemtier.eps')
-xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_1b', 'memtierLatency')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('3_1b', 'memtierLatency', ['8','16','32','64','128','160','192'])
 plot_generic(xs, ys, stddevs, title='Section 3.1 Average Client Response Time write only (memtier)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels=labels, save_file='3_1b_latencyMemtier.eps')
 
 # middleware
-xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_1b', 'mwThroughput')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('3_1b', 'mwThroughput', ['8','16','32','64','128','160','192'])
 plot_generic(xs, ys, stddevs, title='Section 3.1 Cumulative Client Throughput write only (middleware)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels=labels, save_file='3_1b_throughputMiddleware.eps')
-xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_1b', 'memtierLatency')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('3_1b', 'memtierLatency', ['8','16','32','64','128','160','192'])
 plot_generic(xs, ys, stddevs, title='Section 3.1 Average Client Response Time write only (middleware)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels=labels, save_file='3_1b_latencyMiddleware.eps')
 
 
-# In[8]:
+# In[ ]:
 
 
 xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_2a', 'memtierThroughput')
@@ -218,26 +264,71 @@ xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_2a', 'memtierLatency')
 plot_generic(xs, ys, stddevs, title='Section 3.2 Average Client Response Time read only (middleware)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels=labels, save_file='3_2a_latencyMiddleware.eps')
 
 
-# In[9]:
+# In[ ]:
 
 
-xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_2b', 'memtierThroughput')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('3_2b', 'memtierThroughput', ['8','16','32','64','96', '128'])
 plot_generic(xs, ys, stddevs, title='Section 3.2 Cumulative Client Throughput write only (memtier)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels=labels, save_file='3_2b_throughputMemtier.eps')
-xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_2b', 'memtierLatency')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('3_2b', 'memtierLatency', ['8','16','32','64','96', '128'])
 plot_generic(xs, ys, stddevs, title='Section 3.2 Average Client Response Time write only (memtier)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels=labels, save_file='3_2b_latencyMemtier.eps')
 
 # middleware
-xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_2b', 'mwThroughput')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('3_2b', 'mwThroughput', ['8','16','32','64','96', '128'])
 plot_generic(xs, ys, stddevs, title='Section 3.2 Cumulative Client Throughput write only (middleware)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels=labels, save_file='3_2b_throughputMiddleware.eps')
-xs, ys, stddevs, labels = getDataFromJsonAllWorkers('3_2b', 'memtierLatency')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('3_2b', 'memtierLatency', ['8','16','32','64','96', '128'])
 plot_generic(xs, ys, stddevs, title='Section 3.2 Average Client Response Time write only (middleware)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels=labels, save_file='3_2b_latencyMiddleware.eps')
 
 
-# In[10]:
+# In[ ]:
+
+
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('4b', 'memtierThroughput', ['8','16','32','64','128','192','256'])
+plot_generic(xs, ys, stddevs, title='Section 4 Cumulative Client Throughput write only (memtier)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels=labels, save_file='4b_throughputMemtier.eps')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('4b', 'memtierLatency', ['8','16','32','64','128','192','256'])
+plot_generic(xs, ys, stddevs, title='Section 4 Average Client Response Time write only (memtier)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels=labels, save_file='4b_latencyMemtier.eps')
+
+# middleware
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('4b', 'mwThroughput', ['8','16','32','64','128','192','256'])
+plot_generic(xs, ys, stddevs, title='Section 4 Cumulative Client Throughput write only (middleware)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels=labels, save_file='4b_throughputMiddleware.eps')
+xs, ys, stddevs, labels = getDataFromJsonSpecificWorkers('4b', 'memtierLatency', ['8','16','32','64','128','192','256'])
+plot_generic(xs, ys, stddevs, title='Section 4 Average Client Response Time write only (middleware)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels=labels, save_file='4b_latencyMiddleware.eps')
+
+
+# In[ ]:
+
+
+xs, ys, stddevs = getDataFromJsonAllKeys('5c', 'memtierThroughput')
+plot_generic(xs, ys, stddevs, title='Section 5 Cumulative Client Throughput Multiget Sharded (memtier)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels='throughput', save_file='5a_throughputMemtier.eps')
+xs, ys, stddevs = getDataFromJsonAllKeys('5c', 'memtierLatency')
+plot_generic(xs, ys, stddevs, title='Section 5 Average Client Response Time Multiget Sharded (memtier)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels='response time', save_file='5a_latencyMemtier.eps')
+
+# middleware
+xs, ys, stddevs = getDataFromJsonAllKeys('5c', 'mwThroughput')
+plot_generic(xs, ys, stddevs, title='Section 5 Cumulative Client Throughput Multiget Sharded (middleware)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels='throughput', save_file='5a_throughputMiddleware.eps')
+xs, ys, stddevs = getDataFromJsonAllKeys('5c', 'memtierLatency')
+plot_generic(xs, ys, stddevs, title='Section 5 Average Client Response Time Multiget Sharded (middleware)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels='response time', save_file='5a_latencyMiddleware.eps')
+
+
+# In[ ]:
+
+
+xs, ys, stddevs = getDataFromJsonAllKeys('5d', 'memtierThroughput')
+plot_generic(xs, ys, stddevs, title='Section 5 Cumulative Client Throughput Multiget Nonsharded (memtier)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels='throughput', save_file='5b_throughputMemtier.eps')
+xs, ys, stddevs = getDataFromJsonAllKeys('5d', 'memtierLatency')
+plot_generic(xs, ys, stddevs, title='Section 5 Average Client Response Time Multiget Nonsharded (memtier)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels='response time', save_file='5b_latencyMemtier.eps')
+
+# middleware
+xs, ys, stddevs = getDataFromJsonAllKeys('5d', 'mwThroughput')
+plot_generic(xs, ys, stddevs, title='Section 5 Cumulative Client Throughput Multiget Nonsharded (middleware)', xlabel='Number of Clients', ylabel='Throughput [requests / second]', labels='throughput', save_file='5b_throughputMiddleware.eps')
+xs, ys, stddevs = getDataFromJsonAllKeys('5d', 'memtierLatency')
+plot_generic(xs, ys, stddevs, title='Section 5 Average Client Response Time Multiget Nonsharded (middleware)', xlabel='Number of Clients', ylabel='Response Time [ms]', labels='response time', save_file='5b_latencyMiddleware.eps')
+
+
+# In[ ]:
 
 
 
-zipf = zipfile.ZipFile('plots.zip', 'w', zipfile.ZIP_DEFLATED)
+zipf = zipfile.ZipFile('plots.zip', 'w', zipfile.ZIP_STORED)
 zipdir('./plots', zipf)
 zipf.close()
 print('done')
