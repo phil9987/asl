@@ -227,7 +227,7 @@ def readStatsData(fullpathtofile):
             mwMeanThroughput = float(splitting[4])
             mwStddevThroughput = float(splitting[5])
             mwMeanLatency = float(splitting[6])
-            mwStddevLatency = float(splitting[6])
+            mwStddevLatency = float(splitting[7])
     return meanNumReq, stddevNumReq, meanAvgLatency, stddevAvgLatency, mwMeanThroughput, mwStddevThroughput, mwMeanLatency, mwStddevLatency
 
 def mergeLogsFor1Client(clientFolder):
@@ -462,7 +462,7 @@ def createPlotFiles(basefolder, plotfolder):
 def main():
     basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/'
     plotfolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/aggregated_avg/'
-    calcStats(basefolder)
+    #calcStats(basefolder)
     createPlotFiles(basefolder, plotfolder)
 
 
