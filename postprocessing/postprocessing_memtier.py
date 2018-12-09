@@ -495,9 +495,10 @@ def createPlotFiles(basefolder, plotfolder):
                 json.dump(jsondata, open(os.path.join(plotfolder, "{}.plotdata".format(secDir)), 'w'))
 
 def main():
-    basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/'
+    #basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/'
+    basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05'
     plotfolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/aggregated_avg/'
-    #calcStats(basefolder)
+    calcStats(basefolder)
     createPlotFiles(basefolder, plotfolder)
 
 if __name__ == "__main__":

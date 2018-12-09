@@ -64,7 +64,6 @@ class MWLogProc:
         return totalQueueLengthSum / MWLogProc.totalNumberRequests(self.requests)
 
     def calcStatistics(self):
-        print("test")
         if self.nothing:
             return -1, -1, -1, -1, -1
         numReqPerSec = 0.0
