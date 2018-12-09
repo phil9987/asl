@@ -1,0 +1,273 @@
+found section directory: init
+found section directory: logSection2_1a
+found param directory: memtierCli1
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli2
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli3
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli32
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli4
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli5
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli6
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found section directory: logSection2_1b
+found param directory: memtierCli1
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli12
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli20
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli3
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli32
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found param directory: memtierCli6
+found run directory: run1 with 3 clients and 0 middlewares
+test
+found run directory: run2 with 3 clients and 0 middlewares
+test
+found run directory: run3 with 3 clients and 0 middlewares
+test
+found section directory: logSection2_2a
+found param directory: memtierCli1
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli2
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli3
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli32
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli4
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli5
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli6
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found section directory: logSection2_2b
+found param directory: memtierCli1
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli12
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli20
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli3
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli32
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found param directory: memtierCli6
+found run directory: run1 with 1 clients and 0 middlewares
+test
+found run directory: run2 with 1 clients and 0 middlewares
+test
+found run directory: run3 with 1 clients and 0 middlewares
+test
+found section directory: logSection3_1a
+found param directory: memtierCli1workerThreads128
+found run directory: run1 with 3 clients and 1 middlewares
+numberRequests in requests log = 192274 
+numberRequests in histogram = 192274
+--
+after merging:
+numberRequests in mergedRequests = 192274 
+numberRequests in mergedHistogram = 192274
+test
+found run directory: run2 with 3 clients and 1 middlewares
+numberRequests in requests log = 192832 
+numberRequests in histogram = 192832
+--
+after merging:
+numberRequests in mergedRequests = 192832 
+numberRequests in mergedHistogram = 192832
+test
+found run directory: run3 with 3 clients and 1 middlewares
+numberRequests in requests log = 193238 
+numberRequests in histogram = 193238
+--
+after merging:
+numberRequests in mergedRequests = 193238 
+numberRequests in mergedHistogram = 193238
+test
+found param directory: memtierCli1workerThreads16
+found run directory: run1 with 3 clients and 1 middlewares
+numberRequests in requests log = 189595 
+numberRequests in histogram = 189595
+--
+after merging:
+numberRequests in mergedRequests = 189595 
+numberRequests in mergedHistogram = 189595
+test
+found run directory: run2 with 3 clients and 1 middlewares
+numberRequests in requests log = 192576 
+numberRequests in histogram = 192576
+--
+after merging:
+numberRequests in mergedRequests = 192576 
+numberRequests in mergedHistogram = 192576
+test
+found run directory: run3 with 3 clients and 1 middlewares
+numberRequests in requests log = 191324 
+numberRequests in histogram = 191324
+--
+after merging:
+numberRequests in mergedRequests = 191324 
+numberRequests in mergedHistogram = 191324
+test
+found param directory: memtierCli1workerThreads32
+found run directory: run1 with 3 clients and 1 middlewares
+numberRequests in requests log = 192332 
+numberRequests in histogram = 192332
+--
+after merging:
+numberRequests in mergedRequests = 192332 
+numberRequests in mergedHistogram = 192332
+test
+found run directory: run2 with 3 clients and 1 middlewares
+numberRequests in requests log = 193077 
+numberRequests in histogram = 193077
+--
+after merging:
+numberRequests in mergedRequests = 193077 
+numberRequests in mergedHistogram = 193077
+test
+found run directory: run3 with 3 clients and 1 middlewares
+numberRequests in requests log = 192465 
+numberRequests in histogram = 192465
+--
+after merging:
+numberRequests in mergedRequests = 192465 
+numberRequests in mergedHistogram = 192465
+test
+found param directory: memtierCli1workerThreads64
+found run directory: run1 with 3 clients and 1 middlewares
+numberRequests in requests log = 192542 
+numberRequests in histogram = 192542
+--
+after merging:
+numberRequests in mergedRequests = 192542 
+numberRequests in mergedHistogram = 192542
+test
+found run directory: run2 with 3 clients and 1 middlewares

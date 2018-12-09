@@ -45,15 +45,34 @@ class MWLogProc:
             totalMiddlewareTimeSum += req.middlewareTimeSum
         return float(totalMiddlewareTimeSum) / float(MWLogProc.totalNumberRequests(self.requests))
 
+    def avgQueueTime(self):
+        totalQueueTimeSum = 0
+        for req in self.requests:
+            totalQueueTimeSum += req.queueWaitingTimeSum
+        return float(totalQueueTimeSum) / float(MWLogProc.totalNumberRequests(self.requests))
+    
+    def avgServiceTime(self):
+        totalServiceTimeSum = 0
+        for req in self.requests:
+            totalServiceTimeSum += req.serverTimeSum
+        return float(totalServiceTimeSum) / float(MWLogProc.totalNumberRequests(self.requests))
+
+    def avgQueueLength(self):
+        totalQueueLengthSum = 0
+        for req in self.requests:
+            totalQueueLengthSum += req.queueLengthSum
+        return totalQueueLengthSum / MWLogProc.totalNumberRequests(self.requests)
+
     def calcStatistics(self):
+        print("test")
         if self.nothing:
-            return -1, -1
+            return -1, -1, -1, -1, -1
         numReqPerSec = 0.0
         if len(self.requests) > 0:
             numReqPerSec = MWLogProc.totalNumberRequests(self.requests)/len(self.requests)
         else:
             print("ERROR MW postprocessing: no requests for {}".format(self.basepath))
-        return numReqPerSec, self.avgResponseTime()
+        return numReqPerSec, self.avgResponseTime(), self.avgQueueTime(), self.avgServiceTime(), self.avgQueueLength()
 
     @staticmethod
     def totalNumberRequestsFromHistogram(histogram):
@@ -197,9 +216,8 @@ class HistogramEntry:
 
 def main():
     #mergeLogsFor2Middlewares("./requests.log", "./requests_half.log", "./combined.log")
-    mwproc = MWLogProc(["C:/Users/phili/OneDrive - ETHZ/ETHZ/MSC/AdvancedSystemsLab/Programming/data/logs_sec2_sec3_22112018/experiment_logs_20-11-2018_22-22-23/logSection3_1a/memtierCli1workerThreads8/run1/middleware1/requests.log"])
-    mwproc.cutWarmupCooldown(3,3)
-    totalNumRequests, avgResponseT = mwproc.calcStatistics()
+    mwproc = MWLogProc("C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/logSection3_1a/memtierCli1workerThreads8/run1", ["middleware1"], 3, 3)
+    print(mwproc.calcStatistics())
 
 if __name__ == "__main__":
     main()

@@ -212,6 +212,12 @@ def readStatsData(fullpathtofile):
     mwStddevThroughput = 0.0
     mwMeanLatency = 0.0
     mwStddevLatency = 0.0
+    meanQueueLength = 0.0
+    stddevQueueLength = 0.0
+    meanQueueTime = 0.0
+    stddevQueueTime = 0.0
+    meanServiceTime = 0.0
+    stddevServiceTime = 0.0
     with open(fullpathtofile, 'r') as f:
         skipLine = True
         for line in f:
@@ -228,7 +234,19 @@ def readStatsData(fullpathtofile):
             mwStddevThroughput = float(splitting[5])
             mwMeanLatency = float(splitting[6])
             mwStddevLatency = float(splitting[7])
-    return meanNumReq, stddevNumReq, meanAvgLatency, stddevAvgLatency, mwMeanThroughput, mwStddevThroughput, mwMeanLatency, mwStddevLatency
+            meanQueueLength = float(splitting[8])
+            stddevQueueLength = float(splitting[9])
+            meanQueueTime = float(splitting[10])
+            stddevQueueTime = float(splitting[11])
+            meanServiceTime = float(splitting[12])
+            stddevServiceTime= float(splitting[13])
+    return (meanNumReq, stddevNumReq, 
+            meanAvgLatency, stddevAvgLatency,
+            mwMeanThroughput, mwStddevThroughput, 
+            mwMeanLatency, mwStddevLatency,
+            meanQueueLength, stddevQueueLength,
+            meanQueueTime, stddevQueueTime,
+            meanServiceTime, stddevServiceTime)
 
 def mergeLogsFor1Client(clientFolder):
     requests = []
@@ -332,6 +350,9 @@ def calcStats(basefolder):
                     memtierLatencyOverall = []
                     mwThroughputOverall = []
                     mwLatencyOverall = []
+                    mwQueueTimeOverall = []
+                    mwQueueLengthOverall = []
+                    mwServiceTimeOverall = []
                     for runDir in os.listdir(fullPathParamDir):
                         fullPathRunDir = os.path.join(fullPathParamDir, runDir)
                         if os.path.isdir(fullPathRunDir):
@@ -351,9 +372,12 @@ def calcStats(basefolder):
                                 print("ERROR: mode {} not implemented yet".format(mode))
 
                             mwproc = MWLogProc(fullPathRunDir, middlewareFolders, 3, 3)
-                            mwThroughput, mwLatency = mwproc.calcStatistics()
+                            mwThroughput, mwLatency, mwQueueTime, mwServiceTime, mwQueueLength = mwproc.calcStatistics()
                             mwThroughputOverall.append(mwThroughput)
                             mwLatencyOverall.append(mwLatency)
+                            mwQueueTimeOverall.append(mwQueueTime)
+                            mwQueueLengthOverall.append(mwQueueLength)
+                            mwServiceTimeOverall.append(mwServiceTime)
 
                     meanThroughputMemtier = 0.0
                     stddevThroughputMemtier = 0.0
@@ -365,11 +389,17 @@ def calcStats(basefolder):
                     ### middleware logs
                     meanMWThroughput, stddevMWThroughput = calcMeanAndStdDeviation(mwThroughputOverall)
                     meanMWLatency, stddevMWLatency = calcMeanAndStdDeviation(mwLatencyOverall)
+                    meanQueueLength, stddevQueueLength = calcMeanAndStdDeviation(mwQueueLengthOverall)
+                    meanQueueTime, stddevQueueTime = calcMeanAndStdDeviation(mwQueueTimeOverall)
+                    meanServiceTime, stddevServiceTime = calcMeanAndStdDeviation(mwServiceTimeOverall)
                     data = 'memtier_meanThroughput memtier_stddevThroughput memtier_meanAvgLatency memtier_stddevAvgLatency mw_meanThroughput mw_stddevThroughput mw_meanLatency mw_stddevLatency\n'
-                    data += "{} {} {} {} {} {} {} {}".format(meanThroughputMemtier, stddevThroughputMemtier, 
+                    data += "{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(meanThroughputMemtier, stddevThroughputMemtier, 
                                                              meanLatencyMemtier, stddevLatencyMemtier, 
                                                              meanMWThroughput, stddevMWThroughput, 
-                                                             meanMWLatency, stddevMWLatency)
+                                                             meanMWLatency, stddevMWLatency,
+                                                             meanQueueLength, stddevQueueLength,
+                                                             meanQueueTime, stddevQueueTime,
+                                                             meanServiceTime, stddevServiceTime)
                     writeToFile(data, os.path.join(fullPathParamDir, 'merged_stats.data'))
 
 def extractMemtierParam(foldername):
@@ -412,14 +442,16 @@ def plotFilesForWorkerthreadDict(workerthreadDict, title, filename):
         filename_ = "{}_w{}.plotdata".format(filename, numWorkers)
         writeGnuplotFile(title, plotdata, filename_)
 
-
 def createPlotFiles(basefolder, plotfolder):
     for secDir in os.listdir(basefolder):
             fullPathSecDir = os.path.join(basefolder, secDir)
-            memtierThroughput = {}  # triple (#memtiercli, meanThroughput, stddev)
-            memtierLatency = {}     # triple (#memtiercli, meanLatency, stddev)
-            mwThroughput = {}       # triple (#memtiercli, meanThroughput, stddev)
-            mwLatency = {}          # triple (#memtiercli, meanLatency, stddev)
+            memtierThroughput = defaultdict(list)  # triple (#memtiercli, meanThroughput, stddev)
+            memtierLatency = defaultdict(list)     # triple (#memtiercli, meanLatency, stddev)
+            mwThroughput = defaultdict(list)       # triple (#memtiercli, meanThroughput, stddev)
+            mwLatency = defaultdict(list)          # triple (#memtiercli, meanLatency, stddev)
+            queuetime = defaultdict(list)          # triple (#memtiercli, meanQueueTime, stddev)
+            queuelen = defaultdict(list)           # triple (#memtiercli, meanQueueLen, stddev)
+            servicetime = defaultdict(list)        # triple (#memtiercli, meanServiceTime, stddev)
 
             if os.path.isdir(fullPathSecDir):
                 print("found section directory: {}".format(secDir))
@@ -442,21 +474,24 @@ def createPlotFiles(basefolder, plotfolder):
                             print("found param directory: {} with memtierCli={} and workerThreads={}".format(paramDir, memtierCliParam, workerThreadsParam))
                             key = workerThreadsParam
 
-                        memtierMeanThroughput, memtierStddevThroughput, memtierMeanLatency, memtierStddevLatency, mwMeanThroughput, mwStddevThroughput, mwMeanLatency, mwStddevLatency = readStatsData(os.path.join(fullPathParamDir, 'merged_stats.data'))
-                        memtierThroughput.setdefault(key, [])
+                        memtierMeanThroughput, memtierStddevThroughput, memtierMeanLatency, memtierStddevLatency, mwMeanThroughput, mwStddevThroughput, mwMeanLatency, mwStddevLatency, meanQueueLength, stddevQueueLength, meanQueueTime, stddevQueueTime, meanServiceTime, stddevServiceTime = readStatsData(os.path.join(fullPathParamDir, 'merged_stats.data'))
                         memtierThroughput[key].append((memtierCliParam, memtierMeanThroughput, memtierStddevThroughput))
-                        memtierLatency.setdefault(key, [])
                         memtierLatency[key].append((memtierCliParam, memtierMeanLatency, memtierStddevLatency))
-                        mwThroughput.setdefault(key, [])
                         mwThroughput[key].append((memtierCliParam, mwMeanThroughput, mwStddevThroughput))
-                        mwLatency.setdefault(key, [])
                         mwLatency[key].append((memtierCliParam, mwMeanLatency, mwStddevLatency))
+                        queuetime[key].append((memtierCliParam, meanQueueTime, stddevQueueTime))
+                        queuelen[key].append((memtierCliParam, meanQueueLength, stddevQueueLength))
+                        servicetime[key].append((memtierCliParam, meanServiceTime, stddevServiceTime))
+
 
                 jsondata = {}
                 jsondata['memtierThroughput'] = memtierThroughput
                 jsondata['memtierLatency'] = memtierLatency
                 jsondata['mwThroughput'] = mwThroughput
                 jsondata['mwLatency'] = mwLatency
+                jsondata['queuetime'] = queuetime
+                jsondata['queuelen'] = queuelen
+                jsondata['servicetime'] = servicetime
                 json.dump(jsondata, open(os.path.join(plotfolder, "{}.plotdata".format(secDir)), 'w'))
 
 def main():
@@ -464,10 +499,6 @@ def main():
     plotfolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/aggregated_avg/'
     #calcStats(basefolder)
     createPlotFiles(basefolder, plotfolder)
-
-
-
-
 
 if __name__ == "__main__":
     main()

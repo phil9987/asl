@@ -56,7 +56,7 @@ for c in "${memtierclients[@]}"; do
 	done
 done 
 
-# 6a) Read only, 2 memcached server, 1 mw
+# 6a) Read only, 3 memcached server, 1 mw
 # virtual clients per memtier client 1..32
 # worker threads per middleware 8, 16, 32, 64
 log "### Starting experiment for section 6a)"
@@ -69,14 +69,15 @@ workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
-		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6a) 2server 1mw"
-		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}_2server_1mw"
+		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6a) 3server 1mw"
+		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}_3server_1mw"
 		createDirectory ${clientlogfolder}
 		for run in $(seq 1 ${REPETITIONS}); do
 			log "# Starting run ${run} / ${REPETITIONS}"
 			memtierthreads=2
 			startDstatServer1
 			startDstatServer2
+			startDstatServer3
 			startDstatClient1
 			startDstatClient2
 			startDstatClient3
@@ -88,7 +89,7 @@ for c in "${memtierclients[@]}"; do
 			startPing ${MW1IP} ${SERVER2IP} ${MW1DESIGNATOR} ${SERVER2DESIGNATOR}
 
 
-			startMiddleware1 2 ${w} ${NONSHARDED}
+			startMiddleware1 3 ${w} ${NONSHARDED}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} 
 			runMemtierClientLocal ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads}
@@ -98,6 +99,7 @@ for c in "${memtierclients[@]}"; do
 			stopAllClient3
 			stopDstatServer1
 			stopDstatServer2
+			stopDstatServer3
 			sleep 5
 
 			runlogfolder="${clientlogfolder}/run${run}"
@@ -106,6 +108,7 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware1 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
+			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -174,7 +177,7 @@ for c in "${memtierclients[@]}"; do
 	done
 done 
 
-# 6a) Read only, 2 memcached server, 2 mw
+# 6a) Read only, 3 memcached server, 2 mw
 # virtual clients per memtier client 1..32
 # worker threads per middleware 8, 16, 32, 64
 log "### Starting experiment for section 6a)"
@@ -187,14 +190,15 @@ workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
-		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6a) 2server 2mw"
-		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}_2server_2mw"
+		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6a) 3server 2mw"
+		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}_3server_2mw"
 		createDirectory ${clientlogfolder}
 		for run in $(seq 1 ${REPETITIONS}); do
 			log "# Starting run ${run} / ${REPETITIONS}"
 			memtierthreads=1
 			startDstatServer1
 			startDstatServer2
+			startDstatServer3
 			startDstatClient1
 			startDstatClient2
 			startDstatClient3
@@ -212,8 +216,8 @@ for c in "${memtierclients[@]}"; do
 			startPing ${MW2IP} ${SERVER2IP} ${MW2DESIGNATOR} ${SERVER2DESIGNATOR}
 
 
-			startMiddleware1 2 ${w} ${NONSHARDED}
-			startMiddleware2 2 ${w} ${NONSHARDED}
+			startMiddleware1 3 ${w} ${NONSHARDED}
+			startMiddleware2 3 ${w} ${NONSHARDED}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP} ${MW2IP} ${MWPORT}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} ${MW2IP} ${MWPORT}
 			runMemtierClientLocal ${MW1IP} ${MWPORT} $c ${READONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${MW2IP} ${MWPORT}
@@ -224,6 +228,7 @@ for c in "${memtierclients[@]}"; do
 			stopAllClient3
 			stopDstatServer1
 			stopDstatServer2
+			stopDstatServer3
 			sleep 5
 
 			runlogfolder="${clientlogfolder}/run${run}"
@@ -233,6 +238,7 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
+			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -296,7 +302,7 @@ for c in "${memtierclients[@]}"; do
 	done
 done 
 
-# 6b) Write only, 2 memcached server, 1 mw
+# 6b) Write only, 3 memcached server, 1 mw
 # virtual clients per memtier client 1..32
 # worker threads per middleware 8, 16, 32, 64
 log "### Starting experiment for section 6b)"
@@ -309,14 +315,15 @@ workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
-		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6b) 2server 1mw"
-		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}_2server_1mw"
+		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6b) 3server 1mw"
+		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}_3server_1mw"
 		createDirectory ${clientlogfolder}
 		for run in $(seq 1 ${REPETITIONS}); do
 			log "# Starting run ${run} / ${REPETITIONS}"
 			memtierthreads=2
 			startDstatServer1
 			startDstatServer2
+			startDstatServer3
 			startDstatClient1
 			startDstatClient2
 			startDstatClient3
@@ -328,7 +335,7 @@ for c in "${memtierclients[@]}"; do
 			startPing ${MW1IP} ${SERVER2IP} ${MW1DESIGNATOR} ${SERVER2DESIGNATOR}
 
 
-			startMiddleware1 2 ${w} ${NONSHARDED}
+			startMiddleware1 3 ${w} ${NONSHARDED}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} 
 			runMemtierClientLocal ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads}
@@ -338,6 +345,7 @@ for c in "${memtierclients[@]}"; do
 			stopAllClient3
 			stopDstatServer1
 			stopDstatServer2
+			stopDstatServer3
 			sleep 5
 
 			runlogfolder="${clientlogfolder}/run${run}"
@@ -346,6 +354,7 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware1 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
+			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
@@ -414,7 +423,7 @@ for c in "${memtierclients[@]}"; do
 	done
 done 
 
-# 6b) Write only, 2 memcached server, 2 mw
+# 6b) Write only, 3 memcached server, 2 mw
 # virtual clients per memtier client 1..32
 # worker threads per middleware 8, 16, 32, 64
 log "### Starting experiment for section 6b)"
@@ -427,14 +436,15 @@ workerthreads=(8 32)
 #
 for c in "${memtierclients[@]}"; do
 	for w in "${workerthreads[@]}"; do
-		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6b) 2server 2mw"
-		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}_2server_2mw"
+		log "## Starting configuration memtierclients=${c} workerthreads=${w} for section 6b) 3server 2mw"
+		clientlogfolder="${logfolder}/memtierCli${c}workerThreads${w}_3server_2mw"
 		createDirectory ${clientlogfolder}
 		for run in $(seq 1 ${REPETITIONS}); do
 			log "# Starting run ${run} / ${REPETITIONS}"
 			memtierthreads=1
 			startDstatServer1
 			startDstatServer2
+			startDstatServer3
 			startDstatClient1
 			startDstatClient2
 			startDstatClient3
@@ -452,8 +462,8 @@ for c in "${memtierclients[@]}"; do
 			startPing ${MW2IP} ${SERVER2IP} ${MW2DESIGNATOR} ${SERVER2DESIGNATOR}
 
 
-			startMiddleware1 2 ${w} ${NONSHARDED}
-			startMiddleware2 2 ${w} ${NONSHARDED}
+			startMiddleware1 3 ${w} ${NONSHARDED}
+			startMiddleware2 3 ${w} ${NONSHARDED}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP} ${MW2IP} ${MWPORT}
 			runMemtierClient ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} ${MW2IP} ${MWPORT}
 			runMemtierClientLocal ${MW1IP} ${MWPORT} $c ${WRITEONLY} ${CLIENT1DESIGNATOR} ${memtierthreads} ${MW2IP} ${MWPORT}
@@ -464,6 +474,7 @@ for c in "${memtierclients[@]}"; do
 			stopAllClient3
 			stopDstatServer1
 			stopDstatServer2
+			stopDstatServer3
 			sleep 5
 
 			runlogfolder="${clientlogfolder}/run${run}"
@@ -473,6 +484,7 @@ for c in "${memtierclients[@]}"; do
 			collectLogsFromMiddleware2 ${runlogfolder}
 			collectLogsFromServer1 ${runlogfolder}
 			collectLogsFromServer2 ${runlogfolder}
+			collectLogsFromServer3 ${runlogfolder}
 			collectLogsFromClient1 ${runlogfolder}
 			collectLogsFromClient2 ${runlogfolder}
 			collectLogsFromClient3 ${runlogfolder}
