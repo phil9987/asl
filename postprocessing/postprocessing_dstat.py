@@ -181,8 +181,9 @@ class DstatEntry:
 
 def main():
     #mergeLogsFor2Middlewares("./requests.log", "./requests_half.log", "./combined.log")
-    dstatproc = DstatProc('C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/')
-    #dstatproc.extractConfigurationAverages(0,3)
+    #dstatproc = DstatProc('C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/')
+    dstatproc  = DstatProc('C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05/')
+    dstatproc.extractConfigurationAverages(0,3)
     dstatproc.mergeConfigurationAverages()
 
 if __name__ == "__main__":

@@ -1,0 +1,846 @@
+found section directory: init
+found section directory: logSection2_2a
+mode = READ
+found param directory: memtierCli1
+found run directory: run1 with 1 clients and 0 middlewares
+found run directory: run2 with 1 clients and 0 middlewares
+found run directory: run3 with 1 clients and 0 middlewares
+found param directory: memtierCli12
+found run directory: run1 with 1 clients and 0 middlewares
+found run directory: run2 with 1 clients and 0 middlewares
+found run directory: run3 with 1 clients and 0 middlewares
+found param directory: memtierCli2
+found run directory: run1 with 1 clients and 0 middlewares
+found run directory: run2 with 1 clients and 0 middlewares
+found run directory: run3 with 1 clients and 0 middlewares
+found param directory: memtierCli3
+found run directory: run1 with 1 clients and 0 middlewares
+found run directory: run2 with 1 clients and 0 middlewares
+found run directory: run3 with 1 clients and 0 middlewares
+found param directory: memtierCli32
+found run directory: run1 with 1 clients and 0 middlewares
+found run directory: run2 with 1 clients and 0 middlewares
+found run directory: run3 with 1 clients and 0 middlewares
+found param directory: memtierCli4
+found run directory: run1 with 1 clients and 0 middlewares
+found run directory: run2 with 1 clients and 0 middlewares
+found run directory: run3 with 1 clients and 0 middlewares
+found param directory: memtierCli5
+found run directory: run1 with 1 clients and 0 middlewares
+found run directory: run2 with 1 clients and 0 middlewares
+found run directory: run3 with 1 clients and 0 middlewares
+found param directory: memtierCli6
+found run directory: run1 with 1 clients and 0 middlewares
+found run directory: run2 with 1 clients and 0 middlewares
+found run directory: run3 with 1 clients and 0 middlewares
+found section directory: logSection2_2b
+mode = WRITE
+found param directory: memtierCli1
+found run directory: run1 with 1 clients and 0 middlewares
+2214.9836065573772 0.0008969615805912045 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli1\run1
+found run directory: run2 with 1 clients and 0 middlewares
+2046.377049180328 0.0009707548486329299 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli1\run2
+found run directory: run3 with 1 clients and 0 middlewares
+2317.0 0.0008571719224265406 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli1\run3
+found param directory: memtierCli12
+found run directory: run1 with 1 clients and 0 middlewares
+5950.311475409836 0.0040296495320537 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli12\run1
+found run directory: run2 with 1 clients and 0 middlewares
+5952.131147540984 0.004028465261099482 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli12\run2
+found run directory: run3 with 1 clients and 0 middlewares
+5954.606557377049 0.004026603001946419 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli12\run3
+found param directory: memtierCli2
+found run directory: run1 with 1 clients and 0 middlewares
+4278.573770491803 0.0009304198465092933 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli2\run1
+found run directory: run2 with 1 clients and 0 middlewares
+4303.11475409836 0.0009252408777477236 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli2\run2
+found run directory: run3 with 1 clients and 0 middlewares
+4354.754098360656 0.0009139970599307335 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli2\run3
+found param directory: memtierCli3
+found run directory: run1 with 1 clients and 0 middlewares
+5965.229508196721 0.001001498805921749 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli3\run1
+found run directory: run2 with 1 clients and 0 middlewares
+5922.803278688524 0.0010089717042494832 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli3\run2
+found run directory: run3 with 1 clients and 0 middlewares
+5941.950819672131 0.0010057829933868385 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli3\run3
+found param directory: memtierCli32
+found run directory: run1 with 1 clients and 0 middlewares
+5910.901639344263 0.010823561699000183 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli32\run1
+found run directory: run2 with 1 clients and 0 middlewares
+5901.11475409836 0.010841557391212554 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli32\run2
+found run directory: run3 with 1 clients and 0 middlewares
+5890.622950819672 0.010860353543280797 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli32\run3
+found param directory: memtierCli4
+found run directory: run1 with 1 clients and 0 middlewares
+5945.508196721312 0.0013417983323958575 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli4\run1
+found run directory: run2 with 1 clients and 0 middlewares
+5979.754098360656 0.0013339815716968458 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli4\run2
+found run directory: run3 with 1 clients and 0 middlewares
+5972.360655737705 0.0013354598203747317 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli4\run3
+found param directory: memtierCli5
+found run directory: run1 with 1 clients and 0 middlewares
+5982.836065573771 0.0016674380975084462 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli5\run1
+found run directory: run2 with 1 clients and 0 middlewares
+5976.377049180328 0.0016692831393546716 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli5\run2
+found run directory: run3 with 1 clients and 0 middlewares
+5981.098360655737 0.001667951080864033 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli5\run3
+found param directory: memtierCli6
+found run directory: run1 with 1 clients and 0 middlewares
+5977.5901639344265 0.002003433945912739 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli6\run1
+found run directory: run2 with 1 clients and 0 middlewares
+5976.295081967213 0.0020042350351388277 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli6\run2
+found run directory: run3 with 1 clients and 0 middlewares
+5981.459016393443 0.002002543014068062 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection2_2b\memtierCli6\run3
+found section directory: logSection6a
+mode = READ
+found param directory: memtierCli32workerThreads32_1server_1mw
+found run directory: run1 with 3 clients and 1 middlewares
+numberRequests in requests log = 196620 
+numberRequests in histogram = 196620
+--
+after merging:
+numberRequests in mergedRequests = 196620 
+numberRequests in mergedHistogram = 196620
+found run directory: run2 with 3 clients and 1 middlewares
+numberRequests in requests log = 196545 
+numberRequests in histogram = 196545
+--
+after merging:
+numberRequests in mergedRequests = 196545 
+numberRequests in mergedHistogram = 196545
+found run directory: run3 with 3 clients and 1 middlewares
+numberRequests in requests log = 196424 
+numberRequests in histogram = 196424
+--
+after merging:
+numberRequests in mergedRequests = 196424 
+numberRequests in mergedHistogram = 196424
+found param directory: memtierCli32workerThreads32_1server_2mw
+found run directory: run1 with 3 clients and 2 middlewares
+numberRequests in requests log = 99760 
+numberRequests in histogram = 99760
+--
+after merging:
+numberRequests in mergedRequests = 99760 
+numberRequests in mergedHistogram = 99760
+numberRequests in requests log = 97330 
+numberRequests in histogram = 97330
+--
+after merging:
+numberRequests in mergedRequests = 97330 
+numberRequests in mergedHistogram = 97330
+MW1: numberRequests in requests log = 99760 
+numberRequests in histogram = 99760
+MW2: numberRequests in requests log = 97330 
+numberRequests in histogram = 97330
+--
+after merging:
+ numberRequests in mergedRequests = 197090 
+numberRequests in mergedHistogram = 197090
+found run directory: run2 with 3 clients and 2 middlewares
+numberRequests in requests log = 99611 
+numberRequests in histogram = 99611
+--
+after merging:
+numberRequests in mergedRequests = 99611 
+numberRequests in mergedHistogram = 99611
+numberRequests in requests log = 96935 
+numberRequests in histogram = 96935
+--
+after merging:
+numberRequests in mergedRequests = 96935 
+numberRequests in mergedHistogram = 96935
+MW1: numberRequests in requests log = 99611 
+numberRequests in histogram = 99611
+MW2: numberRequests in requests log = 96935 
+numberRequests in histogram = 96935
+--
+after merging:
+ numberRequests in mergedRequests = 195627 
+numberRequests in mergedHistogram = 196546
+found run directory: run3 with 3 clients and 2 middlewares
+numberRequests in requests log = 99835 
+numberRequests in histogram = 99835
+--
+after merging:
+numberRequests in mergedRequests = 99835 
+numberRequests in mergedHistogram = 99835
+numberRequests in requests log = 96981 
+numberRequests in histogram = 96981
+--
+after merging:
+numberRequests in mergedRequests = 96981 
+numberRequests in mergedHistogram = 96981
+MW1: numberRequests in requests log = 99835 
+numberRequests in histogram = 99835
+MW2: numberRequests in requests log = 96981 
+numberRequests in histogram = 96981
+--
+after merging:
+ numberRequests in mergedRequests = 195856 
+numberRequests in mergedHistogram = 196816
+found param directory: memtierCli32workerThreads32_3server_1mw
+found run directory: run1 with 3 clients and 1 middlewares
+numberRequests in requests log = 587403 
+numberRequests in histogram = 587403
+--
+after merging:
+numberRequests in mergedRequests = 587403 
+numberRequests in mergedHistogram = 587403
+found run directory: run2 with 3 clients and 1 middlewares
+numberRequests in requests log = 587562 
+numberRequests in histogram = 587562
+--
+after merging:
+numberRequests in mergedRequests = 587562 
+numberRequests in mergedHistogram = 587562
+found run directory: run3 with 3 clients and 1 middlewares
+numberRequests in requests log = 587184 
+numberRequests in histogram = 587184
+--
+after merging:
+numberRequests in mergedRequests = 587184 
+numberRequests in mergedHistogram = 587184
+found param directory: memtierCli32workerThreads32_3server_2mw
+found run directory: run1 with 3 clients and 2 middlewares
+numberRequests in requests log = 295094 
+numberRequests in histogram = 295094
+--
+after merging:
+numberRequests in mergedRequests = 295094 
+numberRequests in mergedHistogram = 295094
+numberRequests in requests log = 290264 
+numberRequests in histogram = 290264
+--
+after merging:
+numberRequests in mergedRequests = 290264 
+numberRequests in mergedHistogram = 290264
+MW1: numberRequests in requests log = 295094 
+numberRequests in histogram = 295094
+MW2: numberRequests in requests log = 290264 
+numberRequests in histogram = 290264
+--
+after merging:
+ numberRequests in mergedRequests = 582159 
+numberRequests in mergedHistogram = 585358
+found run directory: run2 with 3 clients and 2 middlewares
+numberRequests in requests log = 298077 
+numberRequests in histogram = 298077
+--
+after merging:
+numberRequests in mergedRequests = 298077 
+numberRequests in mergedHistogram = 298077
+numberRequests in requests log = 290607 
+numberRequests in histogram = 290607
+--
+after merging:
+numberRequests in mergedRequests = 290607 
+numberRequests in mergedHistogram = 290607
+MW1: numberRequests in requests log = 298077 
+numberRequests in histogram = 298077
+MW2: numberRequests in requests log = 290607 
+numberRequests in histogram = 290607
+--
+after merging:
+ numberRequests in mergedRequests = 585564 
+numberRequests in mergedHistogram = 588684
+found run directory: run3 with 3 clients and 2 middlewares
+numberRequests in requests log = 296312 
+numberRequests in histogram = 296312
+--
+after merging:
+numberRequests in mergedRequests = 296312 
+numberRequests in mergedHistogram = 296312
+numberRequests in requests log = 292130 
+numberRequests in histogram = 292130
+--
+after merging:
+numberRequests in mergedRequests = 292130 
+numberRequests in mergedHistogram = 292130
+MW1: numberRequests in requests log = 296312 
+numberRequests in histogram = 296312
+MW2: numberRequests in requests log = 292130 
+numberRequests in histogram = 292130
+--
+after merging:
+ numberRequests in mergedRequests = 585285 
+numberRequests in mergedHistogram = 588442
+found param directory: memtierCli32workerThreads8_1server_1mw
+found run directory: run1 with 3 clients and 1 middlewares
+numberRequests in requests log = 194975 
+numberRequests in histogram = 194975
+--
+after merging:
+numberRequests in mergedRequests = 194975 
+numberRequests in mergedHistogram = 194975
+found run directory: run2 with 3 clients and 1 middlewares
+numberRequests in requests log = 196178 
+numberRequests in histogram = 196178
+--
+after merging:
+numberRequests in mergedRequests = 196178 
+numberRequests in mergedHistogram = 196178
+found run directory: run3 with 3 clients and 1 middlewares
+numberRequests in requests log = 196122 
+numberRequests in histogram = 196122
+--
+after merging:
+numberRequests in mergedRequests = 196122 
+numberRequests in mergedHistogram = 196122
+found param directory: memtierCli32workerThreads8_1server_2mw
+found run directory: run1 with 3 clients and 2 middlewares
+numberRequests in requests log = 99784 
+numberRequests in histogram = 99784
+--
+after merging:
+numberRequests in mergedRequests = 99784 
+numberRequests in mergedHistogram = 99784
+numberRequests in requests log = 96613 
+numberRequests in histogram = 96613
+--
+after merging:
+numberRequests in mergedRequests = 96613 
+numberRequests in mergedHistogram = 96613
+MW1: numberRequests in requests log = 99784 
+numberRequests in histogram = 99784
+MW2: numberRequests in requests log = 96613 
+numberRequests in histogram = 96613
+--
+after merging:
+ numberRequests in mergedRequests = 195388 
+numberRequests in mergedHistogram = 196397
+found run directory: run2 with 3 clients and 2 middlewares
+numberRequests in requests log = 99861 
+numberRequests in histogram = 99861
+--
+after merging:
+numberRequests in mergedRequests = 99861 
+numberRequests in mergedHistogram = 99861
+numberRequests in requests log = 97079 
+numberRequests in histogram = 97079
+--
+after merging:
+numberRequests in mergedRequests = 97079 
+numberRequests in mergedHistogram = 97079
+MW1: numberRequests in requests log = 99861 
+numberRequests in histogram = 99861
+MW2: numberRequests in requests log = 97079 
+numberRequests in histogram = 97079
+--
+after merging:
+ numberRequests in mergedRequests = 195973 
+numberRequests in mergedHistogram = 196940
+found run directory: run3 with 3 clients and 2 middlewares
+numberRequests in requests log = 100303 
+numberRequests in histogram = 100303
+--
+after merging:
+numberRequests in mergedRequests = 100303 
+numberRequests in mergedHistogram = 100303
+numberRequests in requests log = 96297 
+numberRequests in histogram = 96297
+--
+after merging:
+numberRequests in mergedRequests = 96297 
+numberRequests in mergedHistogram = 96297
+MW1: numberRequests in requests log = 100303 
+numberRequests in histogram = 100303
+MW2: numberRequests in requests log = 96297 
+numberRequests in histogram = 96297
+--
+after merging:
+ numberRequests in mergedRequests = 195549 
+numberRequests in mergedHistogram = 196600
+found param directory: memtierCli32workerThreads8_3server_1mw
+found run directory: run1 with 3 clients and 1 middlewares
+numberRequests in requests log = 579790 
+numberRequests in histogram = 579790
+--
+after merging:
+numberRequests in mergedRequests = 579790 
+numberRequests in mergedHistogram = 579790
+found run directory: run2 with 3 clients and 1 middlewares
+numberRequests in requests log = 576444 
+numberRequests in histogram = 576444
+--
+after merging:
+numberRequests in mergedRequests = 576444 
+numberRequests in mergedHistogram = 576444
+found run directory: run3 with 3 clients and 1 middlewares
+numberRequests in requests log = 579400 
+numberRequests in histogram = 579400
+--
+after merging:
+numberRequests in mergedRequests = 579400 
+numberRequests in mergedHistogram = 579400
+found param directory: memtierCli32workerThreads8_3server_2mw
+found run directory: run1 with 3 clients and 2 middlewares
+numberRequests in requests log = 300230 
+numberRequests in histogram = 300230
+--
+after merging:
+numberRequests in mergedRequests = 300230 
+numberRequests in mergedHistogram = 300230
+numberRequests in requests log = 287433 
+numberRequests in histogram = 287433
+--
+after merging:
+numberRequests in mergedRequests = 287433 
+numberRequests in mergedHistogram = 287433
+MW1: numberRequests in requests log = 300230 
+numberRequests in histogram = 300230
+MW2: numberRequests in requests log = 287433 
+numberRequests in histogram = 287433
+--
+after merging:
+ numberRequests in mergedRequests = 584546 
+numberRequests in mergedHistogram = 587663
+found run directory: run2 with 3 clients and 2 middlewares
+numberRequests in requests log = 301046 
+numberRequests in histogram = 301046
+--
+after merging:
+numberRequests in mergedRequests = 301046 
+numberRequests in mergedHistogram = 301046
+numberRequests in requests log = 286884 
+numberRequests in histogram = 286884
+--
+after merging:
+numberRequests in mergedRequests = 286884 
+numberRequests in mergedHistogram = 286884
+MW1: numberRequests in requests log = 301046 
+numberRequests in histogram = 301046
+MW2: numberRequests in requests log = 286884 
+numberRequests in histogram = 286884
+--
+after merging:
+ numberRequests in mergedRequests = 584923 
+numberRequests in mergedHistogram = 587930
+found run directory: run3 with 3 clients and 2 middlewares
+numberRequests in requests log = 297341 
+numberRequests in histogram = 297341
+--
+after merging:
+numberRequests in mergedRequests = 297341 
+numberRequests in mergedHistogram = 297341
+numberRequests in requests log = 290532 
+numberRequests in histogram = 290532
+--
+after merging:
+numberRequests in mergedRequests = 290532 
+numberRequests in mergedHistogram = 290532
+MW1: numberRequests in requests log = 297341 
+numberRequests in histogram = 297341
+MW2: numberRequests in requests log = 290532 
+numberRequests in histogram = 290532
+--
+after merging:
+ numberRequests in mergedRequests = 584744 
+numberRequests in mergedHistogram = 587873
+found section directory: logSection6b
+mode = WRITE
+found param directory: memtierCli32workerThreads32_1server_1mw
+found run directory: run1 with 3 clients and 1 middlewares
+10574.180327868853 0.018152296732684783 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_1server_1mw\run1
+numberRequests in requests log = 701373 
+numberRequests in histogram = 701373
+--
+after merging:
+numberRequests in mergedRequests = 701373 
+numberRequests in mergedHistogram = 701373
+found run directory: run2 with 3 clients and 1 middlewares
+10546.852459016394 0.018198585227820283 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_1server_1mw\run2
+numberRequests in requests log = 699868 
+numberRequests in histogram = 699868
+--
+after merging:
+numberRequests in mergedRequests = 699868 
+numberRequests in mergedHistogram = 699868
+found run directory: run3 with 3 clients and 1 middlewares
+10605.540983606557 0.01809784914783178 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_1server_1mw\run3
+numberRequests in requests log = 703835 
+numberRequests in histogram = 703835
+--
+after merging:
+numberRequests in mergedRequests = 703835 
+numberRequests in mergedHistogram = 703835
+found param directory: memtierCli32workerThreads32_1server_2mw
+found run directory: run1 with 3 clients and 2 middlewares
+13086.065573770491 0.014666352546194803 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_1server_2mw\run1
+numberRequests in requests log = 438476 
+numberRequests in histogram = 438476
+--
+after merging:
+numberRequests in mergedRequests = 438476 
+numberRequests in mergedHistogram = 438476
+numberRequests in requests log = 428281 
+numberRequests in histogram = 428281
+--
+after merging:
+numberRequests in mergedRequests = 428281 
+numberRequests in mergedHistogram = 428281
+MW1: numberRequests in requests log = 438476 
+numberRequests in histogram = 438476
+MW2: numberRequests in requests log = 428281 
+numberRequests in histogram = 428281
+--
+after merging:
+ numberRequests in mergedRequests = 863069 
+numberRequests in mergedHistogram = 866757
+found run directory: run2 with 3 clients and 2 middlewares
+13059.868852459016 0.014695953023402937 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_1server_2mw\run2
+numberRequests in requests log = 438823 
+numberRequests in histogram = 438823
+--
+after merging:
+numberRequests in mergedRequests = 438823 
+numberRequests in mergedHistogram = 438823
+numberRequests in requests log = 427262 
+numberRequests in histogram = 427262
+--
+after merging:
+numberRequests in mergedRequests = 427262 
+numberRequests in mergedHistogram = 427262
+MW1: numberRequests in requests log = 438823 
+numberRequests in histogram = 438823
+MW2: numberRequests in requests log = 427262 
+numberRequests in histogram = 427262
+--
+after merging:
+ numberRequests in mergedRequests = 861655 
+numberRequests in mergedHistogram = 866085
+found run directory: run3 with 3 clients and 2 middlewares
+13056.065573770491 0.014687376532482858 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_1server_2mw\run3
+numberRequests in requests log = 443980 
+numberRequests in histogram = 443980
+--
+after merging:
+numberRequests in mergedRequests = 443980 
+numberRequests in mergedHistogram = 443980
+numberRequests in requests log = 421868 
+numberRequests in histogram = 421868
+--
+after merging:
+numberRequests in mergedRequests = 421868 
+numberRequests in mergedHistogram = 421868
+MW1: numberRequests in requests log = 443980 
+numberRequests in histogram = 443980
+MW2: numberRequests in requests log = 421868 
+numberRequests in histogram = 421868
+--
+after merging:
+ numberRequests in mergedRequests = 865848 
+numberRequests in mergedHistogram = 865848
+found param directory: memtierCli32workerThreads32_3server_1mw
+found run directory: run1 with 3 clients and 1 middlewares
+8097.393442622951 0.02370572618187193 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_3server_1mw\run1
+numberRequests in requests log = 538841 
+numberRequests in histogram = 538841
+--
+after merging:
+numberRequests in mergedRequests = 538841 
+numberRequests in mergedHistogram = 538841
+found run directory: run2 with 3 clients and 1 middlewares
+8098.327868852459 0.02370369782671185 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_3server_1mw\run2
+numberRequests in requests log = 538365 
+numberRequests in histogram = 538365
+--
+after merging:
+numberRequests in mergedRequests = 538365 
+numberRequests in mergedHistogram = 538365
+found run directory: run3 with 3 clients and 1 middlewares
+8132.131147540984 0.023603637156795556 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_3server_1mw\run3
+numberRequests in requests log = 541555 
+numberRequests in histogram = 541555
+--
+after merging:
+numberRequests in mergedRequests = 541555 
+numberRequests in mergedHistogram = 541555
+found param directory: memtierCli32workerThreads32_3server_2mw
+found run directory: run1 with 3 clients and 2 middlewares
+10741.622950819672 0.01786848709554834 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_3server_2mw\run1
+numberRequests in requests log = 357751 
+numberRequests in histogram = 357751
+--
+after merging:
+numberRequests in mergedRequests = 357751 
+numberRequests in mergedHistogram = 357751
+numberRequests in requests log = 355525 
+numberRequests in histogram = 355525
+--
+after merging:
+numberRequests in mergedRequests = 355525 
+numberRequests in mergedHistogram = 355525
+MW1: numberRequests in requests log = 357751 
+numberRequests in histogram = 357751
+MW2: numberRequests in requests log = 355525 
+numberRequests in histogram = 355525
+--
+after merging:
+ numberRequests in mergedRequests = 709742 
+numberRequests in mergedHistogram = 713276
+found run directory: run2 with 3 clients and 2 middlewares
+10871.819672131147 0.01765493901664855 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_3server_2mw\run2
+numberRequests in requests log = 363415 
+numberRequests in histogram = 363415
+--
+after merging:
+numberRequests in mergedRequests = 363415 
+numberRequests in mergedHistogram = 363415
+numberRequests in requests log = 359225 
+numberRequests in histogram = 359225
+--
+after merging:
+numberRequests in mergedRequests = 359225 
+numberRequests in mergedHistogram = 359225
+MW1: numberRequests in requests log = 363415 
+numberRequests in histogram = 363415
+MW2: numberRequests in requests log = 359225 
+numberRequests in histogram = 359225
+--
+after merging:
+ numberRequests in mergedRequests = 722640 
+numberRequests in mergedHistogram = 722640
+found run directory: run3 with 3 clients and 2 middlewares
+10745.737704918032 0.017859873764664597 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads32_3server_2mw\run3
+numberRequests in requests log = 371911 
+numberRequests in histogram = 371911
+--
+after merging:
+numberRequests in mergedRequests = 371911 
+numberRequests in mergedHistogram = 371911
+numberRequests in requests log = 339008 
+numberRequests in histogram = 339008
+--
+after merging:
+numberRequests in mergedRequests = 339008 
+numberRequests in mergedHistogram = 339008
+MW1: numberRequests in requests log = 371911 
+numberRequests in histogram = 371911
+MW2: numberRequests in requests log = 339008 
+numberRequests in histogram = 339008
+--
+after merging:
+ numberRequests in mergedRequests = 705609 
+numberRequests in mergedHistogram = 710919
+found param directory: memtierCli32workerThreads8_1server_1mw
+found run directory: run1 with 3 clients and 1 middlewares
+6802.6557377049185 0.028218909690525876 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_1server_1mw\run1
+numberRequests in requests log = 452741 
+numberRequests in histogram = 452741
+--
+after merging:
+numberRequests in mergedRequests = 452741 
+numberRequests in mergedHistogram = 452741
+found run directory: run2 with 3 clients and 1 middlewares
+6832.55737704918 0.028095488073015887 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_1server_1mw\run2
+numberRequests in requests log = 454882 
+numberRequests in histogram = 454882
+--
+after merging:
+numberRequests in mergedRequests = 454882 
+numberRequests in mergedHistogram = 454882
+found run directory: run3 with 3 clients and 1 middlewares
+6828.4098360655735 0.028109293604588352 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_1server_1mw\run3
+numberRequests in requests log = 454380 
+numberRequests in histogram = 454380
+--
+after merging:
+numberRequests in mergedRequests = 454380 
+numberRequests in mergedHistogram = 454380
+found param directory: memtierCli32workerThreads8_1server_2mw
+found run directory: run1 with 3 clients and 2 middlewares
+8512.606557377048 0.022565398725901215 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_1server_2mw\run1
+numberRequests in requests log = 295469 
+numberRequests in histogram = 295469
+--
+after merging:
+numberRequests in mergedRequests = 295469 
+numberRequests in mergedHistogram = 295469
+numberRequests in requests log = 271426 
+numberRequests in histogram = 271426
+--
+after merging:
+numberRequests in mergedRequests = 271426 
+numberRequests in mergedHistogram = 271426
+MW1: numberRequests in requests log = 295469 
+numberRequests in histogram = 295469
+MW2: numberRequests in requests log = 271426 
+numberRequests in histogram = 271426
+--
+after merging:
+ numberRequests in mergedRequests = 563842 
+numberRequests in mergedHistogram = 566895
+found run directory: run2 with 3 clients and 2 middlewares
+8596.557377049181 0.022329207780468735 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_1server_2mw\run2
+numberRequests in requests log = 293814 
+numberRequests in histogram = 293814
+--
+after merging:
+numberRequests in mergedRequests = 293814 
+numberRequests in mergedHistogram = 293814
+numberRequests in requests log = 277757 
+numberRequests in histogram = 277757
+--
+after merging:
+numberRequests in mergedRequests = 277757 
+numberRequests in mergedHistogram = 277757
+MW1: numberRequests in requests log = 293814 
+numberRequests in histogram = 293814
+MW2: numberRequests in requests log = 277757 
+numberRequests in histogram = 277757
+--
+after merging:
+ numberRequests in mergedRequests = 568759 
+numberRequests in mergedHistogram = 571571
+found run directory: run3 with 3 clients and 2 middlewares
+8582.524590163934 0.02236614652534505 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_1server_2mw\run3
+numberRequests in requests log = 290376 
+numberRequests in histogram = 290376
+--
+after merging:
+numberRequests in mergedRequests = 290376 
+numberRequests in mergedHistogram = 290376
+numberRequests in requests log = 280687 
+numberRequests in histogram = 280687
+--
+after merging:
+numberRequests in mergedRequests = 280687 
+numberRequests in mergedHistogram = 280687
+MW1: numberRequests in requests log = 290376 
+numberRequests in histogram = 290376
+MW2: numberRequests in requests log = 280687 
+numberRequests in histogram = 280687
+--
+after merging:
+ numberRequests in mergedRequests = 567838 
+numberRequests in mergedHistogram = 571063
+found param directory: memtierCli32workerThreads8_3server_1mw
+found run directory: run1 with 3 clients and 1 middlewares
+5095.918032786885 0.037673144760673107 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_3server_1mw\run1
+numberRequests in requests log = 341092 
+numberRequests in histogram = 341092
+--
+after merging:
+numberRequests in mergedRequests = 341092 
+numberRequests in mergedHistogram = 341092
+found run directory: run2 with 3 clients and 1 middlewares
+5394.622950819672 0.03558450999781204 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_3server_1mw\run2
+numberRequests in requests log = 358599 
+numberRequests in histogram = 358599
+--
+after merging:
+numberRequests in mergedRequests = 358599 
+numberRequests in mergedHistogram = 358599
+found run directory: run3 with 3 clients and 1 middlewares
+5525.737704918033 0.03474153023110927 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_3server_1mw\run3
+numberRequests in requests log = 366053 
+numberRequests in histogram = 366053
+--
+after merging:
+numberRequests in mergedRequests = 366053 
+numberRequests in mergedHistogram = 366053
+found param directory: memtierCli32workerThreads8_3server_2mw
+found run directory: run1 with 3 clients and 2 middlewares
+7294.704918032787 0.026314963580140096 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_3server_2mw\run1
+numberRequests in requests log = 247751 
+numberRequests in histogram = 247751
+--
+after merging:
+numberRequests in mergedRequests = 247751 
+numberRequests in mergedHistogram = 247751
+numberRequests in requests log = 238047 
+numberRequests in histogram = 238047
+--
+after merging:
+numberRequests in mergedRequests = 238047 
+numberRequests in mergedHistogram = 238047
+MW1: numberRequests in requests log = 247751 
+numberRequests in histogram = 247751
+MW2: numberRequests in requests log = 238047 
+numberRequests in histogram = 238047
+--
+after merging:
+ numberRequests in mergedRequests = 483543 
+numberRequests in mergedHistogram = 485798
+found run directory: run2 with 3 clients and 2 middlewares
+7206.7213114754095 0.02663576512363231 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_3server_2mw\run2
+numberRequests in requests log = 247018 
+numberRequests in histogram = 247018
+--
+after merging:
+numberRequests in mergedRequests = 247018 
+numberRequests in mergedHistogram = 247018
+numberRequests in requests log = 233118 
+numberRequests in histogram = 233118
+--
+after merging:
+numberRequests in mergedRequests = 233118 
+numberRequests in mergedHistogram = 233118
+MW1: numberRequests in requests log = 247018 
+numberRequests in histogram = 247018
+MW2: numberRequests in requests log = 233118 
+numberRequests in histogram = 233118
+--
+after merging:
+ numberRequests in mergedRequests = 477653 
+numberRequests in mergedHistogram = 480136
+found run directory: run3 with 3 clients and 2 middlewares
+7229.950819672131 0.02654985199545606 C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05\logSection6b\memtierCli32workerThreads8_3server_2mw\run3
+numberRequests in requests log = 247216 
+numberRequests in histogram = 247216
+--
+after merging:
+numberRequests in mergedRequests = 247216 
+numberRequests in mergedHistogram = 247216
+numberRequests in requests log = 234575 
+numberRequests in histogram = 234575
+--
+after merging:
+numberRequests in mergedRequests = 234575 
+numberRequests in mergedHistogram = 234575
+MW1: numberRequests in requests log = 247216 
+numberRequests in histogram = 247216
+MW2: numberRequests in requests log = 234575 
+numberRequests in histogram = 234575
+--
+after merging:
+ numberRequests in mergedRequests = 479204 
+numberRequests in mergedHistogram = 481791
+found section directory: init
+found section directory: logSection2_2a
+found param directory: memtierCli1 with memtierCli=1 and workerThreads=-1
+found param directory: memtierCli12 with memtierCli=12 and workerThreads=-1
+found param directory: memtierCli2 with memtierCli=2 and workerThreads=-1
+found param directory: memtierCli3 with memtierCli=3 and workerThreads=-1
+found param directory: memtierCli32 with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli4 with memtierCli=4 and workerThreads=-1
+found param directory: memtierCli5 with memtierCli=5 and workerThreads=-1
+found param directory: memtierCli6 with memtierCli=6 and workerThreads=-1
+found section directory: logSection2_2b
+found param directory: memtierCli1 with memtierCli=1 and workerThreads=-1
+found param directory: memtierCli12 with memtierCli=12 and workerThreads=-1
+found param directory: memtierCli2 with memtierCli=2 and workerThreads=-1
+found param directory: memtierCli3 with memtierCli=3 and workerThreads=-1
+found param directory: memtierCli32 with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli4 with memtierCli=4 and workerThreads=-1
+found param directory: memtierCli5 with memtierCli=5 and workerThreads=-1
+found param directory: memtierCli6 with memtierCli=6 and workerThreads=-1
+found section directory: logSection6a
+found param directory: memtierCli32workerThreads32_1server_1mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads32_1server_2mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads32_3server_1mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads32_3server_2mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads8_1server_1mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads8_1server_2mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads8_3server_1mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads8_3server_2mw with memtierCli=32 and workerThreads=-1
+found section directory: logSection6b
+found param directory: memtierCli32workerThreads32_1server_1mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads32_1server_2mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads32_3server_1mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads32_3server_2mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads8_1server_1mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads8_1server_2mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads8_3server_1mw with memtierCli=32 and workerThreads=-1
+found param directory: memtierCli32workerThreads8_3server_2mw with memtierCli=32 and workerThreads=-1

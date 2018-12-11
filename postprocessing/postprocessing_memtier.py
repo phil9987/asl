@@ -202,6 +202,30 @@ def writeGnuplotFile(title, rows, filename):
         for row in rows:
             f.write("{} {} {}\n".format(row[0], row[1], row[2]))
 
+def read2kStatsData(fullpathtofile):
+    mwMeanThroughput = 0.0
+    mwStddevThroughput = 0.0
+    mwMeanLatency = 0.0
+    mwStddevLatency = 0.0
+    sqErrThroughput = 0.0
+    sqErrLatency = 0.0
+    with open(fullpathtofile, 'r') as f:
+        skipLine = True
+        for line in f:
+            if skipLine:
+                # skip header line
+                skipLine = False
+                continue
+            splitting = line.split(' ')
+            mwMeanThroughput = float(splitting[4])
+            mwStddevThroughput = float(splitting[5])
+            mwMeanLatency = float(splitting[6])/1000000
+            mwStddevLatency = float(splitting[7])/1000000
+            sqErrThroughput = float(splitting[14])
+            sqErrLatency= float(splitting[15])
+    return (mwMeanThroughput, mwStddevThroughput, 
+            mwMeanLatency, mwStddevLatency,
+            sqErrThroughput, sqErrLatency)
 
 def readStatsData(fullpathtofile):
     meanNumReq = 0.0
@@ -318,6 +342,16 @@ def getMiddlewareFolders(fullFolderPath):
 def calcMeanAndStdDeviation(data):
     return statistics.mean(data), statistics.pstdev(data)
 
+def calcSqErr(data):
+    mean = statistics.mean(data)
+    #print("mean={} data={}".format(mean, data))
+    res = 0.0
+    for el in data:
+        err = el - mean
+        res += err * err
+    #print("sqerrsum={}".format(res))
+    return res
+
 def calcStats(basefolder):
     for secDir in os.listdir(basefolder):
         fullPathSecDir = os.path.join(basefolder, secDir)
@@ -342,6 +376,7 @@ def calcStats(basefolder):
                 continue
             else:
                 print("ERROR: Mode could not be detected for folder {}".format(secDir))
+            print("mode = {}".format(mode))
             for paramDir in os.listdir(fullPathSecDir):
                 fullPathParamDir = os.path.join(fullPathSecDir, paramDir)
                 if os.path.isdir(fullPathParamDir):
@@ -368,6 +403,7 @@ def calcStats(basefolder):
                             elif mode == 'WRITE':
                                 memtierThroughputOverall.append(avgNumSetPerSec)
                                 memtierLatencyOverall.append(avgLatencySET)       
+                                print("{} {} {}".format(avgNumSetPerSec, avgLatencySET, fullPathRunDir))
                             else:
                                 print("ERROR: mode {} not implemented yet".format(mode))
 
@@ -392,14 +428,21 @@ def calcStats(basefolder):
                     meanQueueLength, stddevQueueLength = calcMeanAndStdDeviation(mwQueueLengthOverall)
                     meanQueueTime, stddevQueueTime = calcMeanAndStdDeviation(mwQueueTimeOverall)
                     meanServiceTime, stddevServiceTime = calcMeanAndStdDeviation(mwServiceTimeOverall)
-                    data = 'memtier_meanThroughput memtier_stddevThroughput memtier_meanAvgLatency memtier_stddevAvgLatency mw_meanThroughput mw_stddevThroughput mw_meanLatency mw_stddevLatency\n'
-                    data += "{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(meanThroughputMemtier, stddevThroughputMemtier, 
+
+                    mwThroughputOverallms = [el/1000000 for el in mwThroughputOverall]
+                    mwLatencyOverallms = [el/1000000 for el in mwLatencyOverall]
+                    sqErrThroughput = calcSqErr(mwThroughputOverallms)
+                    sqErrLatency = calcSqErr(mwLatencyOverallms)
+                    #print("sqErrLatency={}".format(sqErrLatency))
+                    data = 'memtier_meanThroughput memtier_stddevThroughput memtier_meanAvgLatency memtier_stddevAvgLatency mw_meanThroughput mw_stddevThroughput mw_meanLatency mw_stddevLatency meanQueueLength stddevQueueLength meanQueueTime stddevQueueTime meanServiceTime stddevServiceTime squaredErrThroughputMW squaredErrLatencyMW\n'
+                    data += "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(meanThroughputMemtier, stddevThroughputMemtier, 
                                                              meanLatencyMemtier, stddevLatencyMemtier, 
                                                              meanMWThroughput, stddevMWThroughput, 
                                                              meanMWLatency, stddevMWLatency,
                                                              meanQueueLength, stddevQueueLength,
                                                              meanQueueTime, stddevQueueTime,
-                                                             meanServiceTime, stddevServiceTime)
+                                                             meanServiceTime, stddevServiceTime,
+                                                             sqErrThroughput, sqErrLatency)
                     writeToFile(data, os.path.join(fullPathParamDir, 'merged_stats.data'))
 
 def extractMemtierParam(foldername):
@@ -497,9 +540,10 @@ def createPlotFiles(basefolder, plotfolder):
 def main():
     #basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/'
     basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05'
+    #basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_23-35-05'
     plotfolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/aggregated_avg/'
     calcStats(basefolder)
-    createPlotFiles(basefolder, plotfolder)
+    #createPlotFiles(basefolder, plotfolder)
 
 if __name__ == "__main__":
     main()
