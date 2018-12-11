@@ -239,6 +239,67 @@ stopMemcachedServers() {
     removeFile ${SERVER3IP} "~/screenlog.0"
 }
 
+
+runMemtierClientLocalMultiget() {
+    #args: 
+    # $1: ip to connect to
+    # $2: port to connect to
+    # $3: numclients
+    # $4: numMultigetKeys
+    # $5: designator e.g. "client1"
+    # $6: numthreads e.g. 2
+    # $8: OPTIONAL ip2 to connect to
+    # $9: OPTIONAL port2 to connect to
+    logname=$5${FIRSTMEMTIER}
+    log "memtier parameters ip=$1 port=$2 numclients=$3 numMultigetKeys=$4 designator=$5 numthreads=$6 logname=${logname}"
+    basecmd="memtier_benchmark --debug --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=1:$4 --multi-key-get=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
+    if [[ $# -eq 6 ]]; then
+        log "starting 1 memtier instance on $5 (local, $7, blockingmode)"
+        log "executing $basecmd"
+        $basecmd
+    elif [[ $# -eq 8 ]]; then
+        log "starting 2 memtier instances on $5 (local, $7:$8, nonblocking & blocking)"
+        logname2=$5${SECONDMEMTIER}
+        basecmd2="memtier_benchmark --server=$7 --port=$8 --clients=$3 --test-time=${TESTTIME} --ratio=1:$4 --multi-key-get=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=../logs/${logname2}clientstats --json-out-file=../logs/${logname2}.json"
+        cmd1="screen -dm -S ${logname} ${basecmd}"
+        log "executing $cmd1"
+        $cmd1
+        log "executing $basecmd2"
+        $basecmd2
+    else
+        log "ERROR: invalid number of arguments (expected 6 for 1 memtier instance and 8 for two instances): $#"
+    fi
+}
+
+# 
+runMemtierClientMultiget() {
+    #args: 
+    # $1: ip to connect to
+    # $2: port to connect to
+    # $3: numclients
+    # $4: numMultigetKeys
+    # $5: designator e.g. "client1"
+    # $6: numthreads e.g. 2
+    # $7: client_IP
+    # $8: OPTIONAL client_IP OR ip2 to connect to
+    # $9: OPTIONAL port2 to connect to
+    logname=$5${FIRSTMEMTIER}
+    log "memtier parameters ip=$1 port=$2 numclients=$3 numMultigetKeys=$4 designator=$5 numthreads=$6 logname=${logname}"
+    basecmd="memtier_benchmark --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=1:$4 --multi-key-get=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=asl/logs/${logname}clientstats --json-out-file=asl/logs/${logname}.json"
+    if [[ $# -eq 7 ]]; then
+        log "starting 1 memtier instance on $5 (remote, $7, clientIP=$8)"
+        ssh -o StrictHostKeyChecking=no junkerp@$7 "screen -dm -S ${logname} ${basecmd}"
+    elif [[ $# -eq 9 ]]; then
+        log "starting 2 memtier instances on $5 (remote, $7, clientIP=$8)"
+        logname2=$5${SECONDMEMTIER}
+        basecmd2="memtier_benchmark --server=$8 --port=$9 --clients=$3 --test-time=${TESTTIME} --ratio=1:$4 --multi-key-get=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=asl/logs/${logname2}clientstats --json-out-file=asl/logs/${logname2}.json"
+        ssh -o StrictHostKeyChecking=no junkerp@$7 "screen -dm -S ${logname} ${basecmd}; screen -dm -S ${logname2} ${basecmd2}"
+    else
+        log "ERROR: invalid number of arguments (expected 7 for 1 memtier instance and 9 for two instances): $#"
+    fi
+}
+
+
 runMemtierClientLocal() {
     #args: 
     # $1: ip to connect to
@@ -247,11 +308,11 @@ runMemtierClientLocal() {
     # $4: ratio e.g. ${READONLY}
     # $5: designator e.g. "client1"
     # $6: numthreads e.g. 2
-    # $7: OPTIONAL ip2 to connect to
-    # $8: OPTIONAL port2 to connect to
+    # $8: OPTIONAL ip2 to connect to
+    # $9: OPTIONAL port2 to connect to
     logname=$5${FIRSTMEMTIER}
     log "memtier parameters ip=$1 port=$2 numclients=$3 ratio=$4 designator=$5 numthreads=$6 logname=${logname}"
-    basecmd="memtier_benchmark --debug --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
+    basecmd="memtier_benchmark --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
     if [[ $# -eq 6 ]]; then
         log "starting 1 memtier instance on $5 (local, $7, blockingmode)"
         log "executing $basecmd"
