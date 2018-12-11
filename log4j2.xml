@@ -28,7 +28,6 @@
         <Root level="TRACE">
             <AppenderRef ref="Requests"/>
             <AppenderRef ref="Errors"/>
-            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>

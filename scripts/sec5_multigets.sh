@@ -48,9 +48,9 @@ for c in "${memtierclients[@]}"; do
 
                 startMiddleware1 3 ${w} ${SHARDED}
                 startMiddleware2 3 ${w} ${SHARDED}
-                runMemtierClient ${MW1IP} ${MWPORT} $c 1:${k} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP} ${MW2IP} ${MWPORT}
-                runMemtierClient ${MW1IP} ${MWPORT} $c 1:${k} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} ${MW2IP} ${MWPORT}
-                runMemtierClientLocal ${MW1IP} ${MWPORT} $c 1:${k} ${CLIENT1DESIGNATOR} ${memtierthreads} ${MW2IP} ${MWPORT}
+                runMemtierClientMultiget ${MW1IP} ${MWPORT} $c ${k} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP} ${MW2IP} ${MWPORT}
+                runMemtierClientMultiget ${MW1IP} ${MWPORT} $c ${k} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} ${MW2IP} ${MWPORT}
+                runMemtierClientLocalMultiget ${MW1IP} ${MWPORT} $c ${k} ${CLIENT1DESIGNATOR} ${memtierthreads} ${MW2IP} ${MWPORT}
                 stopAllMW1
                 stopAllMW2
                 stopAllClient1
@@ -121,9 +121,9 @@ for c in "${memtierclients[@]}"; do
 
                 startMiddleware1 3 ${w} ${NONSHARDED}
                 startMiddleware2 3 ${w} ${NONSHARDED}
-                runMemtierClient ${MW1IP} ${MWPORT} $c 1:${k} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP} ${MW2IP} ${MWPORT}
-                runMemtierClient ${MW1IP} ${MWPORT} $c 1:${k} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} ${MW2IP} ${MWPORT}
-                runMemtierClientLocal ${MW1IP} ${MWPORT} $c 1:${k} ${CLIENT1DESIGNATOR} ${memtierthreads} ${MW2IP} ${MWPORT}
+                runMemtierClientMultiget ${MW1IP} ${MWPORT} $c ${k} ${CLIENT3DESIGNATOR} ${memtierthreads} ${CLIENT3IP} ${MW2IP} ${MWPORT}
+                runMemtierClientMultiget ${MW1IP} ${MWPORT} $c ${k} ${CLIENT2DESIGNATOR} ${memtierthreads} ${CLIENT2IP} ${MW2IP} ${MWPORT}
+                runMemtierClientLocalMultiget ${MW1IP} ${MWPORT} $c ${k} ${CLIENT1DESIGNATOR} ${memtierthreads} ${MW2IP} ${MWPORT}
                 stopAllMW1
                 stopAllMW2
                 stopAllClient1
