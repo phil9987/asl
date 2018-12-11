@@ -251,7 +251,7 @@ runMemtierClientLocal() {
     # $8: OPTIONAL port2 to connect to
     logname=$5${FIRSTMEMTIER}
     log "memtier parameters ip=$1 port=$2 numclients=$3 ratio=$4 designator=$5 numthreads=$6 logname=${logname}"
-    basecmd="memtier_benchmark --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
+    basecmd="memtier_benchmark --debug --server=$1 --port=$2 --clients=$3 --test-time=${TESTTIME} --ratio=$4 --protocol=memcache_text --run-count=1 --threads=$6 --key-maximum=10000 --data-size=4096 --client-stats=../logs/${logname}clientstats --json-out-file=../logs/${logname}.json"
     if [[ $# -eq 6 ]]; then
         log "starting 1 memtier instance on $5 (local, $7, blockingmode)"
         log "executing $basecmd"

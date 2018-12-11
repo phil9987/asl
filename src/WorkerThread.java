@@ -285,7 +285,7 @@ public class WorkerThread implements Runnable {
                     Request request = this.blockingRequestQueue.take();     // worker is possibly waiting here
                     request.queueWaitingTime = System.currentTimeMillis() - request.timestampQueueEntered;
                     Request.Type type = request.getType();
-                    //logger.debug(String.format("Worker %d starts handling request of type %s", this.id, type));
+                    logger.debug(String.format("Worker %d starts handling request of type %s", this.id, type));
                     switch(type) {
                         case GET:
                             processGet(request);
