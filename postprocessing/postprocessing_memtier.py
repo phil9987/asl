@@ -6,6 +6,8 @@ import statistics
 
 from postprocessing_middleware import MWLogProc
 
+from matplotlib import pyplot as plt
+
 class MemtierEntry:
     def __init__(self, splitting):
         # Second,SET Requests,SET Average Latency,SET Total Bytes,GET Requests,GET Average Latency,GET Total Bytes,GET Misses,GET Hits,WAIT Requests,WAIT Average Latency
@@ -47,17 +49,15 @@ class MemtierEntry:
 class HistogramEntry:
     def __init__(self, splitting, totalNumRequests):
         self.totalNumRequests = totalNumRequests
-        self.latency = float(splitting[0]) # in ms
+        self.responseTime = float(splitting[0])*10 # in 1/100ms
         self.percentage = float(splitting[1])
-        self.numRequests = self.totalNumRequests*self.percentage
+        self.numRequests = (self.totalNumRequests*self.percentage)/100
 
     def merge(self, histoEntry):
-        self.totalNumRequests += histoEntry.totalNumRequests
         self.numRequests += histoEntry.numRequests
-        self.percentage = (self.numRequests * 100.0) / self.totalNumRequests
 
     def __str__(self):
-        return "{} {} {} {}\n".format(self. latency, self.numRequests, self.percentage, self.totalNumRequests)
+        return "{} {} {} {}\n".format(self.responseTime, self.numRequests, self.percentage, self.totalNumRequests)
 
 
 def extractRequestsAndHistogram(logfilename):
@@ -94,26 +94,26 @@ def extractRequestsAndHistogram(logfilename):
                 # extract histogramSet
                 histogramSet.append(HistogramEntry(splitting, totalNumSetRequests))
     requests.sort(key=lambda r: r.timestamp)
-    histogramGet.sort(key=lambda h: h.latency)
-    histogramSet.sort(key=lambda h: h.latency)
+    histogramGet.sort(key=lambda h: h.responseTime)
+    histogramSet.sort(key=lambda h: h.responseTime)
     return requests, histogramGet, histogramSet
 
-# TODO: set latency to the same format as in middlewarelogs
 def setNumRequestsForHistogram(histogram):
     prevAmount = 0
     for h in histogram:
         thisAmount = int(h.numRequests)
-        h.numRequests = thisAmount = prevAmount
+        h.numRequests = thisAmount - prevAmount
         prevAmount = thisAmount
 
     # for testing purposes
     totalNumRequestscalc = 0
     for h in histogram:
-        totalNumRequestcalc += h.numRequests
+        totalNumRequestscalc += h.numRequests
     totalNumRequests = 0
     if len(histogram) > 0:
         totalNumRequests = histogram[0].totalNumRequests
     print("totalNumRequests stored={} totalNumRequests calculated={}".format(totalNumRequests, totalNumRequestscalc))
+    return histogram
 
 
 def numSetRequests(requests):
@@ -157,18 +157,17 @@ def mergeLogsFrom2Clients(requests1, requests2):
         mergedRequests.append(req1)
     return mergedRequests
 
-# TODO: not tested yet
 def mergeHistogramLogEntries(histograms):
     mergerDict = defaultdict(list)
     mergedHistogram = []
-    for histo in histograms:
-        mergerDict[histo.latency].append(histo)
-    for _, histogramsToMerge in mergerDict.items():
-        tmpHisto, *tail = histogramsToMerge
+    for histoEntry in histograms:
+        mergerDict[histoEntry.responseTime].append(histoEntry)
+    for _, histogramEntriesToMerge in mergerDict.items():
+        tmpHistoEntry, *tail = histogramEntriesToMerge
         for histo in tail:
-            tmpHisto.merge(histo)
-        mergedHistogram.append(tmpHisto)
-    mergedHistogram.sort(key = lambda histo: histo.latency)
+            tmpHistoEntry.merge(histo)
+        mergedHistogram.append(tmpHistoEntry)
+    mergedHistogram.sort(key = lambda histo: histo.responseTime)
     return mergedHistogram
 
 def cutWarmupCooldown(requests, warmup, cooldown):
@@ -276,26 +275,28 @@ def mergeLogsFor1Client(clientFolder):
     requests = []
     histogramGet = []
     histogramSet = []
-    #print("merging logs for client {}".format(clientFolder))
-    #print(os.listdir(clientFolder))
     for filename in os.listdir(clientFolder):
-        #print('.')
         if filename.endswith(".csv") and filename.startswith('client'):
             tmpRequests, tmpHistogramGet, tmpHistogramSet = extractRequestsAndHistogram(os.path.join(clientFolder, filename))
-            #print("number requests for {}: {}".format(filename, totalNumberRequests(tmpRequests)))
+            tmpHistogramGet = setNumRequestsForHistogram(tmpHistogramGet)
+            tmpHistogramSet = setNumRequestsForHistogram(tmpHistogramSet)
+
             if len(requests) == 0:
                 requests = tmpRequests
                 histogramGet = tmpHistogramGet
                 histogramSet = tmpHistogramSet
             else:
                 mergeLogsFrom2Clients(requests, tmpRequests)
-    #print("Total number of requests after merging: {}".format(totalNumberRequests(requests)))
+                histogramGet += tmpHistogramGet
+                histogramSet += tmpHistogramSet
+    histogramGet = mergeHistogramLogEntries(histogramGet)
+    histogramSet = mergeHistogramLogEntries(histogramSet)
     return requests, histogramGet, histogramSet
 
 def mergeLogsFor3Clients(client1Folder, client2Folder, client3Folder):
-    requests1, _, _ = mergeLogsFor1Client(client1Folder)
-    requests2, _, _ = mergeLogsFor1Client(client2Folder)
-    requests3, _, _ = mergeLogsFor1Client(client3Folder)
+    requests1, histoGet1, histoSet1 = mergeLogsFor1Client(client1Folder)
+    requests2, histoGet2, histoSet2 = mergeLogsFor1Client(client2Folder)
+    requests3, histoGet3, histoSet3 = mergeLogsFor1Client(client3Folder)
     if len(requests1) == 0:
         print("ERROR: no requests for {}".format(client1Folder))
     if len(requests2) == 0:
@@ -304,7 +305,9 @@ def mergeLogsFor3Clients(client1Folder, client2Folder, client3Folder):
         print("ERROR: no requests for {}".format(client3Folder))
     mergedRequests = mergeLogsFrom2Clients(requests1, requests2)
     mergedRequests = mergeLogsFrom2Clients(mergedRequests, requests3)
-    return cumulativeThroughput(mergedRequests, 3, 3)
+    histogramGet = mergeHistogramLogEntries(histoGet1 + histoGet2 + histoGet3)
+    histogramSet = mergeHistogramLogEntries(histoSet1 + histoSet2 + histoSet3)
+    return mergedRequests, histogramGet, histogramSet
 
 def mergeMemtierLogs(basefolder, clientFolders):
     numClients = len(clientFolders)
@@ -318,9 +321,10 @@ def mergeMemtierLogs(basefolder, clientFolders):
             print("ERROR: no requests for {}".format(os.path.join(basefolder, clientFolders[0])))
         avgNumGetPerSec, avgLatencyGET, avgNumSetPerSec, avgLatencySET = cumulativeThroughput(requests, 3, 3)
     elif numClients == 3:
-        avgNumGetPerSec, avgLatencyGET, avgNumSetPerSec, avgLatencySET = mergeLogsFor3Clients(os.path.join(basefolder, clientFolders[0]),
+        requests, _, _ = mergeLogsFor3Clients(os.path.join(basefolder, clientFolders[0]),
                                 os.path.join(basefolder, clientFolders[1]),
                                 os.path.join(basefolder, clientFolders[2]))
+        avgNumGetPerSec, avgLatencyGET, avgNumSetPerSec, avgLatencySET = cumulativeThroughput(requests, 3, 3)
     else:
         print("ERROR: found {} client directories, no implementation for this yet. clientFolders: {}".format(numClients, clientFolders))
     return avgNumGetPerSec, avgLatencyGET, avgNumSetPerSec, avgLatencySET
@@ -445,6 +449,86 @@ def calcStats(basefolder):
                                                              sqErrThroughput, sqErrLatency)
                     writeToFile(data, os.path.join(fullPathParamDir, 'merged_stats.data'))
 
+def avgHistogramFromRuns(histogramentries):
+    mergedHistogram = mergeHistogramLogEntries(histogramentries)
+    for histoEntry in mergedHistogram:
+        histoEntry.numRequests /= 3.0       # take average over 3 runs
+    return mergedHistogram
+
+def histogramToBuckets(histogram, bucketsize):
+    buckets = [0]*15
+    for histoEntry in histogram:
+        bucket = int(histoEntry.responseTime / bucketsize)
+        if bucket > 14:
+            bucket = 14
+        buckets[bucket] += histoEntry.numRequests
+    xs = [el+1 for el in range(15)]
+    return xs, buckets
+
+def extractHistogramData(basefolder):
+    for secDir in os.listdir(basefolder):
+        fullPathSecDir = os.path.join(basefolder, secDir)
+        if os.path.isdir(fullPathSecDir):
+            print("found section directory: {}".format(secDir))
+            if not secDir.startswith('logSection5'):
+                continue
+
+            for paramDir in os.listdir(fullPathSecDir):
+                fullPathParamDir = os.path.join(fullPathSecDir, paramDir)
+                if os.path.isdir(fullPathParamDir):
+                    print("found param directory: {}".format(paramDir))
+                    if not paramDir.endswith('keys6'):
+                        # we only need histograms for the 6 key configuration...
+                        continue
+                    memtierHistogram = []
+                    middlewareHistogram = []
+                    for runDir in os.listdir(fullPathParamDir):
+                        fullPathRunDir = os.path.join(fullPathParamDir, runDir)
+                        if os.path.isdir(fullPathRunDir):
+                            clientFolders = getClientFolders(fullPathRunDir)
+                            middlewareFolders = getMiddlewareFolders(fullPathRunDir)
+                            numClients = len(clientFolders)
+                            numMiddlewares = len(middlewareFolders)
+                            print("found run directory: {} with {} clients and {} middlewares".format(runDir, numClients, numMiddlewares))
+                            _, histogramMemtierGet, histogramMemtierSet = mergeLogsFor3Clients(os.path.join(fullPathRunDir, clientFolders[0]),
+                                                                                 os.path.join(fullPathRunDir, clientFolders[1]),
+                                                                                 os.path.join(fullPathRunDir, clientFolders[2]))
+
+                            mwproc = MWLogProc(fullPathRunDir, middlewareFolders, 3, 3)
+                            histogramMiddlewareGet = mwproc.histogramGet
+                            histogramMiddlewareSet = mwproc.histogramSet
+                            memtierHistogram += histogramMemtierGet
+                            middlewareHistogram += histogramMiddlewareGet
+                    
+                    memtierHistogram = avgHistogramFromRuns(memtierHistogram)
+                    xs = [el.responseTime for el in memtierHistogram]
+                    ys = [el.numRequests for el in memtierHistogram]
+                    
+                    middlewareHistogram = avgHistogramFromRuns(middlewareHistogram)
+                    xs, ys = histogramToBuckets(memtierHistogram, 10)
+                    xs_mw, ys_mw = histogramToBuckets(middlewareHistogram, 10)
+                    print("numRequestsMemtier: {} numRequestsMiddleware: {}".format(sum(ys), sum(ys_mw)))
+
+                    plt.title('Memtier Histogram')
+                    plt.xlabel('Response Time')
+                    plt.ylabel('Number of Requests')
+                    print(ys)
+                    plt.bar(xs, ys, align='center')
+                    plt.xticks(range(16))
+                    plt.ylim((0,50000))
+                    plt.savefig("./plots/{}_histogramMemtier.eps".format(secDir), format='eps', dpi=1000)
+                    plt.figure()
+                    plt.title('Middleware Histogram')
+                    plt.xlabel('Response Time')
+                    plt.ylabel('Number of Requests')
+                    print(ys)
+                    plt.bar(xs_mw, ys_mw, align='center')
+                    plt.ylim((0,50000))
+                    plt.xticks(range(16))
+                    plt.savefig("./plots/{}_histogramMiddleware.eps".format(secDir), format='eps', dpi=1000)
+
+
+
 def extractMemtierParam(foldername):
     splitting = foldername.split('memtierCli')
     relevantPart = splitting[1]
@@ -543,8 +627,9 @@ def main():
     basefolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_11-12-2018_18-17-52'      # sec5 only
 
     plotfolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/aggregated_avg/'
-    calcStats(basefolder)
-    createPlotFiles(basefolder, plotfolder)
+    #calcStats(basefolder)
+    #createPlotFiles(basefolder, plotfolder)
+    extractHistogramData(basefolder)
 
 if __name__ == "__main__":
     main()

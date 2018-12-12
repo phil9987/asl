@@ -126,6 +126,7 @@ class DstatProc:
                         skiplines -= 1
                         continue
                     elif len(splitting[0]) > 0:
+                        #print(splitting)
                         entry = DstatEntry(splitting)
                         if entry.net_send > 100000:
                             self.entries.append(entry)
@@ -181,8 +182,10 @@ class DstatEntry:
 
 def main():
     #mergeLogsFor2Middlewares("./requests.log", "./requests_half.log", "./combined.log")
-    #dstatproc = DstatProc('C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/')
-    dstatproc  = DstatProc('C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05/')
+    #dstatproc = DstatProc('C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_03-12-2018_11-06-33/')      # full data
+    #dstatproc  = DstatProc('C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_09-12-2018_20-57-05/')     # sec6 data
+    dstatproc = DstatProc('C:/Users/philip/Programming/AdvancedSystemsLab/Programming/data/experiment_logs_11-12-2018_18-17-52/')        # sec5 only
+
     dstatproc.extractConfigurationAverages(0,3)
     dstatproc.mergeConfigurationAverages()
 
