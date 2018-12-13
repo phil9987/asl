@@ -496,6 +496,11 @@ def calcMaxPercentiles(basefolder):
             if not secDir.startswith('logSection5'):
                 continue
             fileoutput = []
+            p25 = []
+            p50 = []
+            p75 = []
+            p90 = []
+            p99 = []
             for paramDir in os.listdir(fullPathSecDir):
                 fullPathParamDir = os.path.join(fullPathSecDir, paramDir)
                 if os.path.isdir(fullPathParamDir):
@@ -516,9 +521,83 @@ def calcMaxPercentiles(basefolder):
                                 memtierPercentiles = percentiles
                             else:
                                 mergePercentiles(memtierPercentiles, percentiles)
-                    fileoutput.append("{},{},{},{},{},{}\n".format(paramDir, percentiles[0], percentiles[1], percentiles[2], percentiles[3], percentiles[4]))
-                writeToFile(fileoutput, os.path.join(fullPathSecDir, 'percentiles_{}.csv'.format(secDir)))
+                    numKeys = extractKeyParam(paramDir)
+                    fileoutput.append("{},{},{},{},{},{}\n".format(numKeys, percentiles[0], percentiles[1], percentiles[2], percentiles[3], percentiles[4]))
+                    p25.append(percentiles[0]/10)
+                    p50.append(percentiles[1]/10)
+                    p75.append(percentiles[2]/10)
+                    p90.append(percentiles[3]/10)
+                    p99.append(percentiles[4]/10)
+                    writeToFile(fileoutput, os.path.join(fullPathSecDir, 'percentiles_{}.csv'.format(secDir)))
+            
+            fig, ax = plt.subplots()
+            index = [1.0,3.0,6.0,9.0]
+            bar_width = 0.35
+            bar_dist = 0.0
+            opacity = 0.8
+            print(p25)
+            print(p50)
+            print(p75)
+            print(p90)
+            print(p99)
+            
+            rects1 = plt.bar([el - 2*bar_width - 2*bar_dist for el in index], p25, bar_width,
+                            alpha=opacity,
+                            label='25th Percentile')
+            
+            rects2 = plt.bar([el - bar_width - bar_dist for el in index], p50, bar_width,
+                            alpha=opacity,
+                            label='50th Percentile')
 
+            rects3 = plt.bar(index, p75, bar_width,
+                            alpha=opacity,
+                            label='75th Percentile')
+
+            rects4 = plt.bar([el + bar_width + bar_dist for el in index], p90, bar_width,
+                            alpha=opacity,
+                            label='90th Percentile')
+
+            rects5 = plt.bar([el + 2*bar_width + 2*bar_dist for el in index], p99, bar_width,
+                            alpha=opacity,
+                            label='99th Percentile')
+            
+            plt.xlabel('Number of keys')
+            plt.ylabel('Latency [ms]')
+            plt.xticks(index)
+            sec, subsec = extractSection(secDir)
+            if subsec is 'c':
+                plt.title('Client Response Time Percentiles, Sharded')
+            else:
+                plt.title('Client Response Time Percentiles, Non-Sharded')
+
+            xs, ys, errs = getDataFromJsonAllKeys('{}{}'.format(sec, subsec), 'memtierLatency')
+            ys = [el*1000 for el in ys]
+            errs = [el*1000 for el in errs]
+            print(ys)
+            ax.errorbar(index, ys, yerr=errs, fmt='navy', markersize=6, capsize=8, label='Average Response Time', linewidth=1)
+            plt.legend()
+            plt.tight_layout()
+            plt.ylim((0,30))
+            plt.savefig("./plots/{}_latencyPercentilesMemtier.eps".format(secDir), format='eps', dpi=1000)
+
+def getDataFromJsonNoWorkers(section, key, workers='-1'):
+    jsonfile = '../aggregated_avg/logSection{}.plotdata'.format(section)
+    jsondata = json.load(open(jsonfile, 'r'))
+    throughputJson = jsondata[key][workers]
+    throughputJson.sort(key=lambda tup: tup[0])
+    x,y,s = zip(*throughputJson)
+    return list(x), list(y), list(s)
+
+def getDataFromJsonAllKeys(section, key):
+    x = []
+    y = []
+    stddev = []
+    for k in ['1','3','6','9']:
+        x_, y_, stddev_ = getDataFromJsonNoWorkers(section, key, k)
+        x.append(k)
+        y.append(y_[0])
+        stddev.append(stddev_[0])
+    return x, y, stddev
 
 def extractHistogramData(basefolder):
     for secDir in os.listdir(basefolder):
@@ -569,21 +648,21 @@ def extractHistogramData(basefolder):
                     print("numRequestsMemtier: {} numRequestsMiddleware: {}".format(sum(ys), sum(ys_mw)))
                     print(memtierPercentiles)
 
-
-                    plt.title('Memtier Histogram')
+                    plt.figure()
+                    plt.title('Response Time Histogram, Memtier Client')
                     plt.xlabel('Response Time')
                     plt.ylabel('Number of Requests')
                     print(ys)
-                    plt.bar(xs, ys, align='center')
+                    plt.bar(xs, ys, align='center', alpha=0.8)
                     plt.xticks(range(16))
                     plt.ylim((0,50000))
                     plt.savefig("./plots/{}_histogramMemtier.eps".format(secDir), format='eps', dpi=1000)
                     plt.figure()
-                    plt.title('Middleware Histogram')
+                    plt.title('Response Time Histogram, Middleware')
                     plt.xlabel('Response Time')
                     plt.ylabel('Number of Requests')
                     print(ys)
-                    plt.bar(xs_mw, ys_mw, align='center')
+                    plt.bar(xs_mw, ys_mw, align='center', alpha=0.8)
                     plt.ylim((0,50000))
                     plt.xticks(range(16))
                     plt.savefig("./plots/{}_histogramMiddleware.eps".format(secDir), format='eps', dpi=1000)
@@ -690,7 +769,7 @@ def main():
     plotfolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/aggregated_avg/'
     #calcStats(basefolder)
     #createPlotFiles(basefolder, plotfolder)
-    #extractHistogramData(basefolder)
+    extractHistogramData(basefolder)
     calcMaxPercentiles(basefolder)
 
 if __name__ == "__main__":
