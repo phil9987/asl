@@ -59,6 +59,24 @@ class HistogramEntry:
     def __str__(self):
         return "{} {} {} {}\n".format(self.responseTime, self.numRequests, self.percentage, self.totalNumRequests)
 
+def extractPercentiles(histogram, percentiles):
+    closestErrs = [100.0]*len(percentiles)
+    percentileEntries = [histogram[0]]*len(percentiles)
+    for entry in histogram:
+        for i, percentile in enumerate(percentiles):
+            currentErr = abs(entry.percentage - percentile)
+            if currentErr < closestErrs[i]:
+                closestErrs[i] = currentErr
+                percentileEntries[i] = entry.responseTime
+    return percentileEntries
+
+def mergePercentiles(percentiles1, percentiles2):
+    percentiles = []
+    for p1, p2 in zip(percentiles1, percentiles2):
+        percentiles.append(max(p1,p2))
+    return percentiles
+
+
 
 def extractRequestsAndHistogram(logfilename):
     requests = []
@@ -112,7 +130,7 @@ def setNumRequestsForHistogram(histogram):
     totalNumRequests = 0
     if len(histogram) > 0:
         totalNumRequests = histogram[0].totalNumRequests
-    print("totalNumRequests stored={} totalNumRequests calculated={}".format(totalNumRequests, totalNumRequestscalc))
+    #print("totalNumRequests stored={} totalNumRequests calculated={}".format(totalNumRequests, totalNumRequestscalc))
     return histogram
 
 
@@ -275,39 +293,44 @@ def mergeLogsFor1Client(clientFolder):
     requests = []
     histogramGet = []
     histogramSet = []
+    percentiles = []
     for filename in os.listdir(clientFolder):
         if filename.endswith(".csv") and filename.startswith('client'):
             tmpRequests, tmpHistogramGet, tmpHistogramSet = extractRequestsAndHistogram(os.path.join(clientFolder, filename))
             tmpHistogramGet = setNumRequestsForHistogram(tmpHistogramGet)
             tmpHistogramSet = setNumRequestsForHistogram(tmpHistogramSet)
-
+            tmpPercentiles = extractPercentiles(tmpHistogramGet, [25, 50, 75, 90, 99])
             if len(requests) == 0:
                 requests = tmpRequests
                 histogramGet = tmpHistogramGet
                 histogramSet = tmpHistogramSet
+                percentiles = tmpPercentiles
             else:
                 mergeLogsFrom2Clients(requests, tmpRequests)
                 histogramGet += tmpHistogramGet
                 histogramSet += tmpHistogramSet
+                percentiles = mergePercentiles(percentiles, tmpPercentiles)
     histogramGet = mergeHistogramLogEntries(histogramGet)
     histogramSet = mergeHistogramLogEntries(histogramSet)
-    return requests, histogramGet, histogramSet
+    return requests, histogramGet, histogramSet, percentiles
 
 def mergeLogsFor3Clients(client1Folder, client2Folder, client3Folder):
-    requests1, histoGet1, histoSet1 = mergeLogsFor1Client(client1Folder)
-    requests2, histoGet2, histoSet2 = mergeLogsFor1Client(client2Folder)
-    requests3, histoGet3, histoSet3 = mergeLogsFor1Client(client3Folder)
+    requests1, histoGet1, histoSet1, percentiles1 = mergeLogsFor1Client(client1Folder)
+    requests2, histoGet2, histoSet2, percentiles2 = mergeLogsFor1Client(client2Folder)
+    requests3, histoGet3, histoSet3, percentiles3 = mergeLogsFor1Client(client3Folder)
     if len(requests1) == 0:
         print("ERROR: no requests for {}".format(client1Folder))
     if len(requests2) == 0:
         print("ERROR: no requests for {}".format(client2Folder))
     if len(requests3) == 0:
         print("ERROR: no requests for {}".format(client3Folder))
+    percentiles = mergePercentiles(percentiles1, percentiles2)
+    percentiles = mergePercentiles(percentiles, percentiles3)
     mergedRequests = mergeLogsFrom2Clients(requests1, requests2)
     mergedRequests = mergeLogsFrom2Clients(mergedRequests, requests3)
     histogramGet = mergeHistogramLogEntries(histoGet1 + histoGet2 + histoGet3)
     histogramSet = mergeHistogramLogEntries(histoSet1 + histoSet2 + histoSet3)
-    return mergedRequests, histogramGet, histogramSet
+    return mergedRequests, histogramGet, histogramSet, percentiles
 
 def mergeMemtierLogs(basefolder, clientFolders):
     numClients = len(clientFolders)
@@ -316,12 +339,12 @@ def mergeMemtierLogs(basefolder, clientFolders):
     avgNumSetPerSec = 0
     avgLatencySET = 0.0
     if numClients == 1:
-        requests, _, _ = mergeLogsFor1Client(os.path.join(basefolder, clientFolders[0]))
+        requests, _, _, _= mergeLogsFor1Client(os.path.join(basefolder, clientFolders[0]))
         if len(requests) == 0:
             print("ERROR: no requests for {}".format(os.path.join(basefolder, clientFolders[0])))
         avgNumGetPerSec, avgLatencyGET, avgNumSetPerSec, avgLatencySET = cumulativeThroughput(requests, 3, 3)
     elif numClients == 3:
-        requests, _, _ = mergeLogsFor3Clients(os.path.join(basefolder, clientFolders[0]),
+        requests, _, _, _= mergeLogsFor3Clients(os.path.join(basefolder, clientFolders[0]),
                                 os.path.join(basefolder, clientFolders[1]),
                                 os.path.join(basefolder, clientFolders[2]))
         avgNumGetPerSec, avgLatencyGET, avgNumSetPerSec, avgLatencySET = cumulativeThroughput(requests, 3, 3)
@@ -465,6 +488,38 @@ def histogramToBuckets(histogram, bucketsize):
     xs = [el+1 for el in range(15)]
     return xs, buckets
 
+def calcMaxPercentiles(basefolder):
+    for secDir in os.listdir(basefolder):
+        fullPathSecDir = os.path.join(basefolder, secDir)
+        if os.path.isdir(fullPathSecDir):
+            print("found section directory: {}".format(secDir))
+            if not secDir.startswith('logSection5'):
+                continue
+            fileoutput = []
+            for paramDir in os.listdir(fullPathSecDir):
+                fullPathParamDir = os.path.join(fullPathSecDir, paramDir)
+                if os.path.isdir(fullPathParamDir):
+                    print("found param directory: {}".format(paramDir))
+                    memtierPercentiles = []
+                    for runDir in os.listdir(fullPathParamDir):
+                        fullPathRunDir = os.path.join(fullPathParamDir, runDir)
+                        if os.path.isdir(fullPathRunDir):
+                            clientFolders = getClientFolders(fullPathRunDir)
+                            middlewareFolders = getMiddlewareFolders(fullPathRunDir)
+                            numClients = len(clientFolders)
+                            numMiddlewares = len(middlewareFolders)
+                            print("found run directory: {} with {} clients and {} middlewares".format(runDir, numClients, numMiddlewares))
+                            _, _, _, percentiles = mergeLogsFor3Clients(os.path.join(fullPathRunDir, clientFolders[0]),
+                                                                                 os.path.join(fullPathRunDir, clientFolders[1]),
+                                                                                 os.path.join(fullPathRunDir, clientFolders[2]))
+                            if(len(memtierPercentiles) is 0):
+                                memtierPercentiles = percentiles
+                            else:
+                                mergePercentiles(memtierPercentiles, percentiles)
+                    fileoutput.append("{},{},{},{},{},{}\n".format(paramDir, percentiles[0], percentiles[1], percentiles[2], percentiles[3], percentiles[4]))
+                writeToFile(fileoutput, os.path.join(fullPathSecDir, 'percentiles_{}.csv'.format(secDir)))
+
+
 def extractHistogramData(basefolder):
     for secDir in os.listdir(basefolder):
         fullPathSecDir = os.path.join(basefolder, secDir)
@@ -481,6 +536,7 @@ def extractHistogramData(basefolder):
                         # we only need histograms for the 6 key configuration...
                         continue
                     memtierHistogram = []
+                    memtierPercentiles = []
                     middlewareHistogram = []
                     for runDir in os.listdir(fullPathParamDir):
                         fullPathRunDir = os.path.join(fullPathParamDir, runDir)
@@ -490,10 +546,13 @@ def extractHistogramData(basefolder):
                             numClients = len(clientFolders)
                             numMiddlewares = len(middlewareFolders)
                             print("found run directory: {} with {} clients and {} middlewares".format(runDir, numClients, numMiddlewares))
-                            _, histogramMemtierGet, histogramMemtierSet = mergeLogsFor3Clients(os.path.join(fullPathRunDir, clientFolders[0]),
+                            _, histogramMemtierGet, histogramMemtierSet, percentiles = mergeLogsFor3Clients(os.path.join(fullPathRunDir, clientFolders[0]),
                                                                                  os.path.join(fullPathRunDir, clientFolders[1]),
                                                                                  os.path.join(fullPathRunDir, clientFolders[2]))
-
+                            if(len(memtierPercentiles) is 0):
+                                memtierPercentiles = percentiles
+                            else:
+                                mergePercentiles(memtierPercentiles, percentiles)                            
                             mwproc = MWLogProc(fullPathRunDir, middlewareFolders, 3, 3)
                             histogramMiddlewareGet = mwproc.histogramGet
                             histogramMiddlewareSet = mwproc.histogramSet
@@ -508,6 +567,8 @@ def extractHistogramData(basefolder):
                     xs, ys = histogramToBuckets(memtierHistogram, 10)
                     xs_mw, ys_mw = histogramToBuckets(middlewareHistogram, 10)
                     print("numRequestsMemtier: {} numRequestsMiddleware: {}".format(sum(ys), sum(ys_mw)))
+                    print(memtierPercentiles)
+
 
                     plt.title('Memtier Histogram')
                     plt.xlabel('Response Time')
@@ -629,7 +690,8 @@ def main():
     plotfolder = 'C:/Users/philip/Programming/AdvancedSystemsLab/Programming/aggregated_avg/'
     #calcStats(basefolder)
     #createPlotFiles(basefolder, plotfolder)
-    extractHistogramData(basefolder)
+    #extractHistogramData(basefolder)
+    calcMaxPercentiles(basefolder)
 
 if __name__ == "__main__":
     main()
