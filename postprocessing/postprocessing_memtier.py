@@ -560,7 +560,7 @@ def calcMaxPercentiles(basefolder):
             rects5 = plt.bar([el + 2*bar_width + 2*bar_dist for el in index], p99, bar_width,
                             alpha=opacity,
                             label='99th Percentile')
-            
+            plt.grid(linestyle=':', linewidth=0.8)
             plt.xlabel('Number of keys')
             plt.ylabel('Latency [ms]')
             plt.xticks(index)
@@ -579,7 +579,7 @@ def calcMaxPercentiles(basefolder):
             plt.tight_layout()
             plt.ylim((0,30))
             plt.savefig("./plots/{}_latencyPercentilesMemtier.eps".format(secDir), format='eps', dpi=1000)
-
+            plt.show()
 def getDataFromJsonNoWorkers(section, key, workers='-1'):
     jsonfile = '../aggregated_avg/logSection{}.plotdata'.format(section)
     jsondata = json.load(open(jsonfile, 'r'))
@@ -649,6 +649,7 @@ def extractHistogramData(basefolder):
                     print(memtierPercentiles)
 
                     plt.figure()
+                    plt.grid(linestyle=':', linewidth=0.8)
                     plt.title('Response Time Histogram, Memtier Client')
                     plt.xlabel('Response Time')
                     plt.ylabel('Number of Requests')
@@ -657,7 +658,9 @@ def extractHistogramData(basefolder):
                     plt.xticks(range(16))
                     plt.ylim((0,50000))
                     plt.savefig("./plots/{}_histogramMemtier.eps".format(secDir), format='eps', dpi=1000)
+                    plt.show()
                     plt.figure()
+                    plt.grid(linestyle=':', linewidth=0.8)
                     plt.title('Response Time Histogram, Middleware')
                     plt.xlabel('Response Time')
                     plt.ylabel('Number of Requests')
@@ -666,7 +669,7 @@ def extractHistogramData(basefolder):
                     plt.ylim((0,50000))
                     plt.xticks(range(16))
                     plt.savefig("./plots/{}_histogramMiddleware.eps".format(secDir), format='eps', dpi=1000)
-
+                    plt.show()
 
 
 def extractMemtierParam(foldername):

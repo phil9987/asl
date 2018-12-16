@@ -1,0 +1,103 @@
+### WRITE ONLY 64WT
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.001 0.001];               # Average service times: network latency, networker thread, networker thread, server service time, server service time
+m = [0 1 1 64 64];             #                       # number of centers: inf, 1 1, numWorkers, numWorkers
+Z = 0;                         # External delay - we model it using the M/M/inf
+N = 18;                        # Number clients
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+X # throughput
+dot(R,V)    # response time
+U # utilization
+Q # queue size
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.002 0.002];               # Average service times
+m = [0 1 1 64 64];             # 
+Z = 0;                         # External delay
+N = 18;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.003 0.003];               # Average service times
+m = [0 1 1 64 64];             # 
+Z = 0;                         # External delay
+N = 36;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.005 0.005];               # Average service times
+m = [0 1 1 64 64];             # 
+Z = 0;                         # External delay
+N = 72;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.007 0.007];               # Average service times
+m = [0 1 1 64 64];             # 
+Z = 0;                         # External delay
+N = 122;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+
+#### READ ONLY, 8WT
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.001 0.001];               # Average service times
+m = [0 1 1 8 8];             # 
+Z = 0;                         # External delay
+N = 6;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.003 0.003];               # Average service times
+m = [0 1 1 8 8];             # 
+Z = 0;                         # External delay
+N = 12;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.005 0.005];               # Average service times
+m = [0 1 1 8 8];             # 
+Z = 0;                         # External delay
+N = 18;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.005 0.005];               # Average service times
+m = [0 1 1 8 8];             # 
+Z = 0;                         # External delay
+N = 24;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.005 0.005];               # Average service times
+m = [0 1 1 8 8];             # 
+Z = 0;                         # External delay
+N = 30;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.005 0.005];               # Average service times
+m = [0 1 1 8 8];             # 
+Z = 0;                         # External delay
+N = 36;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
+
+P = [0 0.5 0.5 0 0; 0 0 0 1 0; 0 0 0 0 1; 1 0 0 0 0; 1 0 0 0 0]; # Transition probability matrix
+S = [0.001 0.00001 0.00001 0.005 0.005];               # Average service times
+m = [0 1 1 8 8];             # 
+Z = 0;                         # External delay
+N = 192;                        # Maximum population to consider
+V = qncsvisits(P);             # Compute number of visits
+[U R Q X] = qnclosed( N, S, V, m, Z );
