@@ -4,6 +4,7 @@
 ./init.sh
 #./repeat5.sh
 #./sec2_baseline.sh
+./sec2_baselineExtended.sh
 #./sec3_baselineMW.sh
 ./sec3_baselineMWExtended.sh
 ./sec4_writeExtended.sh
