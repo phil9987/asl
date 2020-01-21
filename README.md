@@ -8,4 +8,4 @@ autonomously to gather data which I now use to identify and analyze the bottlene
 The course description can be found here: 
 https://www.systems.ethz.ch/node/1333
 
-The report with a detailed explanation of the setup and the tests can be found in the submodule 'asl_report'
+The report with a detailed explanation of the setup and the tests can be found in the submodule 'asl_report': https://github.com/phil9987/asl_report
